@@ -108,7 +108,7 @@ export const TEAMS_DATA: Team[] = [
   },
   {
     name: 'Echipa 4',
-    coordinator: 'Miriam Mitoşeriu',
+    coordinator: 'Mitoşeriu Miriam',
     coordinatorPhone: '641 45 43 01',
     members: [
       { name: 'Barbă Levi' },
@@ -120,7 +120,7 @@ export const TEAMS_DATA: Team[] = [
       { name: 'Mic Karina' },
       { name: 'Toader Ainoa' },
       { name: 'Zăgrean Jesica' },
-      { name: 'Miriam Mitoşeriu', phone: '641 45 43 01' },
+      { name: 'Mitoşeriu Miriam', phone: '641 45 43 01' },
     ]
   },
   {

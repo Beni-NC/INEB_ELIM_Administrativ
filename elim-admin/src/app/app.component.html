@@ -228,10 +228,6 @@
                 <span class="team-coord-label">Coordonator</span>
                 <span class="team-coord-name">{{ team.coordinator }}</span>
               </div>
-              <a [href]="getPhoneHref(team.coordinatorPhone)" class="team-coord-phone" (click)="$event.stopPropagation()">
-                <span class="material-symbols-rounded" style="font-size:16px">call</span>
-                {{ team.coordinatorPhone }}
-              </a>
             </div>
           </div>
 
@@ -297,12 +293,6 @@
               <mat-list-item *ngFor="let member of hist.members" class="member-row">
                 <span matListItemIcon class="material-symbols-rounded member-list-icon" style="color:#94a3b8">person</span>
                 <span matListItemTitle>{{ member.name }}</span>
-                <span matListItemMeta *ngIf="member.phone">
-                  <a [href]="getPhoneHref(member.phone)" class="phone-link small" (click)="$event.stopPropagation()">
-                    <span class="material-symbols-rounded" style="font-size:16px">call</span>
-                    {{ member.phone }}
-                  </a>
-                </span>
               </mat-list-item>
             </mat-list>
           </mat-card-content>
