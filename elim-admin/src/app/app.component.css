@@ -232,6 +232,54 @@
   color: #1565c0;
 }
 
+/* Coordinator highlight in next event card */
+.next-event-coordinator-highlight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #f0f7ff, #e8f0fe);
+  border-left: 4px solid #1565c0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.next-event-coord-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(21, 101, 192, 0.25);
+}
+
+.next-event-coord-icon .material-symbols-rounded {
+  font-size: 20px;
+  color: #fff;
+}
+
+.next-event-coord-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.next-event-coord-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #78909c;
+}
+
+.next-event-coord-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1565c0;
+}
+
 .next-event-details {
   margin-bottom: 1rem;
 }

@@ -66,12 +66,18 @@
           </div>
         </div>
 
+        <div class="next-event-coordinator-highlight">
+          <div class="next-event-coord-icon" [style.background]="'linear-gradient(135deg, ' + getTeamColor(nextEvent.team) + ', ' + getTeamColor(nextEvent.team) + 'cc)'">
+            <span class="material-symbols-rounded">star</span>
+          </div>
+          <div class="next-event-coord-info">
+            <span class="next-event-coord-label">Coordonator</span>
+            <span class="next-event-coord-name">{{ nextEvent.coordinator }}</span>
+          </div>
+        </div>
+
         <div class="next-event-details">
           <mat-chip-set>
-            <mat-chip highlighted>
-              <span class="material-symbols-rounded" matChipAvatar>person</span>
-              {{ nextEvent.coordinator }}
-            </mat-chip>
             <mat-chip>
               <span class="material-symbols-rounded" matChipAvatar>restaurant</span>
               {{ nextEvent.estimatedPersons }} persoane
