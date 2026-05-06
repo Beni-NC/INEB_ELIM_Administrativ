@@ -142,6 +142,8 @@ export class CalendarSyncButtonComponent {
   readonly team = input<string | null>(null);
   readonly youthId = input<string | null>(null);
   readonly youthName = input<string | null>(null);
+  readonly parentId = input<string | null>(null);
+  readonly parentName = input<string | null>(null);
   readonly iconOnly = input<boolean>(false);
   readonly compact = input<boolean>(false);
 
@@ -154,10 +156,11 @@ export class CalendarSyncButtonComponent {
 
   protected readonly lastWebcalUrl = signal<string | null>(null);
 
-  protected readonly mode = computed<'event' | 'team' | 'youth' | 'none'>(() => {
+  protected readonly mode = computed<'event' | 'team' | 'youth' | 'parent' | 'none'>(() => {
     if (this.event()) return 'event';
     if (this.team()) return 'team';
     if (this.youthId()) return 'youth';
+    if (this.parentId()) return 'parent';
     return 'none';
   });
 
@@ -167,6 +170,7 @@ export class CalendarSyncButtonComponent {
       case 'event': { const e = this.event(); return e ? [e] : []; }
       case 'team':  return this.data.getUpcomingEventsForTeam(this.team()!);
       case 'youth': return this.data.getUpcomingEventsForYouth(this.youthId()!);
+      case 'parent': return this.data.getUpcomingEventsForParent(this.parentId()!);
       default: return [];
     }
   });
@@ -180,6 +184,7 @@ export class CalendarSyncButtonComponent {
       case 'event': { const e = this.event(); return e ? this.data.getUpcomingEventsForTeam(e.team) : []; }
       case 'team':  return this.data.getUpcomingEventsForTeam(this.team()!);
       case 'youth': return this.data.getUpcomingEventsForYouth(this.youthId()!);
+      case 'parent': return this.data.getUpcomingEventsForParent(this.parentId()!);
       default: return [];
     }
   });
@@ -201,6 +206,7 @@ export class CalendarSyncButtonComponent {
       case 'event': this.cal.downloadEvent(this.event()!); break;
       case 'team':  this.cal.downloadTeam(this.team()!); break;
       case 'youth': this.cal.downloadYouth(this.youthId()!, this.youthName() ?? this.youthId()!); break;
+      case 'parent': this.cal.downloadParent(this.parentId()!, this.parentName() ?? this.parentId()!); break;
     }
   }
 
@@ -210,6 +216,7 @@ export class CalendarSyncButtonComponent {
       case 'event':
       case 'team':  url = this.cal.webcalUrlForTeam(this.team() ?? this.event()!.team); break;
       case 'youth': url = this.cal.webcalUrlForYouth(this.youthId()!); break;
+      case 'parent': url = this.cal.webcalUrlForParent(this.parentId()!); break;
       default: return;
     }
     this.lastWebcalUrl.set(url);

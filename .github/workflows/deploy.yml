@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      artifact-path: elim-admin/dist/elim-admin/browser
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,17 +34,47 @@ jobs:
         run: npm ci
         working-directory: elim-admin
 
-      - name: Build
-        run: npx ng build --base-href /INEB_ELIM_Administrativ/
+      # Build for THIS repo (Beni-NC/INEB_ELIM_Administrativ)
+      - name: Build (primary)
+        run: npx ng build --base-href /INEB_ELIM_Administrativ/ --output-path dist-primary
         working-directory: elim-admin
 
-      - name: Copy index.html to 404.html
-        run: cp elim-admin/dist/elim-admin/browser/index.html elim-admin/dist/elim-admin/browser/404.html
+      - name: Copy index.html to 404.html (primary)
+        run: cp elim-admin/dist-primary/browser/index.html elim-admin/dist-primary/browser/404.html
 
-      - name: Upload artifact
+      - name: Upload primary artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: elim-admin/dist/elim-admin/browser
+          path: elim-admin/dist-primary/browser
+
+      # Build for the MIRROR repo (beni-cioarba/ADM-TINERET) with its own base-href
+      - name: Build (mirror)
+        if: ${{ env.MIRROR_PAT != '' }}
+        env:
+          MIRROR_PAT: ${{ secrets.MIRROR_PAT }}
+        run: npx ng build --base-href /ADM-TINERET/ --output-path dist-mirror
+        working-directory: elim-admin
+
+      - name: Copy index.html to 404.html (mirror)
+        if: ${{ env.MIRROR_PAT != '' }}
+        env:
+          MIRROR_PAT: ${{ secrets.MIRROR_PAT }}
+        run: cp elim-admin/dist-mirror/browser/index.html elim-admin/dist-mirror/browser/404.html
+
+      - name: Deploy to mirror (beni-cioarba/ADM-TINERET)
+        if: ${{ env.MIRROR_PAT != '' }}
+        env:
+          MIRROR_PAT: ${{ secrets.MIRROR_PAT }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.MIRROR_PAT }}
+          external_repository: beni-cioarba/ADM-TINERET
+          publish_branch: gh-pages
+          publish_dir: elim-admin/dist-mirror/browser
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'deploy: ${{ github.sha }}'
+          force_orphan: true
 
   deploy:
     environment:

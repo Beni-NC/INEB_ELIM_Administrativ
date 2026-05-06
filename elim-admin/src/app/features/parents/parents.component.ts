@@ -15,6 +15,7 @@ import {
   formatDate, formatDateShort, formatJoinedDate, daysBetween, isSameDay,
 } from '../../core/utils/date.utils';
 import { getTeamColor, getTeamNumber } from '../../core/utils/team.utils';
+import { CalendarSyncButtonComponent } from '../../shared/components/calendar-sync-button/calendar-sync-button.component';
 
 @Component({
   selector: 'app-parents',
@@ -23,6 +24,7 @@ import { getTeamColor, getTeamNumber } from '../../core/utils/team.utils';
   imports: [
     CommonModule, MatButtonModule, MatCardModule, MatChipsModule,
     MatDividerModule, MatRippleModule, MatTooltipModule, TranslateModule,
+    CalendarSyncButtonComponent,
   ],
   templateUrl: './parents.component.html',
 })

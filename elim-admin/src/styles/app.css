@@ -5552,11 +5552,19 @@ main.main-content { flex: 1 0 auto !important; }
 .hero-cal-sync { display: inline-flex; margin-top: 8px; flex-shrink: 0; }
 
 /* Inline placements */
-.sr-cal-sync, .ntc-cal-sync, .team-cal-sync, .event-cal-sync, .youth-cal-sync {
+.sr-cal-sync, .ntc-cal-sync, .team-cal-sync, .event-cal-sync, .youth-cal-sync,
+.parent-cal-sync, .purs-cal-sync {
   display: inline-flex;
   margin-left: 6px;
   flex-shrink: 0;
 }
+.support-next-banner .parent-cal-sync,
+.youth-next-banner .youth-cal-sync,
+.team-next-banner .team-cal-sync { margin-left: auto; }
+.support-hero-person { position: relative; }
+.support-hero-person .parent-cal-sync { margin-left: auto; align-self: center; }
+.purs-item { position: relative; }
+.purs-item .purs-cal-sync { margin-left: 6px; align-self: center; }
 .team-next-banner .team-cal-sync { margin-left: auto; }
 .youth-next-banner .youth-cal-sync { margin-left: auto; }
 .event-history-row { position: relative; }
