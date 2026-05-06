@@ -5528,33 +5528,37 @@ main.main-content { flex: 1 0 auto !important; }
 .cal-sync-btn .cal-sync-icon { font-size: 16px !important; }
 .cal-sync-btn .cal-sync-label { letter-spacing: 0.02em; }
 .cal-sync-icon-only {
-  padding: 6px;
-  width: 30px;
-  height: 30px;
-  justify-content: center;
+  padding: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
 }
-.cal-sync-icon-only .cal-sync-icon { font-size: 18px !important; }
+.cal-sync-icon-only .cal-sync-icon { 
+  font-size: 20px !important; 
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
 
 /* Hero placement */
 .hero-cal-sync .cal-sync-btn {
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 .hero-cal-sync .cal-sync-btn:hover {
-  background: rgba(255, 255, 255, 0.28);
-  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(21, 101, 192, 0.18);
 }
-.hero-cal-sync { display: inline-flex; margin-top: 8px; }
+.hero-cal-sync { display: inline-flex; margin-top: 8px; flex-shrink: 0; }
 
 /* Inline placements */
 .sr-cal-sync, .ntc-cal-sync, .team-cal-sync, .event-cal-sync, .youth-cal-sync {
   display: inline-flex;
-  margin-left: auto;
+  margin-left: 6px;
+  flex-shrink: 0;
 }
-.team-next-banner .team-cal-sync { margin-left: 8px; }
-.youth-next-banner .youth-cal-sync { margin-left: 6px; }
+.team-next-banner .team-cal-sync { margin-left: auto; }
+.youth-next-banner .youth-cal-sync { margin-left: auto; }
 .event-history-row { position: relative; }
 .event-history-row .event-cal-sync { align-self: center; margin-left: 6px; }
 
@@ -5634,4 +5638,103 @@ main.main-content { flex: 1 0 auto !important; }
   color: rgba(0,0,0,0.45);
   margin-top: 1px;
   flex-shrink: 0;
+}
+
+/* Preview list of events that will be added by each option */
+.cal-sync-preview {
+  margin: 4px 10px 8px;
+  padding: 8px 10px 6px;
+  background: rgba(21, 101, 192, 0.045);
+  border: 1px dashed rgba(21, 101, 192, 0.22);
+  border-radius: 10px;
+}
+.cal-sync-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #1565c0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.cal-sync-preview-header .material-symbols-rounded {
+  font-size: 15px;
+  color: #1565c0;
+}
+.cal-sync-preview-title { flex: 1; min-width: 0; }
+.cal-sync-preview-count {
+  background: rgba(21, 101, 192, 0.15);
+  color: #1565c0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 8px;
+  border-radius: 999px;
+  letter-spacing: 0;
+}
+.cal-sync-preview-empty {
+  margin: 0;
+  font-size: 0.74rem;
+  font-style: italic;
+  color: rgba(0,0,0,0.5);
+}
+.cal-sync-preview-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cal-sync-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: #fff;
+  border: 1px solid rgba(21, 101, 192, 0.12);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+.cal-sync-preview-date {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: #1565c0;
+  background: rgba(21, 101, 192, 0.08);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+.cal-sync-preview-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.cal-sync-preview-team {
+  font-weight: 600;
+  color: #102a43;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-sync-preview-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 500;
+}
+.cal-sync-preview-time .material-symbols-rounded { font-size: 12px; }
+.cal-sync-preview-more {
+  margin: 6px 0 0;
+  font-size: 0.7rem;
+  color: rgba(0,0,0,0.55);
+  text-align: center;
+  font-style: italic;
 }

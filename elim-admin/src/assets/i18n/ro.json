@@ -227,6 +227,12 @@
     "option_subscribe_title": "Abonare în direct (webcal)",
     "option_subscribe_desc": "Adaugă acest link în calendarul tău o singură dată; orice modificare făcută de coordonatori se actualizează automat.",
     "webcal_note": "Linkul webcal:// necesită ca serverul să publice fişierul .ics. Dacă nu funcţionează imediat, foloseşte descărcarea unică.",
+    "preview_download_title": "Evenimente care se vor adăuga",
+    "preview_subscribe_title": "Evenimente sincronizate automat",
+    "preview_empty": "Nu există evenimente programate momentan.",
+    "preview_more": "+ încă {{n}} evenimente",
+    "preview_at": "la",
+
     "event_summary": "Program tineret — {{team}}",
     "team_calendar_name": "Programări {{team}}",
     "youth_calendar_name": "Programări {{name}}",
