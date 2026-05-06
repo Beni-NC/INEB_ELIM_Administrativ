@@ -1,0 +1,8 @@
+// Estilos visuales globales en src/styles/atm-gallery.scss
+// (registrado en angular.json) para coincidir con cementerios y
+// poder superar el budget de anyComponentStyle.
+
+:host {
+  display: block;
+  width: 100%;
+}

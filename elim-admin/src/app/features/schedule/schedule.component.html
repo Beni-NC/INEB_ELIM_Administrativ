@@ -1,0 +1,409 @@
+<!-- ── Top stats strip ── -->
+<div class="home-stats">
+  <div class="home-stat" data-tone="primary">
+    <span class="material-symbols-rounded">event_upcoming</span>
+    <div class="home-stat-meta">
+      <span class="home-stat-num">{{ data.scheduleStats.upcoming }}</span>
+      <span class="home-stat-label">{{ 'schedule.stat_upcoming' | translate }}</span>
+    </div>
+  </div>
+  <div class="home-stat" data-tone="success">
+    <span class="material-symbols-rounded">today</span>
+    <div class="home-stat-meta">
+      <span class="home-stat-num">{{ data.scheduleStats.thisMonth }}</span>
+      <span class="home-stat-label">{{ 'schedule.stat_this_month' | translate }}</span>
+    </div>
+  </div>
+  <div class="home-stat" data-tone="info">
+    <span class="material-symbols-rounded">groups</span>
+    <div class="home-stat-meta">
+      <span class="home-stat-num">{{ data.scheduleStats.teams }}</span>
+      <span class="home-stat-label">{{ 'schedule.stat_active_teams' | translate }}</span>
+    </div>
+  </div>
+  <div class="home-stat" data-tone="muted">
+    <span class="material-symbols-rounded">history</span>
+    <div class="home-stat-meta">
+      <span class="home-stat-num">{{ data.scheduleStats.completed }}</span>
+      <span class="home-stat-label">{{ 'schedule.stat_completed' | translate }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Next event hero ── -->
+@if (data.nextEvent; as nextEvent) {
+  <mat-card class="hero-card" appearance="outlined"
+            [style.--accent]="getTeamColor(nextEvent.team)">
+    <div class="hero-ribbon">
+      <span class="material-symbols-rounded">notifications_active</span>
+      {{ 'schedule.next_event' | translate }}
+      <span class="hero-ribbon-date">{{ formatDateShort(nextEvent.date) }}</span>
+    </div>
+
+    <div class="hero-body">
+      <div class="hero-left">
+        <div class="hero-team-chip linkable-chip"
+             (click)="nav.goTo('team', nextEvent.team)"
+             [matTooltip]="'schedule.view_team' | translate">
+          <span class="hero-team-num">{{ getTeamNumber(nextEvent.team) }}</span>
+          <div class="hero-team-text">
+            <span class="hero-team-label">{{ 'schedule.team' | translate }}</span>
+            <span class="hero-team-name">{{ nextEvent.team }}</span>
+          </div>
+        </div>
+
+        @if (data.getCoordinatorForTeam(nextEvent.team); as heroCoord) {
+          <div class="hero-coord linkable-chip"
+               (click)="nav.goTo('youth', heroCoord.id)"
+               [matTooltip]="'schedule.view_coordinator' | translate">
+            <span class="material-symbols-rounded">star</span>
+            <div>
+              <span class="hero-coord-label">{{ 'schedule.coordinator' | translate }}</span>
+              <span class="hero-coord-name">{{ nextEvent.coordinator }}</span>
+            </div>
+          </div>
+        }
+
+        <div class="hero-meta-row">
+          <span class="hero-meta-pill">
+            <span class="material-symbols-rounded">restaurant</span>
+            {{ nextEvent.estimatedPersons }} {{ 'common.people' | translate }}
+          </span>
+          <span class="hero-meta-pill">
+            <span class="material-symbols-rounded">celebration</span>
+            {{ nextEvent.programType }}
+          </span>
+          @if (data.getParentsForEvent(nextEvent).length > 0) {
+            <span class="hero-meta-pill">
+              <span class="material-symbols-rounded">family_restroom</span>
+              {{ data.getParentsForEvent(nextEvent).length }} {{ 'common.parents' | translate }}
+            </span>
+          }
+          <span class="hero-meta-pill">
+            <span class="material-symbols-rounded">school</span>
+            {{ data.getYouthsForTeam(nextEvent.team).length }} {{ 'common.youths' | translate }}
+          </span>
+        </div>
+
+        <div class="hero-times-row">
+          <span class="hero-time-pill" [matTooltip]="'schedule.tooltip_program_start' | translate">
+            <span class="material-symbols-rounded">event</span>
+            <span class="hero-time-label">{{ 'event_dialog.program' | translate }}</span>
+            <span class="hero-time-val">{{ getEntryTimes(nextEvent).programStart }}</span>
+          </span>
+          <span class="hero-time-pill" [matTooltip]="'schedule.tooltip_youths_arrival' | translate">
+            <span class="material-symbols-rounded">schedule</span>
+            <span class="hero-time-label">{{ 'schedule.youths_present' | translate }}</span>
+            <span class="hero-time-val">{{ getEntryTimes(nextEvent).youthsArrival }}</span>
+          </span>
+          <span class="hero-time-pill parents" [matTooltip]="'schedule.tooltip_parents_food' | translate">
+            <span class="material-symbols-rounded">restaurant_menu</span>
+            <span class="hero-time-label">{{ 'schedule.parents_food' | translate }}</span>
+            <span class="hero-time-val">{{ getEntryTimes(nextEvent).parentsFoodArrival }}</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        @if (isToday(nextEvent.date)) {
+          <div class="hero-countdown today">
+            <span class="material-symbols-rounded hero-cd-icon">priority_high</span>
+            <span class="hero-cd-unit">{{ 'schedule.today_excl' | translate }}</span>
+          </div>
+        } @else {
+          <div class="hero-countdown">
+            <span class="hero-cd-num">{{ daysUntil(nextEvent.date) }}</span>
+            <span class="hero-cd-unit">{{ daysUntil(nextEvent.date) === 1 ? ('common.day' | translate) : ('common.days' | translate) }}</span>
+          </div>
+          <span class="hero-cd-caption">{{ 'schedule.until_event' | translate }}</span>
+        }
+        <app-calendar-sync-button class="hero-cal-sync" [event]="nextEvent" />
+      </div>
+    </div>
+
+    @if (data.getYouthsForTeam(nextEvent.team).length > 0) {
+      <div class="hero-roster">
+        <div class="hero-roster-label">
+          <span class="material-symbols-rounded">groups</span>
+          {{ 'schedule.preparing_team' | translate }}
+          <span class="hero-roster-count">{{ data.getYouthsForTeam(nextEvent.team).length }}</span>
+        </div>
+        <div class="hero-roster-avatars">
+          @for (y of data.getYouthsForTeam(nextEvent.team); track y.id) {
+            <span class="hero-roster-avatar linkable-chip"
+                  [class.is-coord]="data.isActiveCoordinator(y.id)"
+                  [style.background]="'linear-gradient(135deg, ' + y.accentColor + ', ' + y.accentColor + 'cc)'"
+                  [matTooltip]="y.fullName"
+                  (click)="nav.goTo('youth', y.id, $event)">
+              {{ y.initials }}
+            </span>
+          }
+        </div>
+        @if (data.getParentsForEvent(nextEvent).length > 0) {
+          <div class="hero-roster-parents" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <span class="hero-roster-parents-label">
+                <span class="material-symbols-rounded">family_restroom</span>
+                {{ 'schedule.support_parents' | translate }}
+              </span>
+              @for (p of data.getParentsForEvent(nextEvent); track p.id) {
+                <span class="sr-parent-chip linkable-chip"
+                      [style.background]="p.accentColor + '22'"
+                      [style.border-color]="p.accentColor + '55'"
+                      [style.color]="p.accentColor"
+                      [matTooltip]="p.name + (p.role ? ' — ' + p.role : '')"
+                      (click)="nav.goTo('parent', p.id, $event)">
+                  {{ p.name }}
+                </span>
+              }
+            </div>
+            <span class="hero-roster-count" style="margin-left: 0;">{{ data.getParentsForEvent(nextEvent).length }}</span>
+          </div>
+        }
+      </div>
+    }
+  </mat-card>
+}
+
+<!-- ── Top 3 next ── -->
+<h3 class="section-heading compact">
+  <span class="material-symbols-rounded heading-icon">upcoming</span>
+  {{ 'schedule.soon' | translate }}
+</h3>
+@if (data.nextThree.length > 0) {
+  <div class="next-three-grid">
+    @for (entry of data.nextThree; track entry.date.getTime() + '|' + entry.team; let i = $index) {
+      <div class="next-three-card"
+           [class.is-first]="i === 0"
+           [style.--accent]="getTeamColor(entry.team)"
+           (click)="nav.goTo('team', entry.team)"
+           [matTooltip]="'schedule.view_team' | translate"
+           matRipple>
+        <div class="ntc-date">
+          <span class="ntc-day">{{ entry.date.getDate() }}</span>
+          <span class="ntc-month">{{ getMonthShort(entry.date) }}</span>
+        </div>
+        <div class="ntc-info">
+          <span class="ntc-team">{{ entry.team }}</span>
+          <span class="ntc-coord">
+            <span class="material-symbols-rounded">person</span>
+            {{ entry.coordinator }}
+          </span>
+        </div>
+        <div class="ntc-days">
+          @if (isToday(entry.date)) { {{ 'common.today_short' | translate }} }
+          @else { {{ daysUntil(entry.date) }}<small>{{ 'common.day_letter' | translate }}</small> }
+        </div>
+        <app-calendar-sync-button class="ntc-cal-sync" [event]="entry" [iconOnly]="true" />
+      </div>
+    }
+  </div>
+}
+
+<!-- ── Full upcoming, grouped by month ── -->
+<h3 class="section-heading compact with-count">
+  <span class="material-symbols-rounded heading-icon">calendar_month</span>
+  {{ 'schedule.all_schedules' | translate }}
+  <span class="heading-count">{{ data.upcomingSchedule.length }}</span>
+</h3>
+
+@for (group of data.upcomingByMonth; track group.key) {
+  <div class="month-group">
+    <div class="month-header">
+      <span class="material-symbols-rounded">calendar_today</span>
+      {{ group.label }}
+      <span class="month-count">{{ group.entries.length }}</span>
+    </div>
+    <div class="schedule-rows">
+      @for (entry of group.entries; track entry.date.getTime() + '|' + entry.team) {
+        <div class="schedule-row"
+             [class.is-this-week]="isThisWeek(entry.date)"
+             [class.is-today]="isToday(entry.date)"
+             [style.--accent]="getTeamColor(entry.team)"
+             (click)="nav.goTo('team', entry.team)"
+             matRipple>
+          <div class="sr-date">
+            <span class="sr-dow">{{ DAYS_LETTER[entry.date.getDay()] }}</span>
+            <span class="sr-day">{{ entry.date.getDate() }}</span>
+          </div>
+          <div class="sr-bar"></div>
+          <div class="sr-info">
+            <div class="sr-top">
+              <span class="sr-team">{{ entry.team }}</span>
+              <span class="sr-pers">
+                <span class="material-symbols-rounded">restaurant</span>
+                {{ entry.estimatedPersons }}
+              </span>
+            </div>
+            <div class="sr-bottom">
+              <span class="sr-coord">
+                <span class="material-symbols-rounded">person</span>
+                {{ entry.coordinator }}
+              </span>
+              <span class="sr-times" [matTooltip]="'schedule.tooltip_times_full' | translate: { food: getEntryTimes(entry).parentsFoodArrival }">
+                <span class="material-symbols-rounded">schedule</span>
+                {{ getEntryTimes(entry).youthsArrival }} → {{ getEntryTimes(entry).programStart }}
+                <span class="sr-times-parents">
+                  <span class="material-symbols-rounded">restaurant_menu</span>
+                  {{ getEntryTimes(entry).parentsFoodArrival }}
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="sr-badge">
+            @if (isToday(entry.date)) {
+              <span class="sr-badge-today">{{ 'common.today_short' | translate }}</span>
+            } @else {
+              <span class="sr-badge-num">{{ daysUntil(entry.date) }}</span>
+              <span class="sr-badge-unit">{{ daysUntil(entry.date) === 1 ? ('common.day' | translate) : ('common.days' | translate) }}</span>
+            }
+          </div>
+          <app-calendar-sync-button class="sr-cal-sync" [event]="entry" [iconOnly]="true" />
+          @if (notes.hasNotes(entry)) {
+            <div class="sr-note">
+              <span class="material-symbols-rounded">sticky_note_2</span>
+              <span class="sr-note-text">{{ entry.observations }}</span>
+            </div>
+          }
+          @if (data.getParentsForEvent(entry).length > 0) {
+            <div class="sr-parents">
+              <span class="material-symbols-rounded">family_restroom</span>
+              <span class="sr-parents-text">
+                @for (p of data.getParentsForEvent(entry); track p.id) {
+                  <span class="sr-parent-chip"
+                        [style.background]="p.accentColor + '22'"
+                        [style.border-color]="p.accentColor + '55'"
+                        [style.color]="p.accentColor"
+                        (click)="nav.goTo('parent', p.id, $event)"
+                        [matTooltip]="p.name">{{ p.name }}</span>
+                }
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- ── Coordinator summary ── -->
+@if (data.coordinatorRotations.length > 0) {
+  <h3 class="section-heading compact">
+    <span class="material-symbols-rounded heading-icon">leaderboard</span>
+    {{ 'schedule.coordinator_summary' | translate }}
+  </h3>
+  <div class="coord-summary">
+    @for (c of topCoordinators; track c.name + '|' + c.team) {
+      <div class="coord-summary-row linkable"
+           [style.--accent]="c.color"
+           (click)="goToCoord(c.name)"
+           [matTooltip]="'schedule.view_coordinator' | translate">
+        <div class="coord-bullet"></div>
+        <span class="coord-name">{{ c.name }}</span>
+        <span class="coord-team">{{ c.team }}</span>
+        <span class="coord-count">{{ c.count }}×</span>
+      </div>
+    }
+  </div>
+}
+
+<!-- ── Impact Mese ──
+  @if (data.totalMealsServed > 0) {
+    <h3 class="section-heading compact">
+      <span class="material-symbols-rounded heading-icon">restaurant</span>
+      Total porții pregătite (istoric)
+    </h3>
+    <div class="home-stats" style="grid-template-columns: 1fr; margin-bottom: 2rem;">
+      <div class="home-stat" data-tone="warning" style="width: auto;">
+        <span class="material-symbols-rounded">local_dining</span>
+        <div class="home-stat-meta">
+          <span class="home-stat-num">{{ data.totalMealsServed }}</span>
+          <span class="home-stat-label">porții de mâncare pregătite în total pentru tineri</span>
+        </div>
+      </div>
+    </div>
+  }
+  -->
+
+<!-- ── History ── -->
+<mat-divider class="past-divider"></mat-divider>
+<div class="past-section">
+  <button mat-button class="past-toggle" (click)="showPastSchedule.set(!showPastSchedule())">
+    <span class="material-symbols-rounded">{{ showPastSchedule() ? 'expand_less' : 'history' }}</span>
+    {{ 'teams.schedule_history' | translate }} ({{ data.pastSchedule.length }})
+    <span class="material-symbols-rounded">{{ showPastSchedule() ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</span>
+  </button>
+
+  @if (showPastSchedule()) {
+    <div class="past-by-month">
+      @for (group of data.pastByMonth; track group.key) {
+        <div class="month-group">
+          <div class="month-header past">
+            <span class="material-symbols-rounded">history</span>
+            {{ group.label }}
+            <span class="month-count">{{ group.entries.length }}</span>
+          </div>
+          <div class="schedule-rows">
+            @for (entry of group.entries; track entry.date.getTime() + '|' + entry.team) {
+              <div class="schedule-row past-row"
+                   [class.is-historical-comp]="data.isHistoricalEvent(entry)"
+                   [style.--accent]="getTeamColor(entry.team)"
+                   (click)="data.isHistoricalEvent(entry)
+                              ? nav.goToHistoricalTeam(data.getHistoryKeyForEvent(entry)!, $event)
+                              : nav.goTo('team', entry.team)"
+                   [matTooltip]="data.isHistoricalEvent(entry) ? ('teams.view_team_history_composition' | translate) : ''"
+                   matRipple>
+                <div class="sr-date past">
+                  <span class="sr-dow">{{ DAYS_LETTER[entry.date.getDay()] }}</span>
+                  <span class="sr-day">{{ entry.date.getDate() }}</span>
+                </div>
+                <div class="sr-bar past"></div>
+                <div class="sr-info">
+                  <div class="sr-top">
+                    <span class="sr-team">
+                      {{ entry.team }}
+                      @if (data.isHistoricalEvent(entry)) {
+                        <span class="historical-comp-pill inline">
+                          <span class="material-symbols-rounded">history</span>
+                          {{ 'teams.history_short' | translate }}
+                        </span>
+                      }
+                    </span>
+                    <span class="material-symbols-rounded sr-done">check_circle</span>
+                  </div>
+                  <div class="sr-bottom">
+                    <span class="sr-coord">
+                      <span class="material-symbols-rounded">person</span>
+                      {{ data.getCoordinatorNameForEvent(entry) }}
+                    </span>
+                  </div>
+                </div>
+                @if (notes.hasNotes(entry)) {
+                  <div class="sr-note">
+                    <span class="material-symbols-rounded">sticky_note_2</span>
+                    <span class="sr-note-text">{{ entry.observations }}</span>
+                  </div>
+                }
+                @if (data.getParentsForEvent(entry).length > 0) {
+                  <div class="sr-parents">
+                    <span class="material-symbols-rounded">family_restroom</span>
+                    <span class="sr-parents-text">
+                      @for (p of data.getParentsForEvent(entry); track p.id) {
+                        <span class="sr-parent-chip"
+                              [style.background]="p.accentColor + '22'"
+                              [style.border-color]="p.accentColor + '55'"
+                              [style.color]="p.accentColor"
+                              (click)="nav.goTo('parent', p.id, $event)"
+                              [matTooltip]="p.name">{{ p.name }}</span>
+                      }
+                    </span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

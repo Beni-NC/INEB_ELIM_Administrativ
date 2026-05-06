@@ -48,11 +48,17 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
+              "src/manifest.webmanifest",
               { "glob": ".nojekyll", "input": "src/assets/", "output": "/" }
             ],
             "styles": [
               "src/custom-theme.scss",
-              "src/styles.css"
+              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeicons/primeicons.css",
+              "src/styles.css",
+              "src/styles/app.css",
+              "src/styles/atm-gallery.scss"
             ],
             "scripts": []
           },
@@ -61,21 +67,23 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "750kb",
+                  "maximumWarning": "1mb",
                   "maximumError": "1.5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "16kb",
-                  "maximumError": "32kb"
+                  "maximumWarning": "150kb",
+                  "maximumError": "300kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "serviceWorker": "ngsw-config.json"
             }
           },
           "defaultConfiguration": "production"

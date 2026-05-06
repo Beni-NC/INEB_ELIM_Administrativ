@@ -1,0 +1,341 @@
+<div class="teams-grid">
+  @for (team of data.teams; track team.name) {
+    <mat-card class="team-card"
+              [id]="'card-team-' + team.name"
+              [class.expanded]="expandedTeam() === team.name"
+              appearance="outlined"
+              (click)="toggle(team.name)">
+
+      <div class="team-header"
+           [style.background]="'linear-gradient(135deg, ' + getTeamColor(team.name) + ' 0%, ' + getTeamColor(team.name) + 'bb 100%)'">
+        <div class="team-number-circle">{{ getTeamNumber(team.name) }}</div>
+        <div class="team-header-text">
+          <span class="team-name">{{ team.name }}</span>
+          <span class="team-coord-pill">
+            <span class="material-symbols-rounded">star</span>
+            {{ team.coordinator }}
+          </span>
+        </div>
+        <div class="team-member-count-badge">
+          <span class="material-symbols-rounded">person</span>
+          {{ team.members.length }}
+        </div>
+      </div>
+
+      @if (data.getNextEventForTeam(team.name); as nextDate) {
+        <div class="team-next-banner">
+          <span class="material-symbols-rounded">event</span>
+          {{ 'teams.next_date' | translate }} <strong>{{ formatDateShort(nextDate.date) }}</strong>
+          <span class="team-next-days">&mdash; {{ 'teams.in_days' | translate: { n: daysUntil(nextDate.date) } }}</span>
+          <app-calendar-sync-button class="team-cal-sync" [team]="team.name" [iconOnly]="true" />
+        </div>
+      }
+
+      @if (expandedTeam() === team.name) {
+        <mat-card-content class="team-body" (click)="$event.stopPropagation()">
+          @if (data.getCoordinatorForTeam(team.name); as coord) {
+            <div class="team-coordinator-card linkable"
+                 [style.border-left-color]="getTeamColor(team.name)"
+                 (click)="nav.goTo('youth', coord.id, $event)"
+                 [matTooltip]="'schedule.view_coordinator' | translate">
+              <div class="team-coord-row">
+                <span class="material-symbols-rounded team-coord-star">star</span>
+                <div class="team-coord-info">
+                  <span class="team-coord-label">{{ 'teams.coordinator' | translate }}</span>
+                  <span class="team-coord-name">{{ team.coordinator }}</span>
+                </div>
+                <span class="material-symbols-rounded link-arrow">chevron_right</span>
+              </div>
+            </div>
+          }
+
+          <div class="team-members-heading">
+            <span class="material-symbols-rounded">group</span>
+            {{ 'teams.members' | translate }}
+          </div>
+
+          <div class="members-list">
+            @for (member of team.members; track member.name) {
+              <div class="member-row"
+                   [class.linkable]="member.youthId"
+                   (click)="member.youthId && nav.goTo('youth', member.youthId, $event)">
+                <span class="material-symbols-rounded member-list-icon">person</span>
+                <span class="member-row-name">{{ member.name }}</span>
+                @if (member.youthId) {
+                  <span class="material-symbols-rounded link-arrow">chevron_right</span>
+                }
+              </div>
+            }
+          </div>
+
+          @if (hasGalleryImages(team.name)) {
+            <div class="support-section-label">
+              <span class="material-symbols-rounded">photo_library</span>
+              {{ 'teams.gallery' | translate }}
+            </div>
+            <div class="team-gallery-wrap" (click)="$event.stopPropagation()">
+              <app-atm-gallery [keyGroup]="team.name"></app-atm-gallery>
+            </div>
+          }
+
+          @if (data.getUpcomingEventsForTeam(team.name).length > 0) {
+            <div class="support-section-label">
+              <span class="material-symbols-rounded">event_upcoming</span>
+              {{ 'teams.upcoming_schedules' | translate }}
+              <span class="section-count-pill">{{ data.getUpcomingEventsForTeam(team.name).length }}</span>
+            </div>
+            <div class="event-history-list">
+              @for (e of data.getUpcomingEventsForTeam(team.name); track e.date.getTime()) {
+                <div class="event-history-row" [style.border-left-color]="getTeamColor(e.team)">
+                  <div class="event-history-date">
+                    <span class="event-history-day">{{ e.date.getDate() }}</span>
+                    <span class="event-history-mo">{{ formatDateShort(e.date).split(' ')[1] }}</span>
+                  </div>
+                  <div class="event-history-info">
+                    <span class="event-history-team">{{ e.programType }}</span>
+                    <span class="event-history-type">
+                      <span class="material-symbols-rounded" style="font-size:12px;vertical-align:middle">person</span>
+                      {{ e.coordinator }}
+                    </span>
+                  </div>
+                  <app-calendar-sync-button class="event-cal-sync" [event]="e" [iconOnly]="true" />
+                  @if (notes.hasNotes(e)) {
+                    <div class="sr-note">
+                      <span class="material-symbols-rounded">sticky_note_2</span>
+                      <span class="sr-note-text">{{ e.observations }}</span>
+                    </div>
+                  }
+                  @if (data.getParentsForEvent(e).length > 0) {
+                    <div class="sr-parents">
+                      <span class="material-symbols-rounded">family_restroom</span>
+                      <span class="sr-parents-text">
+                        @for (p of data.getParentsForEvent(e); track p.id) {
+                          <span class="sr-parent-chip"
+                                [style.background]="p.accentColor + '22'"
+                                [style.border-color]="p.accentColor + '55'"
+                                [style.color]="p.accentColor"
+                                (click)="nav.goTo('parent', p.id, $event)"
+                                [matTooltip]="p.name">{{ p.name }}</span>
+                        }
+                      </span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          @if (data.getPastEventsForTeam(team.name).length > 0) {
+            <div class="support-section-label history-toggle-label"
+                 (click)="togglePastEvents(team.name, $event)"
+                 role="button">
+              <span class="material-symbols-rounded">history</span>
+              {{ 'teams.schedule_history' | translate }}
+              <span class="section-count-pill">{{ data.getPastEventsForTeam(team.name).length }}</span>
+              <span class="material-symbols-rounded history-toggle-chevron">
+                {{ isPastEventsOpen(team.name) ? 'expand_less' : 'expand_more' }}
+              </span>
+            </div>
+            @if (isPastEventsOpen(team.name)) {
+              <div class="event-history-list past-events-list">
+                @for (e of data.getPastEventsForTeam(team.name); track e.date.getTime()) {
+                  <div class="event-history-row past"
+                       [class.is-historical-comp]="data.isHistoricalEvent(e)"
+                       [style.border-left-color]="getTeamColor(e.team) + '99'"
+                       [class.linkable]="data.isHistoricalEvent(e)"
+                       [matTooltip]="data.isHistoricalEvent(e) ? ('teams.view_team_history_composition' | translate) : ''"
+                       (click)="data.isHistoricalEvent(e) && nav.goToHistoricalTeam(data.getHistoryKeyForEvent(e)!, $event)">
+                    <div class="event-history-date">
+                      <span class="event-history-day">{{ e.date.getDate() }}</span>
+                      <span class="event-history-mo">{{ formatDateShort(e.date).split(' ')[1] }}</span>
+                    </div>
+                    <div class="event-history-info">
+                      <span class="event-history-team">{{ e.programType }}</span>
+                      <span class="event-history-type">
+                        <span class="material-symbols-rounded" style="font-size:12px;vertical-align:middle">person</span>
+                        {{ data.getCoordinatorNameForEvent(e) }}
+                      </span>
+                    </div>
+                    @if (data.isHistoricalEvent(e)) {
+                      <span class="historical-comp-pill"
+                            [matTooltip]="'teams.composition_ended_on' | translate: { date: formatDateShort(data.getCompositionForEvent(e)!.end!) }">
+                        <span class="material-symbols-rounded">history</span>
+                        {{ 'teams.history_short' | translate }}
+                      </span>
+                    }
+                    <span class="event-history-year">{{ e.date.getFullYear() }}</span>
+                    @if (notes.hasNotes(e)) {
+                      <div class="sr-note">
+                        <span class="material-symbols-rounded">sticky_note_2</span>
+                        <span class="sr-note-text">{{ e.observations }}</span>
+                      </div>
+                    }
+                    @if (data.getParentsForEvent(e).length > 0) {
+                      <div class="sr-parents">
+                        <span class="material-symbols-rounded">family_restroom</span>
+                        <span class="sr-parents-text">
+                          @for (p of data.getParentsForEvent(e); track p.id) {
+                            <span class="sr-parent-chip"
+                                  [style.background]="p.accentColor + '22'"
+                                  [style.border-color]="p.accentColor + '55'"
+                                  [style.color]="p.accentColor"
+                                  (click)="nav.goTo('parent', p.id, $event)"
+                                  [matTooltip]="p.name">{{ p.name }}</span>
+                          }
+                        </span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          }
+        </mat-card-content>
+      }
+
+      <div class="team-expand-hint">
+        <span class="material-symbols-rounded">{{ expandedTeam() === team.name ? 'expand_less' : 'expand_more' }}</span>
+        {{ expandedTeam() === team.name ? ('teams.close' | translate) : ('teams.details' | translate) }}
+      </div>
+    </mat-card>
+  }
+</div>
+
+@if (data.teamsHistory.length > 0) {
+  <div class="team-history-section">
+    <mat-divider class="past-divider"></mat-divider>
+    <div class="past-section">
+      <button mat-button class="past-toggle" (click)="showHistory.set(!showHistory())">
+        <span class="material-symbols-rounded">{{ showHistory() ? 'expand_less' : 'history' }}</span>
+        {{ 'teams.teams_history' | translate }} ({{ data.teamsHistory.length }})
+        <span class="material-symbols-rounded">{{ showHistory() ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</span>
+      </button>
+    </div>
+
+    @if (showHistory()) {
+      <div class="teams-grid">
+        @for (hist of data.teamsHistory; track hist.name + '-' + hist.endDate.getTime()) {
+          <mat-card class="team-card history-card" appearance="outlined"
+                    [id]="'card-team-history-' + hist.name + '-' + hist.endDate.getTime()">
+            <div class="team-header history-header"
+                 [style.background]="'linear-gradient(135deg, ' + getTeamColor(hist.name) + '88 0%, ' + getTeamColor(hist.name) + '55 100%)'">
+              <div class="team-number-circle">{{ getTeamNumber(hist.name) }}</div>
+              <div class="team-header-text">
+                <span class="team-name">{{ hist.name }}</span>
+                <span class="team-role-line">
+                  <span class="material-symbols-rounded" style="font-size:14px">star</span>
+                  {{ hist.coordinator }}
+                </span>
+              </div>
+              <div class="history-end-badge">
+                <span class="material-symbols-rounded" style="font-size:14px">event_busy</span>
+                {{ formatDateShort(hist.endDate) }}
+              </div>
+            </div>
+
+            <mat-card-content class="team-body">
+              @if (historyCoordinator(hist); as coord) {
+                <div class="team-coordinator-card linkable"
+                     [style.border-left-color]="getTeamColor(hist.name)"
+                     (click)="nav.goTo('youth', coord.id, $event)"
+                     [matTooltip]="'schedule.view_coordinator' | translate">
+                  <div class="team-coord-row">
+                    <span class="material-symbols-rounded team-coord-star">star</span>
+                    <div class="team-coord-info">
+                      <span class="team-coord-label">{{ 'teams.coordinator' | translate }}</span>
+                      <span class="team-coord-name">{{ hist.coordinator }}</span>
+                    </div>
+                    <span class="material-symbols-rounded link-arrow">chevron_right</span>
+                  </div>
+                </div>
+              }
+
+              <div class="team-members-heading">
+                <span class="material-symbols-rounded">group</span>
+                {{ 'teams.members' | translate }}
+              </div>
+              <div class="members-list">
+                @for (member of hist.members; track member.name) {
+                  <div class="member-row"
+                       [class.linkable]="member.youthId"
+                       (click)="member.youthId && nav.goTo('youth', member.youthId, $event)">
+                    <span class="material-symbols-rounded member-list-icon">person</span>
+                    <span class="member-row-name">{{ member.name }}</span>
+                    @if (member.youthId) {
+                      <span class="material-symbols-rounded link-arrow">chevron_right</span>
+                    }
+                  </div>
+                }
+              </div>
+
+              @if (hasGalleryImages(historyKeyFor(hist))) {
+                <div class="support-section-label">
+                  <span class="material-symbols-rounded">photo_library</span>
+                  {{ 'teams.gallery' | translate }}
+                </div>
+                <div class="team-gallery-wrap" (click)="$event.stopPropagation()">
+                  <app-atm-gallery [keyGroup]="historyKeyFor(hist)"></app-atm-gallery>
+                </div>
+              }
+
+              @if (pastEventsForHistory(hist).length > 0) {
+                <div class="support-section-label history-toggle-label"
+                     (click)="togglePastEvents(historyKeyFor(hist), $event)"
+                     role="button">
+                  <span class="material-symbols-rounded">history</span>
+                  {{ 'teams.schedule_history' | translate }}
+                  <span class="section-count-pill">{{ pastEventsForHistory(hist).length }}</span>
+                  <span class="material-symbols-rounded history-toggle-chevron">
+                    {{ isPastEventsOpen(historyKeyFor(hist)) ? 'expand_less' : 'expand_more' }}
+                  </span>
+                </div>
+                @if (isPastEventsOpen(historyKeyFor(hist))) {
+                  <div class="event-history-list past-events-list">
+                    @for (e of pastEventsForHistory(hist); track e.date.getTime()) {
+                      <div class="event-history-row past is-historical-comp"
+                           [style.border-left-color]="getTeamColor(e.team) + '99'">
+                        <div class="event-history-date">
+                          <span class="event-history-day">{{ e.date.getDate() }}</span>
+                          <span class="event-history-mo">{{ formatDateShort(e.date).split(' ')[1] }}</span>
+                        </div>
+                        <div class="event-history-info">
+                          <span class="event-history-team">{{ e.programType }}</span>
+                          <span class="event-history-type">
+                            <span class="material-symbols-rounded" style="font-size:12px;vertical-align:middle">person</span>
+                            {{ data.getCoordinatorNameForEvent(e) }}
+                          </span>
+                        </div>
+                        <span class="event-history-year">{{ e.date.getFullYear() }}</span>
+                        @if (notes.hasNotes(e)) {
+                          <div class="sr-note">
+                            <span class="material-symbols-rounded">sticky_note_2</span>
+                            <span class="sr-note-text">{{ e.observations }}</span>
+                          </div>
+                        }
+                        @if (data.getParentsForEvent(e).length > 0) {
+                          <div class="sr-parents">
+                            <span class="material-symbols-rounded">family_restroom</span>
+                            <span class="sr-parents-text">
+                              @for (p of data.getParentsForEvent(e); track p.id) {
+                                <span class="sr-parent-chip"
+                                      [style.background]="p.accentColor + '22'"
+                                      [style.border-color]="p.accentColor + '55'"
+                                      [style.color]="p.accentColor"
+                                      (click)="nav.goTo('parent', p.id, $event)"
+                                      [matTooltip]="p.name">{{ p.name }}</span>
+                              }
+                            </span>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  </div>
+}

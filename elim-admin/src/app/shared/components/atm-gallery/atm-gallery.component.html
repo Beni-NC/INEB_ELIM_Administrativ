@@ -1,0 +1,95 @@
+<div class="atm-gallery-wrapper">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="atm-gallery-loading">
+    <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem;"></i>
+  </div>
+
+  <!-- Galería principal (read-only) -->
+  <div *ngIf="!loading && images.length > 0" class="atm-gallery-container"
+       [class.atm-gallery-container--simulated-fs]="simulatedFullscreen">
+
+    <!-- Botón cerrar fullscreen simulado -->
+    <button *ngIf="simulatedFullscreen" type="button"
+            class="atm-gallery-simfs__close"
+            (click)="closePreviewFullScreen()"
+            title="Închide ecran complet (Esc)">
+      <i class="pi pi-times"></i>
+    </button>
+
+    <!-- Barra progreso fullscreen simulado -->
+    <div *ngIf="simulatedFullscreen && images.length > 1" class="atm-gallery-simfs__progress-bar">
+      <div *ngFor="let img of images; let i = index"
+           class="atm-gallery-simfs__progress-segment"
+           [class.atm-gallery-simfs__progress-segment--active]="i === activeIndex"
+           [class.atm-gallery-simfs__progress-segment--done]="i < activeIndex">
+      </div>
+    </div>
+
+    <p-galleria #galleria
+                [value]="images"
+                [(activeIndex)]="activeIndex"
+                [numVisible]="5"
+                [showThumbnails]="showThumbnails"
+                [showItemNavigators]="images.length > 1"
+                [showItemNavigatorsOnHover]="false"
+                [circular]="true"
+                [autoPlay]="isAutoPlay"
+                [transitionInterval]="4000"
+                [style]="simulatedFullscreen ? { 'flex': '1', 'min-height': '0', 'display': 'flex', 'flex-direction': 'column', 'overflow': 'hidden' } : {}"
+                [containerStyle]="simulatedFullscreen ? { 'max-width': '100%', 'height': '100%', 'display': 'flex', 'flex-direction': 'column' } : { 'max-width': '100%' }">
+
+      <ng-template pTemplate="item" let-item>
+        <div class="atm-gallery-item">
+          <img [src]="item.itemImageSrc" [alt]="item.title || 'Imagine'" class="atm-gallery-item__img"/>
+          <div class="atm-gallery-item__caption" *ngIf="item.title || item.description">
+            <span #titleEl class="atm-gallery-item__title" *ngIf="item.title"
+                  [pTooltip]="isOverflowing(titleEl) ? item.title : ''"
+                  tooltipPosition="top">{{ item.title }}</span>
+            <span #descEl class="atm-gallery-item__desc" *ngIf="item.description"
+                  [pTooltip]="isOverflowing(descEl) ? item.description : ''"
+                  tooltipPosition="top">{{ item.description }}</span>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="thumbnail" let-item>
+        <div class="atm-gallery-thumb">
+          <img [src]="item.thumbnailImageSrc" [alt]="item.title || 'Miniatură'"/>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <div class="atm-gallery-footer">
+          <div class="atm-gallery-footer__left">
+            <button pButton type="button" icon="pi pi-th-large"
+                    [class]="'p-button-text p-button-sm p-button-rounded atm-gallery-footer__btn' + (showThumbnails ? ' atm-gallery-footer__btn--active' : '')"
+                    (click)="onThumbnailButtonClick()" pTooltip="Miniaturi"></button>
+            <button pButton type="button" [icon]="slideButtonIcon"
+                    class="p-button-text p-button-sm p-button-rounded atm-gallery-footer__btn"
+                    (click)="toggleAutoSlide()" pTooltip="Redare automată"></button>
+            <span class="atm-gallery-footer__separator"></span>
+            <span class="atm-gallery-footer__counter" *ngIf="images.length > 0">
+              {{ activeIndex + 1 }}/{{ images.length }}
+            </span>
+            <span #footerInfoEl class="atm-gallery-footer__info"
+                  *ngIf="images[activeIndex]?.title || images[activeIndex]?.description"
+                  [pTooltip]="isOverflowing(footerInfoEl) ? (images[activeIndex].title || images[activeIndex].description || '') : ''">
+              <strong>{{ images[activeIndex].title || images[activeIndex].description }}</strong>
+            </span>
+            <span class="atm-gallery-footer__date" *ngIf="images[activeIndex]?.uploadedAt">
+              {{ formatDate(images[activeIndex].uploadedAt) }}
+            </span>
+          </div>
+
+          <div class="atm-gallery-footer__right">
+            <button pButton type="button" [icon]="fullScreenIcon"
+                    class="p-button-text p-button-sm p-button-rounded atm-gallery-footer__btn"
+                    (click)="toggleFullScreen()" pTooltip="Ecran complet"></button>
+          </div>
+        </div>
+      </ng-template>
+    </p-galleria>
+  </div>
+
+</div>
