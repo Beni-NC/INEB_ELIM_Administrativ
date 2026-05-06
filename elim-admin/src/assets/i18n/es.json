@@ -235,6 +235,7 @@
     "event_summary": "Programa de jóvenes — {{team}}",
     "team_calendar_name": "Programaciones {{team}}",
     "youth_calendar_name": "Programaciones {{name}}",
+    "parent_calendar_name": "Apoyo {{name}}",
     "calendar_description": "Programaciones de jóvenes — Iglesia ELIM",
     "location_default": "Iglesia ELIM",
     "field_program_type": "Tipo de programa",

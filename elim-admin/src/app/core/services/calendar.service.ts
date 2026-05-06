@@ -48,6 +48,13 @@ export class CalendarService {
     this.triggerDownload(ics, this.slug(`${displayName}-programari`) + '.ics');
   }
 
+  /** Descarga todos los próximos eventos donde participa un padre (apoyo). */
+  downloadParent(parentId: string, displayName: string): void {
+    const events = this.data.getUpcomingEventsForParent(parentId);
+    const ics = this.buildCalendar(events, this.t('calendar.parent_calendar_name', { name: displayName }));
+    this.triggerDownload(ics, this.slug(`${displayName}-sprijin`) + '.ics');
+  }
+
   /**
    * URL webcal:// para suscripción en vivo. Apunta a un archivo estático
    * en /assets/calendars/<id>.ics que debe ser publicado por backend o build pipeline.
@@ -59,6 +66,10 @@ export class CalendarService {
 
   webcalUrlForYouth(youthId: string): string {
     return this.buildWebcalUrl(`youth-${this.slug(youthId)}.ics`);
+  }
+
+  webcalUrlForParent(parentId: string): string {
+    return this.buildWebcalUrl(`parent-${this.slug(parentId)}.ics`);
   }
 
   webcalUrlForAll(): string {

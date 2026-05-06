@@ -236,6 +236,7 @@
     "event_summary": "Program tineret — {{team}}",
     "team_calendar_name": "Programări {{team}}",
     "youth_calendar_name": "Programări {{name}}",
+    "parent_calendar_name": "Sprijin {{name}}",
     "calendar_description": "Programări tineret — Biserica ELIM",
     "location_default": "Biserica ELIM",
     "field_program_type": "Tip program",
