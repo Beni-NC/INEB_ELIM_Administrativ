@@ -117,6 +117,7 @@
           </div>
           <span class="hero-cd-caption">{{ 'schedule.until_event' | translate }}</span>
         }
+        <app-calendar-sync-button class="hero-cal-sync" [event]="nextEvent" />
       </div>
     </div>
 
@@ -193,6 +194,7 @@
           @if (isToday(entry.date)) { {{ 'common.today_short' | translate }} }
           @else { {{ daysUntil(entry.date) }}<small>{{ 'common.day_letter' | translate }}</small> }
         </div>
+        <app-calendar-sync-button class="ntc-cal-sync" [event]="entry" [iconOnly]="true" />
       </div>
     }
   </div>
@@ -256,6 +258,7 @@
               <span class="sr-badge-unit">{{ daysUntil(entry.date) === 1 ? ('common.day' | translate) : ('common.days' | translate) }}</span>
             }
           </div>
+          <app-calendar-sync-button class="sr-cal-sync" [event]="entry" [iconOnly]="true" />
           @if (notes.hasNotes(entry)) {
             <div class="sr-note">
               <span class="material-symbols-rounded">sticky_note_2</span>

@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { CalendarSyncButtonComponent } from '../../shared/components/calendar-sync-button/calendar-sync-button.component';
 import { DataService } from '../../core/services/data.service';
 import { NavigationService } from '../../core/services/navigation.service';
 import { EventNotesService } from '../../core/services/event-notes.service';
@@ -23,6 +24,7 @@ import { getTeamColor, getTeamNumber } from '../../core/utils/team.utils';
   imports: [
     CommonModule, FormsModule, MatButtonModule, MatCardModule, MatChipsModule,
     MatDividerModule, MatIconModule, MatRippleModule, MatTooltipModule, TranslateModule,
+    CalendarSyncButtonComponent,
   ],
   templateUrl: './youths.component.html',
 })

@@ -5500,3 +5500,138 @@ main.main-content { flex: 1 0 auto !important; }
 .schedule-row.past-row.is-historical-comp:hover {
   background: linear-gradient(90deg, rgba(221, 214, 254, 0.55), transparent 80%);
 }
+
+/* ─────────────── Calendar sync button ─────────────── */
+.cal-sync-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(21, 101, 192, 0.10);
+  color: #1565c0;
+  border: 1px solid rgba(21, 101, 192, 0.22);
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.78rem;
+  line-height: 1;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 1px 2px rgba(21, 101, 192, 0.08);
+  white-space: nowrap;
+}
+.cal-sync-btn:hover {
+  background: rgba(21, 101, 192, 0.18);
+  border-color: rgba(21, 101, 192, 0.40);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(21, 101, 192, 0.18);
+}
+.cal-sync-btn .cal-sync-icon { font-size: 16px !important; }
+.cal-sync-btn .cal-sync-label { letter-spacing: 0.02em; }
+.cal-sync-icon-only {
+  padding: 6px;
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+}
+.cal-sync-icon-only .cal-sync-icon { font-size: 18px !important; }
+
+/* Hero placement */
+.hero-cal-sync .cal-sync-btn {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+.hero-cal-sync .cal-sync-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+.hero-cal-sync { display: inline-flex; margin-top: 8px; }
+
+/* Inline placements */
+.sr-cal-sync, .ntc-cal-sync, .team-cal-sync, .event-cal-sync, .youth-cal-sync {
+  display: inline-flex;
+  margin-left: auto;
+}
+.team-next-banner .team-cal-sync { margin-left: 8px; }
+.youth-next-banner .youth-cal-sync { margin-left: 6px; }
+.event-history-row { position: relative; }
+.event-history-row .event-cal-sync { align-self: center; margin-left: 6px; }
+
+/* Menu styling */
+.cal-sync-menu {
+  border-radius: 14px !important;
+  padding: 8px !important;
+  min-width: 320px !important;
+  max-width: 360px !important;
+}
+.cal-sync-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 6px 10px 4px;
+  color: #1565c0;
+}
+.cal-sync-menu-header .material-symbols-rounded { font-size: 20px; }
+.cal-sync-menu-intro {
+  margin: 0 10px 6px;
+  font-size: 0.78rem;
+  color: rgba(0,0,0,0.66);
+  line-height: 1.35;
+}
+.cal-sync-option {
+  height: auto !important;
+  min-height: 56px !important;
+  padding: 10px 12px !important;
+  border-radius: 10px !important;
+  margin: 2px 0 !important;
+  align-items: flex-start !important;
+  white-space: normal !important;
+}
+.cal-sync-option:hover { background: rgba(21, 101, 192, 0.06) !important; }
+.cal-sync-opt-icon {
+  font-size: 22px !important;
+  color: #1565c0;
+  margin-right: 10px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.cal-sync-opt-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.3;
+}
+.cal-sync-opt-title { font-weight: 600; font-size: 0.85rem; color: #102a43; }
+.cal-sync-opt-desc { font-size: 0.74rem; color: rgba(0,0,0,0.62); }
+.cal-sync-opt-url {
+  font-size: 0.68rem;
+  color: #1565c0;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  background: rgba(21, 101, 192, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  word-break: break-all;
+  display: inline-block;
+  max-width: 100%;
+}
+.cal-sync-menu-footer {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  margin: 6px 10px 2px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  font-size: 0.7rem;
+  color: rgba(0,0,0,0.55);
+  line-height: 1.3;
+}
+.cal-sync-menu-footer .material-symbols-rounded {
+  font-size: 14px;
+  color: rgba(0,0,0,0.45);
+  margin-top: 1px;
+  flex-shrink: 0;
+}

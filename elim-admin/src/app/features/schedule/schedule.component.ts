@@ -6,6 +6,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatRippleModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { CalendarSyncButtonComponent } from '../../shared/components/calendar-sync-button/calendar-sync-button.component';
 import { DataService } from '../../core/services/data.service';
 import { NavigationService } from '../../core/services/navigation.service';
 import { EventNotesService } from '../../core/services/event-notes.service';
@@ -23,6 +24,7 @@ import { localizedConstants } from '../../core/i18n/localized-constants';
   imports: [
     CommonModule, MatCardModule, MatButtonModule,
     MatDividerModule, MatRippleModule, MatTooltipModule, TranslateModule,
+    CalendarSyncButtonComponent,
   ],
   templateUrl: './schedule.component.html',
 })

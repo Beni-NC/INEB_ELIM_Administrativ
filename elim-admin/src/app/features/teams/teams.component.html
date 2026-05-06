@@ -27,6 +27,7 @@
           <span class="material-symbols-rounded">event</span>
           {{ 'teams.next_date' | translate }} <strong>{{ formatDateShort(nextDate.date) }}</strong>
           <span class="team-next-days">&mdash; {{ 'teams.in_days' | translate: { n: daysUntil(nextDate.date) } }}</span>
+          <app-calendar-sync-button class="team-cal-sync" [team]="team.name" [iconOnly]="true" />
         </div>
       }
 
@@ -97,6 +98,7 @@
                       {{ e.coordinator }}
                     </span>
                   </div>
+                  <app-calendar-sync-button class="event-cal-sync" [event]="e" [iconOnly]="true" />
                   @if (notes.hasNotes(e)) {
                     <div class="sr-note">
                       <span class="material-symbols-rounded">sticky_note_2</span>

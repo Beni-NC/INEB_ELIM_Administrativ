@@ -144,6 +144,7 @@
             } @else {
               <span class="tl-days-badge today-badge">{{ 'youths.today_excl' | translate }}</span>
             }
+            <app-calendar-sync-button class="youth-cal-sync" [youthId]="y.id" [youthName]="y.fullName" [iconOnly]="true" />
           </div>
         } @else {
           <div class="team-next-banner support-no-assignment">
