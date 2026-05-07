@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -66,14 +66,22 @@ export class ParentsComponent implements OnInit {
   protected readonly getTeamNumber = getTeamNumber;
   protected readonly getEntryTimes = getEntryTimes;
 
-  ngOnInit(): void {
-    const id = this.nav.consumeExpanded('parent');
-    if (id) {
-      this.expanded.set(id);
-      if (this.data.inactiveParents().some(p => p.id === id)) {
-        this.showArchived.set(true);
+  constructor() {
+    effect(() => {
+      const id = this.nav.expandedParentId();
+      if (id) {
+        this.expanded.set(id);
+        if (this.data.inactiveParents().some(p => p.id === id)) {
+          this.showArchived.set(true);
+        }
+        // Consumăm semnalul ca să nu ruleze de mai multe ori amprenta de extindere
+        this.nav.consumeExpanded('parent');
       }
-    }
+    }, { allowSignalWrites: true });
+  }
+
+  ngOnInit(): void {
+    // Înlocuit cu efectul de mai sus pentru a suporta și click-urile din aceeași pagină.
   }
 
   toggle(id: string): void {
