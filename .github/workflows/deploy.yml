@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      MIRROR_PAT: ${{ secrets.MIRROR_PAT }}
     outputs:
       artifact-path: elim-admin/dist/elim-admin/browser
     steps:
@@ -49,25 +51,19 @@ jobs:
 
       # Build for the MIRROR repo (beni-cioarba/ADM-TINERET) with its own base-href
       - name: Build (mirror)
-        env:
-          HAS_MIRROR_PAT: ${{ secrets.MIRROR_PAT != '' }}
-        if: ${{ env.HAS_MIRROR_PAT == 'true' }}
+        if: ${{ env.MIRROR_PAT != '' }}
         run: npx ng build --base-href /ADM-TINERET/ --output-path dist-mirror
         working-directory: elim-admin
 
       - name: Copy index.html to 404.html (mirror)
-        env:
-          HAS_MIRROR_PAT: ${{ secrets.MIRROR_PAT != '' }}
-        if: ${{ env.HAS_MIRROR_PAT == 'true' }}
+        if: ${{ env.MIRROR_PAT != '' }}
         run: cp elim-admin/dist-mirror/browser/index.html elim-admin/dist-mirror/browser/404.html
 
       - name: Deploy to mirror (beni-cioarba/ADM-TINERET)
-        env:
-          HAS_MIRROR_PAT: ${{ secrets.MIRROR_PAT != '' }}
-        if: ${{ env.HAS_MIRROR_PAT == 'true' }}
+        if: ${{ env.MIRROR_PAT != '' }}
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: ${{ secrets.MIRROR_PAT }}
+          personal_token: ${{ env.MIRROR_PAT }}
           external_repository: beni-cioarba/ADM-TINERET
           publish_branch: gh-pages
           publish_dir: elim-admin/dist-mirror/browser
