@@ -13,7 +13,7 @@ import { APP_VERSION } from '../../../version';
       <div class="footer-content">
         <div class="footer-logos-left">
           <img src="assets/logo-elim.png" alt="Logo Biserica ELIM" class="footer-logo footer-logo-elim">
-          <img src="assets/logo_admin-192.png" alt="Logo Departament Administrativ" class="footer-logo">
+          <img src="assets/logo_admin-trans-192.png" alt="Logo Departament Administrativ" class="footer-logo">
         </div>
         <div class="footer-text">
           <p>{{ 'footer.church' | translate }} &copy; {{ year }}</p>

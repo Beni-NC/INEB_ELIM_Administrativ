@@ -26,7 +26,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
               <img src="assets/logo-elim.png" alt="Logo Biserica ELIM" class="header-logo">
             </div>
             <div class="logo-frame">
-              <img src="assets/logo_admin-192.png" alt="Logo Departament Administrativ" class="header-logo">
+              <img src="assets/logo_admin-trans-192.png" alt="Logo Departament Administrativ" class="header-logo">
             </div>
             <div class="header-divider" aria-hidden="true"></div>
             <div class="header-text">
