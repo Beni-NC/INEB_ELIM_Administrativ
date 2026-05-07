@@ -3909,29 +3909,41 @@ app-root, .app-shell {
   .church-name { font-size: 0.95rem !important; }
   .header-tagline { font-size: 0.7rem !important; }
   .nav-tabs .tab-label { 
-    display: block; 
-    font-size: 0.55rem; 
-    line-height: 1.1; 
-    margin-top: 2px;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+    display: block !important; 
+    font-size: 0.55rem !important; 
+    line-height: 1.1 !important; 
+    margin-top: 2px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+    width: 100% !important;
   }
-  .nav-tabs .mdc-tab__content {
+  .nav-tabs .mat-mdc-tab-link .mdc-tab__text-label,
+  .nav-tabs .mat-mdc-tab .mdc-tab__text-label {
+    display: flex !important;
     flex-direction: column !important;
-    justify-content: center;
-    height: 100%;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    height: 100% !important;
+    padding: 4px 0 !important;
+    width: 100% !important;
   }
   .nav-tabs .mat-mdc-tab, .nav-tabs .mat-mdc-tab-link { 
     min-width: 0 !important; 
     padding: 0 2px !important; 
+    height: auto !important;
+    min-height: 52px !important;
   }
   .nav-tabs .tab-icon { 
-    display: block;
-    margin-right: 0 !important;
+    display: block !important;
+    margin: 0 auto !important;
     font-size: 22px !important; 
+    height: 24px !important;
+    line-height: 24px !important;
+    text-align: center !important;
   }
   .next-three-grid { grid-template-columns: 1fr; }
   .home-stats { grid-template-columns: repeat(2, 1fr); }
