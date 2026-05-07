@@ -403,12 +403,12 @@
                   <div class="parent-child-info">
                     <span class="parent-child-name">
                       {{ link.parent.name }}
-                      @for (t of getInvolvedTeams(y.id, link.parent.id); track t) {
+                      <!-- @for (t of getInvolvedTeams(y.id, link.parent.id); track t) {
                         <span class="parent-involvement-pill"
                               [matTooltip]="'youths.support_parent_at' | translate: { team: t }">
                           {{ 'youths.support_at' | translate: { team: t } }}
                         </span>
-                      }
+                      } -->
                     </span>
                     <span class="parent-child-rel">{{ link.relationship }} &middot; {{ link.parent.role }}</span>
                   </div>
