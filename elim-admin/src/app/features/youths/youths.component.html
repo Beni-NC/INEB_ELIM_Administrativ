@@ -194,7 +194,7 @@
             <div class="support-assigned-teams">
             @for (t of data.getActiveTeamsForYouth(y.id); track t.teamName) {
               @if (data.getNextEventForTeam(t.teamName); as nextDate) {
-                <div class="support-team-row" [style.border-left-color]="getTeamColor(t.teamName)">
+                <div class="support-team-row linkable" [style.border-left-color]="getTeamColor(t.teamName)" style="cursor: pointer;" (click)="nav.goTo('team', t.teamName, $event)">
                   <div class="support-team-row-head">
                     <div class="team-number-circle support-team-mini"
                          [style.background-color]="getTeamColor(t.teamName)">
@@ -243,8 +243,10 @@
             </div>
             <div class="youth-history-list">
               @for (h of data.getHistoricalTeamsForYouth(y.id); track h.teamName) {
-                <div class="youth-history-chip"
-                     [style.border-color]="getTeamColor(h.teamName) + '44'">
+                <div class="youth-history-chip linkable"
+                     [style.border-color]="getTeamColor(h.teamName) + '44'"
+                     style="cursor: pointer;"
+                     (click)="nav.goTo('team', h.teamName, $event)">
                   <span class="team-number-circle support-team-mini"
                         [style.background-color]="getTeamColor(h.teamName) + 'aa'">
                     {{ getTeamNumber(h.teamName) }}
@@ -404,7 +406,6 @@
                       @for (t of getInvolvedTeams(y.id, link.parent.id); track t) {
                         <span class="parent-involvement-pill"
                               [matTooltip]="'youths.support_parent_at' | translate: { team: t }">
-                          <span class="material-symbols-rounded">volunteer_activism</span>
                           {{ 'youths.support_at' | translate: { team: t } }}
                         </span>
                       }

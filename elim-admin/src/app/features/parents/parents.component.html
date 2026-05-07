@@ -56,7 +56,9 @@
         </div>
         <div class="support-hero-people-list">
           @for (sp of nextSp.people; track sp.id) {
-            <div class="support-hero-person">
+            <div class="support-hero-person linkable" 
+                 style="cursor: pointer;" 
+                 (click)="nav.goTo('parent', sp.id, $event)">
               <span class="team-support-avatar lg"
                     [style.background]="'linear-gradient(135deg, ' + sp.accentColor + ', ' + sp.accentColor + 'cc)'">{{ sp.initials }}</span>
               <div>
@@ -113,7 +115,9 @@
             </span>
             <div class="purs-people-names">
               @for (p of up.people; track p.id) {
-                <span class="purs-person">
+                <span class="purs-person linkable-chip"
+                      style="cursor: pointer;"
+                      (click)="nav.goTo('parent', p.id, $event)">
                   <span class="material-symbols-rounded">person</span>
                   {{ p.name }}
                 </span>
@@ -155,7 +159,9 @@
               </span>
               <div class="purs-people-names">
                 @for (p of up.people; track p.id) {
-                  <span class="purs-person">
+                  <span class="purs-person linkable-chip"
+                        style="cursor: pointer;"
+                        (click)="nav.goTo('parent', p.id, $event)">
                     <span class="material-symbols-rounded">person</span>
                     {{ p.name }}
                   </span>
