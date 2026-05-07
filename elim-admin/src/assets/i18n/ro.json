@@ -27,6 +27,14 @@
     "church": "Biserica ELIM — Arganda del Rey",
     "department": "Departament Administrativ Tineret"
   },
+  "pwa_install": {
+    "title": "Instalează aplicația",
+    "android_hint": "Adaugă ELIM Tineret pe ecranul principal pentru acces rapid.",
+    "ios_hint_1": "Apasă",
+    "ios_hint_2": "și apoi „Adaugă pe ecranul principal”.",
+    "cta": "Instalează",
+    "close": "Închide"
+  },
   "event_dialog": {
     "program": "Program",
     "youths_present": "Tineri",

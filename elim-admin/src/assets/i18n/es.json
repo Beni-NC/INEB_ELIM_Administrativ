@@ -27,6 +27,14 @@
     "church": "Iglesia ELIM â€” Arganda del Rey",
     "department": "Departamento Administrativo de JÃ³venes"
   },
+  "pwa_install": {
+    "title": "Instala la aplicación",
+    "android_hint": "Añade ELIM Tineret a tu pantalla de inicio para acceso rápido.",
+    "ios_hint_1": "Pulsa",
+    "ios_hint_2": "y luego \"Añadir a pantalla de inicio\".",
+    "cta": "Instalar",
+    "close": "Cerrar"
+  },
   "event_dialog": {
     "program": "Programa",
     "youths_present": "JÃ³venes",

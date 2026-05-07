@@ -4,13 +4,14 @@ import { HeaderComponent } from './features/layout/header.component';
 import { FooterComponent } from './features/layout/footer.component';
 import { TabsNavComponent } from './features/layout/tabs-nav.component';
 import { EventNotesDialogComponent } from './features/layout/event-notes-dialog.component';
+import { PwaInstallPromptComponent } from './features/layout/pwa-install-prompt.component';
 import { PwaUpdateService } from './core/services/pwa-update.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, HeaderComponent, FooterComponent, TabsNavComponent, EventNotesDialogComponent],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, TabsNavComponent, EventNotesDialogComponent, PwaInstallPromptComponent],
   template: `
     <app-header />
     <app-tabs-nav />
@@ -21,6 +22,7 @@ import { PwaUpdateService } from './core/services/pwa-update.service';
     </main>
     <app-footer />
     <app-event-notes-dialog />
+    <app-pwa-install-prompt />
   `,
 })
 export class AppComponent {
