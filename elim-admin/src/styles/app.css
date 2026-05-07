@@ -1073,8 +1073,8 @@ app-root, .app-shell {
   .logo-frame { border-radius: 5px; }
   .header-logo { height: 48px; }
   .church-name { font-size: clamp(0.95rem, 4vw, 1.3rem); }
-  .tab-label { font-size: 0.72rem; }
-  .tab-icon { font-size: 18px; margin-right: 3px; }
+  .tab-label { font-size: 0.55rem; }
+  .tab-icon { font-size: 18px; margin: 0 auto; margin-right: 0; }
   .next-event-team-badge {
     width: 40px; height: 40px; font-size: 1.4rem;
   }
@@ -1085,6 +1085,89 @@ app-root, .app-shell {
   .team-header { padding: 0.75rem; }
   .countdown-circle { width: 65px; height: 65px; }
   .countdown-number { font-size: 1.4rem; }
+}
+
+/* ============================================
+   RESPONSIVE — TEAMS (móvil)
+   Garantiza que ningún texto largo (nombres de
+   coordinador / miembros) descoloque la tarjeta.
+   ============================================ */
+@media (max-width: 600px) {
+  .teams-grid { gap: 0.75rem; }
+
+  .team-card { max-width: 100%; }
+
+  .team-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.85rem;
+  }
+  .team-header-text { flex: 1 1 60%; min-width: 0; }
+  .team-name {
+    font-size: 0.95rem;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.2;
+  }
+  .team-coord-pill {
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    text-align: left;
+  }
+  .team-member-count-badge { margin-left: auto; }
+
+  .team-next-banner {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .team-body { padding: 0.65rem 0.85rem 0.85rem !important; }
+
+  .team-coordinator-card {
+    padding: 0.65rem 0.85rem;
+  }
+  .team-coord-row { gap: 0.5rem; }
+  .team-coord-name {
+    font-size: 0.9rem;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .member-row {
+    min-height: 36px !important;
+    padding: 4px 6px !important;
+  }
+  .member-row-name {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .event-history-row {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .event-history-info { min-width: 0; flex: 1 1 60%; }
+  .event-history-team,
+  .event-history-type {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+  .sr-note-text,
+  .sr-parents-text { word-break: break-word; overflow-wrap: anywhere; }
+  .sr-parent-chip { white-space: normal; }
+}
+
+/* Refuerzo extra para pantallas muy estrechas */
+@media (max-width: 380px) {
+  .team-coord-pill { font-size: 0.72rem; padding: 3px 8px 3px 5px; }
+  .team-member-count-badge { font-size: 0.72rem; padding: 3px 8px; }
+  .team-name { font-size: 0.9rem; }
+  .team-next-banner { font-size: 0.74rem; }
 }
 
 /* ============================================
@@ -3825,12 +3908,43 @@ app-root, .app-shell {
   .header-logo { width: 36px; height: 36px; }
   .church-name { font-size: 0.95rem !important; }
   .header-tagline { font-size: 0.7rem !important; }
-  .nav-tabs .tab-label { display: none; }
-  .nav-tabs .mat-mdc-tab, .nav-tabs .mat-mdc-tab-link { 
-    min-width: 56px !important; 
-    padding: 0 6px !important; 
+  .nav-tabs .tab-label { 
+    display: block !important; 
+    font-size: 0.55rem !important; 
+    line-height: 1.1 !important; 
+    margin-top: 2px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+    width: 100% !important;
   }
-  .nav-tabs .tab-icon { font-size: 22px !important; }
+  .nav-tabs .mat-mdc-tab-link .mdc-tab__text-label,
+  .nav-tabs .mat-mdc-tab .mdc-tab__text-label {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    height: 100% !important;
+    padding: 4px 0 !important;
+    width: 100% !important;
+  }
+  .nav-tabs .mat-mdc-tab, .nav-tabs .mat-mdc-tab-link { 
+    min-width: 0 !important; 
+    padding: 0 2px !important; 
+    height: auto !important;
+    min-height: 52px !important;
+  }
+  .nav-tabs .tab-icon { 
+    display: block !important;
+    margin: 0 auto !important;
+    font-size: 22px !important; 
+    height: 24px !important;
+    line-height: 24px !important;
+    text-align: center !important;
+  }
   .next-three-grid { grid-template-columns: 1fr; }
   .home-stats { grid-template-columns: repeat(2, 1fr); }
   .hero-body { grid-template-columns: 1fr; }
@@ -3937,6 +4051,55 @@ main.main-content { flex: 1 0 auto !important; }
   color: rgba(255, 255, 255, 0.65) !important;
   margin-top: 3px !important;
   font-weight: 400 !important;
+}
+
+/* Footer responsive — pantallas pequeñas:
+   1ª fila: los 3 logos juntos y centrados.
+   2ª fila: bloque de texto (iglesia + departamento + versión) centrado debajo. */
+@media (max-width: 600px) {
+  .footer { padding: 1.1rem 0.85rem 1.25rem !important; }
+
+  /* "Aplanamos" .footer-logos-left para que sus 2 logos queden como hijos
+     directos de .footer-content. Así los 3 logos viven al mismo nivel y
+     podemos colocarlos todos en la primera fila. */
+  .footer-logos-left { display: contents; }
+
+  .footer-content {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 16px 18px;
+    text-align: center;
+  }
+
+  /* Los 3 logos van en la primera "fila" y el texto los empuja a la siguiente
+     gracias al flex-basis 100% del bloque de texto. */
+  .footer-content > .footer-logo,
+  .footer-content > img.footer-logo {
+    order: 1;
+    flex: 0 0 auto;
+    height: 38px !important;
+  }
+  .footer-text {
+    order: 2;
+    flex: 0 0 100%;     /* fuerza salto de línea: texto a la siguiente fila */
+    width: 100%;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .footer-text p,
+  .footer p { font-size: 0.74rem !important; }
+  .footer-sub { font-size: 0.66rem !important; margin-top: 4px !important; }
+  .app-version { display: inline-block; margin-left: 6px; }
+}
+
+/* Ajuste extra para móviles muy estrechos */
+@media (max-width: 360px) {
+  .footer-content { gap: 12px 14px; }
+  .footer-content > .footer-logo,
+  .footer-content > img.footer-logo { height: 32px !important; }
 }
 
 /* ---- Icon-only gender pill ---- */
@@ -5746,3 +5909,110 @@ main.main-content { flex: 1 0 auto !important; }
   text-align: center;
   font-style: italic;
 }
+
+/* ==========================================================================
+   FIX DEFINITIVO DE DESBORDAMIENTO HORIZONTAL (PWA / móvil)
+   --------------------------------------------------------------------------
+   Causa raíz: en CSS Grid, `1fr` = `minmax(auto, 1fr)`. Cuando un hijo tiene
+   `white-space: nowrap` (ej. `.youth-stat-label` "TINERI ÎN TOTAL"), la
+   columna NO puede encogerse por debajo de su contenido y empuja toda la
+   página fuera del viewport. Lo mismo ocurre con elementos flex que no
+   tienen `min-width: 0`.
+   ========================================================================== */
+
+/* Cinturón de seguridad: nada puede salir del ancho del viewport */
+html, body {
+  max-width: 100vw;
+  overflow-x: clip;
+  height: 100%;
+}
+app-root {
+  display: flex !important;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: clip;
+}
+.main-content {
+  overflow-x: clip;
+}
+
+/* Grids con número fijo de columnas: usar minmax(0, 1fr) para que sí puedan
+   encogerse aunque su contenido sea más ancho. */
+.youth-stats-hero { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.home-stats       { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.next-three-grid  { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.past-by-month    { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (min-width: 520px) {
+  .home-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .teams-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Asegurar que celdas/cards de las grids tengan min-width:0 para que el
+   ellipsis y el wrap funcionen. */
+.youth-stat-card,
+.home-stat,
+.team-card,
+.next-three-grid > *,
+.past-by-month > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* El label "TINERI ÎN TOTAL" / "COORDONATORI" / "IMPLICAȚI URM. EVENIMENT"
+   ya no fuerza ancho: si no cabe, se trunca con … */
+.youth-stat-label,
+.home-stat-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Toolbar de filtros (Toți / Coordonatori / Membri) — ya tiene scroll
+   horizontal interno; solo nos aseguramos de que no fuerce el ancho del
+   contenedor padre. */
+.youth-filter-chips,
+.youth-toolbar {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Tabs principales (calendario / equipos / jóvenes / padres / reglas):
+   permitir scroll si no caben en lugar de desbordar la página. */
+.tabs-nav, .tabs-row, .tab-bar, mat-tab-header, .mat-mdc-tab-header {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tabs-nav::-webkit-scrollbar,
+.tabs-row::-webkit-scrollbar,
+.mat-mdc-tab-header::-webkit-scrollbar { display: none; }
+
+/* Header: el título "Departament de Tineret" puede ser largo; permitir
+   que se trunque con … sin romper la cabecera. */
+.header-text { min-width: 0; flex: 1; }
+.church-name,
+.header-tagline {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Cards de jóvenes: contenedor general que nunca se sale */
+.youth-card,
+.youth-card-header,
+.youth-card-content {
+  max-width: 100%;
+  min-width: 0;
+}
+.youth-header-text { min-width: 0; }
+
+/* Imágenes nunca desbordan */
+img, svg, video { max-width: 100%; height: auto; }
+
+
+
