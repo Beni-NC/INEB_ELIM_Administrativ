@@ -5924,9 +5924,12 @@ main.main-content { flex: 1 0 auto !important; }
 html, body {
   max-width: 100vw;
   overflow-x: clip;
+  height: 100%;
 }
 app-root {
-  display: block;
+  display: flex !important;
+  flex-direction: column;
+  min-height: 100vh;
   max-width: 100vw;
   overflow-x: clip;
 }
