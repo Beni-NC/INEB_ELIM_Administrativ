@@ -7,6 +7,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Permite el desplazamiento vertical (pan-y) sobre cualquier elemento, incluso interactivos.
+     Evita que botones/tarjetas/tooltips bloqueen el scroll en móviles (PWA). */
+  touch-action: pan-y;
 }
 
 body {
@@ -16,9 +19,47 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: auto;
 }
 
 html, body { height: 100%; margin: 0; }
+
+/* ==========================================================================
+   Mejora de scroll táctil (PWA / móviles)
+   - touch-action: manipulation permite que el navegador interprete el gesto
+     como scroll cuando el dedo se desliza, en lugar de bloquearlo en el
+     control. Elimina además el delay de 300ms del doble tap.
+   - Aplicado a TODOS los elementos clicables/interactivos para que ningún
+     botón, tarjeta o bloque "capture" el dedo y detenga el desplazamiento.
+   ========================================================================== */
+button,
+a,
+[role="button"],
+[tabindex],
+input,
+select,
+textarea,
+label,
+.mat-mdc-button-base,
+.mat-mdc-icon-button,
+.mat-mdc-list-item,
+.mat-mdc-card,
+.mat-mdc-chip,
+.mat-mdc-menu-item,
+.mat-mdc-tab,
+.mat-mdc-tab-link,
+.mat-expansion-panel-header,
+.mdc-button,
+.mdc-icon-button,
+.coord-summary-row,
+.linkable,
+[ngxtooltip],
+[mattooltip],
+[matTooltip] {
+  touch-action: manipulation;
+}
 
 /* Material Symbols Rounded - global icon class */
 .material-symbols-rounded {
