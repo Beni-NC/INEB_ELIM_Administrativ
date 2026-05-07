@@ -1073,8 +1073,8 @@ app-root, .app-shell {
   .logo-frame { border-radius: 5px; }
   .header-logo { height: 48px; }
   .church-name { font-size: clamp(0.95rem, 4vw, 1.3rem); }
-  .tab-label { font-size: 0.72rem; }
-  .tab-icon { font-size: 18px; margin-right: 3px; }
+  .tab-label { font-size: 0.55rem; }
+  .tab-icon { font-size: 18px; margin: 0 auto; margin-right: 0; }
   .next-event-team-badge {
     width: 40px; height: 40px; font-size: 1.4rem;
   }
@@ -3908,12 +3908,31 @@ app-root, .app-shell {
   .header-logo { width: 36px; height: 36px; }
   .church-name { font-size: 0.95rem !important; }
   .header-tagline { font-size: 0.7rem !important; }
-  .nav-tabs .tab-label { display: none; }
-  .nav-tabs .mat-mdc-tab, .nav-tabs .mat-mdc-tab-link { 
-    min-width: 56px !important; 
-    padding: 0 6px !important; 
+  .nav-tabs .tab-label { 
+    display: block; 
+    font-size: 0.55rem; 
+    line-height: 1.1; 
+    margin-top: 2px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
-  .nav-tabs .tab-icon { font-size: 22px !important; }
+  .nav-tabs .mdc-tab__content {
+    flex-direction: column !important;
+    justify-content: center;
+    height: 100%;
+  }
+  .nav-tabs .mat-mdc-tab, .nav-tabs .mat-mdc-tab-link { 
+    min-width: 0 !important; 
+    padding: 0 2px !important; 
+  }
+  .nav-tabs .tab-icon { 
+    display: block;
+    margin-right: 0 !important;
+    font-size: 22px !important; 
+  }
   .next-three-grid { grid-template-columns: 1fr; }
   .home-stats { grid-template-columns: repeat(2, 1fr); }
   .hero-body { grid-template-columns: 1fr; }
@@ -4020,6 +4039,55 @@ main.main-content { flex: 1 0 auto !important; }
   color: rgba(255, 255, 255, 0.65) !important;
   margin-top: 3px !important;
   font-weight: 400 !important;
+}
+
+/* Footer responsive — pantallas pequeñas:
+   1ª fila: los 3 logos juntos y centrados.
+   2ª fila: bloque de texto (iglesia + departamento + versión) centrado debajo. */
+@media (max-width: 600px) {
+  .footer { padding: 1.1rem 0.85rem 1.25rem !important; }
+
+  /* "Aplanamos" .footer-logos-left para que sus 2 logos queden como hijos
+     directos de .footer-content. Así los 3 logos viven al mismo nivel y
+     podemos colocarlos todos en la primera fila. */
+  .footer-logos-left { display: contents; }
+
+  .footer-content {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 16px 18px;
+    text-align: center;
+  }
+
+  /* Los 3 logos van en la primera "fila" y el texto los empuja a la siguiente
+     gracias al flex-basis 100% del bloque de texto. */
+  .footer-content > .footer-logo,
+  .footer-content > img.footer-logo {
+    order: 1;
+    flex: 0 0 auto;
+    height: 38px !important;
+  }
+  .footer-text {
+    order: 2;
+    flex: 0 0 100%;     /* fuerza salto de línea: texto a la siguiente fila */
+    width: 100%;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .footer-text p,
+  .footer p { font-size: 0.74rem !important; }
+  .footer-sub { font-size: 0.66rem !important; margin-top: 4px !important; }
+  .app-version { display: inline-block; margin-left: 6px; }
+}
+
+/* Ajuste extra para móviles muy estrechos */
+@media (max-width: 360px) {
+  .footer-content { gap: 12px 14px; }
+  .footer-content > .footer-logo,
+  .footer-content > img.footer-logo { height: 32px !important; }
 }
 
 /* ---- Icon-only gender pill ---- */
