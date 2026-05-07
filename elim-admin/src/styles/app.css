@@ -2772,7 +2772,7 @@ app-root, .app-shell {
 /* ---- Responsive ---- */
 @media (min-width: 600px) {
   .home-stats { grid-template-columns: repeat(4, 1fr); }
-  .next-three-grid { grid-template-columns: repeat(3, 1fr); }
+  .next-three-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (min-width: 768px) {
   .main-content { padding: 1.1rem 1.25rem 3rem !important; }
@@ -3945,8 +3945,8 @@ app-root, .app-shell {
     line-height: 24px !important;
     text-align: center !important;
   }
-  .next-three-grid { grid-template-columns: 1fr; }
-  .home-stats { grid-template-columns: repeat(2, 1fr); }
+  .next-three-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-body { grid-template-columns: 1fr; }
   .hero-right {
     flex-direction: row;
@@ -3965,10 +3965,10 @@ app-root, .app-shell {
   .teams-grid,
   .support-grid,
   .youth-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
-  .home-stats { grid-template-columns: repeat(4, 1fr) !important; }
-  .next-three-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .home-stats { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  .next-three-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 }
 
 /* Wider tablets / small laptops */
@@ -3976,7 +3976,7 @@ app-root, .app-shell {
   .teams-grid,
   .support-grid,
   .youth-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
   .youth-stats-hero { grid-template-columns: repeat(3, 1fr) !important; }
 }
@@ -4295,14 +4295,14 @@ main.main-content { flex: 1 0 auto !important; }
 /* ---- Programari history multi-column on wide screens ---- */
 .past-by-month {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.85rem;
 }
 @media (min-width: 700px) {
-  .past-by-month { grid-template-columns: repeat(2, 1fr); }
+  .past-by-month { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 1100px) {
-  .past-by-month { grid-template-columns: repeat(3, 1fr); }
+  .past-by-month { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .past-by-month .month-group { margin-bottom: 0; }
 .past-by-month .schedule-rows { gap: 3px; }
@@ -5941,8 +5941,6 @@ app-root {
    encogerse aunque su contenido sea más ancho. */
 .youth-stats-hero { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 .home-stats       { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.next-three-grid  { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.past-by-month    { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
 @media (min-width: 520px) {
   .home-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
