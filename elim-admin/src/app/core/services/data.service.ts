@@ -109,6 +109,7 @@ export class DataService {
   readonly youthStats: YouthStats;
   readonly nextParentEvent: { entry: ScheduleEntry; people: Parent[] } | null;
   readonly upcomingParentEvents: Array<{ entry: ScheduleEntry; people: Parent[] }>;
+  readonly pastParentEvents: Array<{ entry: ScheduleEntry; people: Parent[] }>;
 
   /* ─────── Reactive UI state (signals) ─────── */
   private readonly _youthSearch = signal('');
@@ -185,6 +186,7 @@ export class DataService {
     this.youthStats = this.computeYouthStats();
     this.nextParentEvent = this.computeNextParentEvent();
     this.upcomingParentEvents = this.computeUpcomingParentEvents();
+    this.pastParentEvents = this.computePastParentEvents();
   }
 
   /* ─────── Public mutators (signals) ─────── */
@@ -638,6 +640,17 @@ export class DataService {
     }
     // Return all except the very first one (which is `nextParentEvent`)
     return list.slice(1);
+  }
+
+  private computePastParentEvents() {
+    const list: Array<{ entry: ScheduleEntry; people: Parent[] }> = [];
+    for (const entry of this.pastSchedule) {
+      const people = this.parentsByEvent.get(entry);
+      if (people && people.length > 0) list.push({ entry, people });
+    }
+    // Most recent first
+    list.sort((a, b) => b.entry.date.getTime() - a.entry.date.getTime());
+    return list;
   }
 }
 

@@ -36,6 +36,11 @@ export class ParentsComponent implements OnInit {
   readonly expanded = signal<string | null>(null);
   readonly showArchived = signal(false);
   readonly pastEventsOpen = signal<Set<string>>(new Set());
+  readonly isGlobalHistoryOpen = signal(false);
+
+  toggleGlobalHistory(): void {
+    this.isGlobalHistoryOpen.update(v => !v);
+  }
 
   togglePastEvents(id: string, ev: Event): void {
     ev.stopPropagation();

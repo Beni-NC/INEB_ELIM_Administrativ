@@ -134,6 +134,8 @@
     "food": "Comida",
     "allocated": "Padre(s)/madre(s) asignado(s)",
     "upcoming_with_parents": "Próximas programaciones con padres implicados",
+    "history_with_parents": "Historial de programaciones con padres implicados",
+    "days_ago_short": "hace {{n}}d",
     "view_team_details": "Ver detalles del equipo",
     "program_start": "Inicio del programa",
     "food_tooltip": "Hora a la que los padres deben traer la comida (30 min antes del inicio)",

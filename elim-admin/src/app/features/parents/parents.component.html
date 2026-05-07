@@ -129,6 +129,47 @@
   </div>
 }
 
+@if (data.pastParentEvents.length > 0) {
+  <div class="parents-upcoming-summary parents-history-summary">
+    <div class="purs-header" style="cursor: pointer; user-select: none;" (click)="toggleGlobalHistory()">
+      <span class="material-symbols-rounded">history</span>
+      {{ 'parents.history_with_parents' | translate }}
+      <span class="purs-count">{{ data.pastParentEvents.length }}</span>
+      <span class="material-symbols-rounded" style="margin-left: auto; color: #78909c;">
+        {{ isGlobalHistoryOpen() ? 'expand_less' : 'expand_more' }}
+      </span>
+    </div>
+    
+    @if (isGlobalHistoryOpen()) {
+      <div class="purs-list">
+        @for (up of data.pastParentEvents; track up.entry.date.getTime() + '|' + up.entry.team) {
+          <div class="purs-item purs-item-past" [style.--accent]="getTeamColor(up.entry.team)" (click)="nav.goTo('team', up.entry.team)">
+            <div class="purs-date">
+              <span class="purs-day">{{ up.entry.date.getDate() }}</span>
+              <span class="purs-mo">{{ formatDateShort(up.entry.date).split(' ')[1] }}</span>
+            </div>
+            <div class="purs-bar"></div>
+            <div class="purs-info">
+              <span class="purs-team">
+                {{ up.entry.team }}
+              </span>
+              <div class="purs-people-names">
+                @for (p of up.people; track p.id) {
+                  <span class="purs-person">
+                    <span class="material-symbols-rounded">person</span>
+                    {{ p.name }}
+                  </span>
+                }
+              </div>
+            </div>
+            <div class="purs-badge purs-badge-past">{{ 'parents.days_ago_short' | translate: { n: -daysUntil(up.entry.date) } }}</div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
+
 <h3 class="section-heading">
   <span class="material-symbols-rounded heading-icon">diversity_3</span>
   {{ 'parents.support_parents' | translate }}

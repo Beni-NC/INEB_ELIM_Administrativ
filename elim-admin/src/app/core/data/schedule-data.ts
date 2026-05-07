@@ -182,19 +182,19 @@ export const SCHEDULE_DATA: ScheduleEntry[] = [
   { team: 'Echipa 4', coordinator: 'Ivaşcu Simona',   programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 1, 27),  observations: '', completed: true },
   { team: 'Echipa 5', coordinator: 'Toader Noemi',    programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 2, 6),   observations: '', completed: true },
   { team: 'Echipa 6', coordinator: 'Halas Noemi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 2, 13),  observations: '', completed: true },
-  { team: 'Echipa 7', coordinator: 'Bereza Ionatan',  programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 2, 27),  observations: '', completed: true },
+  { team: 'Echipa 7', coordinator: 'Bereza Ionatan',  programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 2, 27),  observations: '', completed: true, parentSupporters: ['p-005', 'p-013'] },
   { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 3, 10),  observations: '', completed: true },
   { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 3, 17),  observations: '', completed: true },
   { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 3, 24),  observations: '', completed: true },
   { team: 'Echipa 4', coordinator: 'Mic Karina',      programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 4, 8),   observations: 'Primul program în care părinții vor fi implicați din nou la pregătirea mesei.', completed: false, parentSupporters: ['p-004', 'p-012'] },
   { team: 'Echipa 5', coordinator: 'Toader Noemi',    programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 4, 15),   observations: '', completed: false, parentSupporters: ['p-007', 'p-009']},
-  { team: 'Echipa 6', coordinator: 'Halas Noemi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 4, 22),  observations: '', completed: false, parentSupporters: ['p-005']},
+  { team: 'Echipa 6', coordinator: 'Halas Noemi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 4, 22),  observations: '', completed: false, parentSupporters: ['p-005', 'p-013']},
   { team: 'Echipa 7', coordinator: 'Bereza Ionatan',  programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 4, 29),  observations: '', completed: false, parentSupporters: ['p-008', 'p-010']},
   { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 5, 5),  observations: '', completed: false, parentSupporters: ['p-001']},
   { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 5, 12),   observations: '', completed: false, parentSupporters: ['p-003'] },
   { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 5, 19),  observations: '', completed: false, parentSupporters: ['p-006', 'p-011']},
   { team: 'Echipa 4', coordinator: 'Mic Karina',      programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 5, 26),  observations: '', completed: false, parentSupporters: ['p-002', 'p-012']},
-  { team: 'Echipa 5', coordinator: 'Toader Noemi',    programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 3),   observations: '', completed: false, parentSupporters: ['p-005'] },
+  { team: 'Echipa 5', coordinator: 'Toader Noemi',    programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 3),   observations: '', completed: false, parentSupporters: ['p-005', 'p-013'] },
   { team: 'Echipa 6', coordinator: 'Halas Noemi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 10),  observations: '', completed: false, parentSupporters: ['p-004', 'p-009'] },
   { team: 'Echipa 7', coordinator: 'Bereza Ionatan',  programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 17),  observations: '', completed: false, parentSupporters: ['p-007', 'p-010'] },
   { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 24),  observations: '', completed: false, parentSupporters: ['p-008'] },
@@ -663,6 +663,21 @@ export const PARENTS: Parent[] = [
     accentColor: '#27b171',
     available: true,
   },
+  {
+    id: 'p-013',
+    name: 'Rodica Băleanu',
+    phone: '',
+    email: '',
+    role: '',
+    skills: [],
+    joinedDate: new Date(2026, 0, 1),
+    notes: '',
+    initials: 'RB',
+    accentColor: '#b17c27',
+    available: true,
+  },
+
+
   /* 
   // ✅ Singurul exemplu COMPLET — copiază structura pentru părinți reali.
   {
@@ -744,6 +759,7 @@ export const PARENT_YOUTH_LINKS: ParentYouthLink[] = [
   { parentId: 'p-010', youthId: 'y-filimon-sara',  relationship: 'mamă' },
   { parentId: 'p-011', youthId: 'y-les-fineas',  relationship: 'mamă' },
   { parentId: 'p-012', youthId: 'y-mic-karina',  relationship: 'mamă' },
+  { parentId: 'p-013', youthId: 'y-baleanu-samuel',  relationship: 'mamă' },
 ];
 
 /* ===================== REGULI ===================== */

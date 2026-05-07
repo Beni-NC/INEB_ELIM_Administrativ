@@ -134,6 +134,8 @@
     "food": "Mâncare",
     "allocated": "Părinț(e/i) alocat(i)",
     "upcoming_with_parents": "Următoarele programări cu părinți implicați",
+    "history_with_parents": "Istoric programări cu părinți implicați",
+    "days_ago_short": "acum {{n}}z",
     "view_team_details": "Vezi detalii echipă",
     "program_start": "Începere program",
     "food_tooltip": "Ora la care părinții trebuie să aducă mâncarea (cu 30 min înainte de începere)",

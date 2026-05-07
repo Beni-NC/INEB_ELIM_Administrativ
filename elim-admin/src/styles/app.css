@@ -5319,11 +5319,16 @@ main.main-content { flex: 1 0 auto !important; }
   font-size: 0.85rem; font-weight: 700; color: #475569;
   text-transform: uppercase; letter-spacing: 0.05em;
   margin-bottom: 0.6rem; margin-left: 0.3rem;
+  border-radius: 8px;
+  padding: 4px;
+}
+.purs-header:hover {
+  background: rgba(21, 101, 192, 0.03);
 }
 .purs-header .material-symbols-rounded { color: #f59e0b; font-size: 20px; font-variation-settings: 'FILL' 1; }
 .purs-count {
   background: #f1f5f9; color: #64748b; font-size: 0.72rem;
-  padding: 2px 8px; border-radius: 999px; margin-left: auto;
+  padding: 2px 8px; border-radius: 999px;
 }
 .purs-list {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem;
@@ -5356,6 +5361,15 @@ main.main-content { flex: 1 0 auto !important; }
 .purs-badge {
   font-size: 0.68rem; font-weight: 700; background: color-mix(in srgb, var(--accent) 15%, white);
   color: var(--accent); padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* History (past) variant */
+.parents-history-summary .purs-header .material-symbols-rounded { color: #64748b; }
+.purs-item-past { opacity: 0.92; background: #f8fafc; }
+.purs-item-past:hover { opacity: 1; }
+.purs-badge-past {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
 }
 
 /* === Event notes dialog === */
