@@ -5931,7 +5931,6 @@ app-root {
   overflow-x: clip;
 }
 .main-content {
-  max-width: 100% !important;
   overflow-x: clip;
 }
 
