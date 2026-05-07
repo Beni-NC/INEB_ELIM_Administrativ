@@ -49,16 +49,22 @@ jobs:
 
       # Build for the MIRROR repo (beni-cioarba/ADM-TINERET) with its own base-href
       - name: Build (mirror)
-        if: ${{ secrets.MIRROR_PAT != '' }}
+        env:
+          HAS_MIRROR_PAT: ${{ secrets.MIRROR_PAT != '' }}
+        if: ${{ env.HAS_MIRROR_PAT == 'true' }}
         run: npx ng build --base-href /ADM-TINERET/ --output-path dist-mirror
         working-directory: elim-admin
 
       - name: Copy index.html to 404.html (mirror)
-        if: ${{ secrets.MIRROR_PAT != '' }}
+        env:
+          HAS_MIRROR_PAT: ${{ secrets.MIRROR_PAT != '' }}
+        if: ${{ env.HAS_MIRROR_PAT == 'true' }}
         run: cp elim-admin/dist-mirror/browser/index.html elim-admin/dist-mirror/browser/404.html
 
       - name: Deploy to mirror (beni-cioarba/ADM-TINERET)
-        if: ${{ secrets.MIRROR_PAT != '' }}
+        env:
+          HAS_MIRROR_PAT: ${{ secrets.MIRROR_PAT != '' }}
+        if: ${{ env.HAS_MIRROR_PAT == 'true' }}
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.MIRROR_PAT }}
