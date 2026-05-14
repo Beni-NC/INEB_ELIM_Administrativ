@@ -182,7 +182,7 @@ export const SCHEDULE_DATA: ScheduleEntry[] = [
   { team: 'Echipa 4', coordinator: 'Ivaşcu Simona',   programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 1, 27),  observations: '', completed: true },
   { team: 'Echipa 5', coordinator: 'Toader Noemi',    programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 2, 6),   observations: '', completed: true },
   { team: 'Echipa 6', coordinator: 'Halas Noemi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 2, 13),  observations: '', completed: true },
-  { team: 'Echipa 7', coordinator: 'Bereza Ionatan',  programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 2, 27),  observations: '', completed: true, parentSupporters: ['p-005', 'p-013'] },
+  { team: 'Echipa 7', coordinator: 'Bereza Ionatan',  programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 2, 27),  observations: '', completed: true },
   { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 3, 10),  observations: '', completed: true },
   { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 3, 17),  observations: '', completed: true },
   { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 3, 24),  observations: '', completed: true },
@@ -197,8 +197,8 @@ export const SCHEDULE_DATA: ScheduleEntry[] = [
   { team: 'Echipa 5', coordinator: 'Toader Noemi',    programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 3),   observations: '', completed: false, parentSupporters: ['p-005', 'p-013'] },
   { team: 'Echipa 6', coordinator: 'Halas Noemi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 10),  observations: '', completed: false, parentSupporters: ['p-004', 'p-009'] },
   { team: 'Echipa 7', coordinator: 'Bereza Ionatan',  programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 17),  observations: '', completed: false, parentSupporters: ['p-007', 'p-010'] },
-  { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 24),  observations: '', completed: false, parentSupporters: ['p-008'] },
-  { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 31),  observations: '', completed: false, parentSupporters: ['p-001'] },
+  { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 24),  observations: '', completed: false, parentSupporters: ['p-008', 'p-003'] },
+  { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 6, 31),  observations: '', completed: false, parentSupporters: ['p-001', 'p-002'] },
   // falta 2 - 3 - 6
 ];
 
@@ -300,7 +300,7 @@ export const YOUTHS: Youth[] = [
   youth('y-copran-matias',      'Matias',   'Copran',     'M', new Date(2008, 7, 4),  2026, {}, 4),
   youth('y-tot-aaron',          'Aaron',    'Tot',        'M', new Date(2008, 7, 4),  2026, {}, 5),
   youth('y-filimon-sara',       'Sara',    'Filimon',     'F', new Date(2008, 7, 4),  2026, {}, 6),
-
+  youth('y-apalaghiei-sara',    'Sara',     'Apalaghiei', 'F', new Date(2007, 9, 27), 2026, {}, 7),
 
   // ---- Foști coordonatori (istoric) — au coordonat compoziții de echipă închise și nu mai sunt activi ----
   youth('y-ivascu-simona',
@@ -367,12 +367,13 @@ export const YOUTH_TEAM_MEMBERSHIPS: YouthTeamMembership[] = [
   membership('y-dulca-daniel',      'Echipa 3'),
   membership('y-dulca-david',       'Echipa 3'),
   membership('y-apalaghiei-samuel', 'Echipa 3'),
+  membership('y-apalaghiei-sara',   'Echipa 3'),
   membership('y-gherasim-sara',     'Echipa 3'),
   membership('y-istratoaie-ruben',  'Echipa 3'),
   membership('y-istratoaie-dina',   'Echipa 3', 'coordonator'),
 
 
-  // ---- Echipa 4 (activă, coordonator nou Mitoşeriu Miriam) ----
+  // ---- Echipa 4 (activă, coordonator nou Mic Karina / Tania Birle) ----
   membership('y-barba-levi',        'Echipa 4'),
   membership('y-barba-rebeca',      'Echipa 4'),
   membership('y-biris-sara',        'Echipa 4'),
@@ -750,6 +751,7 @@ export const PARENT_YOUTH_LINKS: ParentYouthLink[] = [
   { parentId: 'p-005', youthId: 'y-dulca-daniel',  relationship: 'mamă' },
   { parentId: 'p-005', youthId: 'y-dulca-david',  relationship: 'mamă' },
   { parentId: 'p-006', youthId: 'y-apalaghiei-samuel',  relationship: 'mamă' },
+  { parentId: 'p-006', youthId: 'y-apalaghiei-sara',  relationship: 'mamă' },
   { parentId: 'p-007', youthId: 'y-pintilei-david',  relationship: 'mamă' },
   { parentId: 'p-008', youthId: 'y-rus-miriam',  relationship: 'mamă' },
   { parentId: 'p-009', youthId: 'y-toader-noemi',  relationship: 'mamă' },
