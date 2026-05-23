@@ -288,7 +288,7 @@ export const YOUTHS: Youth[] = [
   youth('y-istratoaie-rebeca',  'Rebeca',   'Istrătoaie', 'F', new Date(2007, 5, 14), 2026, {}, 2),
   youth('y-istratoaie-david',   'David',    'Istrătoaie', 'M', new Date(2006, 10, 3), 2026, {}, 3),
   youth('y-toader-carla',       'Carla',    'Toader',     'F', new Date(2008, 2, 21), 2026, {}, 4),
-  youth('y-toader-ainoa',       'Ainoa',    'Toader',     'F', new Date(2009, 6, 8),  2026, {}, 5),
+  youth('y-toader-ainhoa',      'Ainhoa',   'Toader',     'F', new Date(2009, 6, 8),  2026, {}, 5),
   youth('y-filimon-natanael',   'Natanael', 'Filimon',    'M', new Date(2006, 11, 17),2026, {}, 6),
   youth('y-suciu-sara',         'Sara',     'Suciu',      'F', new Date(2007, 8, 23), 2026, {}, 7),
   youth('y-stulianec-sara',     'Sara',     'Stulianec',  'F', new Date(2008, 4, 11), 2026, {}, 8),
@@ -301,6 +301,7 @@ export const YOUTHS: Youth[] = [
   youth('y-tot-aaron',          'Aaron',    'Tot',        'M', new Date(2008, 7, 4),  2026, {}, 5),
   youth('y-filimon-sara',       'Sara',    'Filimon',     'F', new Date(2008, 7, 4),  2026, {}, 6),
   youth('y-apalaghiei-sara',    'Sara',     'Apalaghiei', 'F', new Date(2007, 9, 27), 2026, {}, 7),
+  youth('y-toader-irene',       'Irene',    'Toader',     'F', new Date(2009, 6, 8),  2026, {}, 8),
 
   // ---- Foști coordonatori (istoric) — au coordonat compoziții de echipă închise și nu mai sunt activi ----
   youth('y-ivascu-simona',
@@ -394,6 +395,9 @@ export const YOUTH_TEAM_MEMBERSHIPS: YouthTeamMembership[] = [
   membership('y-dragan-abel',       'Echipa 5'),
   membership('y-baleanu-samuel',    'Echipa 5'),
   membership('y-muresan-denisa',    'Echipa 5'),
+  membership('y-toader-carla',      'Echipa 5'),
+  membership('y-toader-ainhoa',     'Echipa 5'),
+  membership('y-toader-irene',      'Echipa 5'),
   membership('y-toader-noemi',      'Echipa 5', 'coordonator'),
 
   // ---- Echipa 6 (activă, coordonator nou Halas Noemi) ----
@@ -404,8 +408,6 @@ export const YOUTH_TEAM_MEMBERSHIPS: YouthTeamMembership[] = [
   membership('y-bosancu-amalia',    'Echipa 6'),
   membership('y-istratoaie-rebeca', 'Echipa 6'),
   membership('y-istratoaie-david',  'Echipa 6'),
-  membership('y-toader-carla',      'Echipa 6'),
-  membership('y-toader-ainoa',      'Echipa 6'),
   membership('y-halas-noemi',       'Echipa 6', 'coordonator'),
 
   // ---- Echipa 7 (activă) ----
@@ -756,7 +758,8 @@ export const PARENT_YOUTH_LINKS: ParentYouthLink[] = [
   { parentId: 'p-008', youthId: 'y-rus-miriam',  relationship: 'mamă' },
   { parentId: 'p-009', youthId: 'y-toader-noemi',  relationship: 'mamă' },
   { parentId: 'p-009', youthId: 'y-toader-carla',  relationship: 'mamă' },
-  { parentId: 'p-009', youthId: 'y-toader-ainoa',  relationship: 'mamă' },
+  { parentId: 'p-009', youthId: 'y-toader-ainhoa',  relationship: 'mamă' },
+  { parentId: 'p-009', youthId: 'y-toader-irene',  relationship: 'mamă' },
   { parentId: 'p-010', youthId: 'y-filimon-natanael',  relationship: 'mamă' },
   { parentId: 'p-010', youthId: 'y-filimon-sara',  relationship: 'mamă' },
   { parentId: 'p-011', youthId: 'y-les-fineas',  relationship: 'mamă' },
