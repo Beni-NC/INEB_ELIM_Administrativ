@@ -191,7 +191,7 @@ export const SCHEDULE_DATA: ScheduleEntry[] = [
   { team: 'Echipa 6', coordinator: 'Halas Noemi',     programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 4, 22),  observations: '', completed: false, parentSupporters: ['p-005', 'p-013']},
   
   { team: 'Echipa 7', coordinator: 'Bereza Ionatan',  programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 4, 29),  observations: '', completed: false, parentSupporters: ['p-008', 'p-010']},
-  { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 5, 5),  observations: '', completed: false, parentSupporters: ['p-001', 'p-007']},
+  { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 5, 5),  observations: '', completed: false, parentSupporters: ['p-001', 'p-004']},
   { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 5, 12),   observations: '', completed: false, parentSupporters: ['p-003', 'p-002']},
   { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 5, 19),  observations: '', completed: false, parentSupporters: ['p-006', 'p-011']},
 
