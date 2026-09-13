@@ -1,47 +1,35 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, AfterViewInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './features/layout/header.component';
-import { FooterComponent } from './features/layout/footer.component';
-import { TabsNavComponent } from './features/layout/tabs-nav.component';
-import { EventNotesDialogComponent } from './features/layout/event-notes-dialog.component';
-import { PwaInstallPromptComponent } from './features/layout/pwa-install-prompt.component';
+import { HeaderComponent } from './layout/header.component';
+import { FooterComponent } from './layout/footer.component';
+import { TabsNavComponent } from './layout/tabs-nav.component';
+import { PwaInstallPromptComponent } from './layout/pwa-install-prompt.component';
+import { FloatingDockComponent } from './layout/floating-dock.component';
 import { PwaUpdateService } from './core/services/pwa-update.service';
-import { TAB_PATHS } from './core/constants';
+import { TAB_ORDER } from './core/constants';
+
+/** Umbrales del gesto de deslizar entre pestañas (px). */
+const SWIPE_MIN_X = 80;
+const SWIPE_MAX_Y = 60;
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, HeaderComponent, FooterComponent, TabsNavComponent, EventNotesDialogComponent, PwaInstallPromptComponent],
-  template: `
+    selector: 'app-root',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RouterOutlet, HeaderComponent, FooterComponent, TabsNavComponent, PwaInstallPromptComponent, FloatingDockComponent],
+    template: `
     <app-header />
     <app-tabs-nav />
-    <main class="main-content" #mainContent>
-      <section class="section">
-        <router-outlet />
-      </section>
+    <main class="ui-main" #mainContent>
+      <router-outlet />
     </main>
     <app-footer />
-    <app-event-notes-dialog />
     <app-pwa-install-prompt />
-  `,
+    <app-floating-dock />
+  `
 })
 export class AppComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mainContent') mainContent!: ElementRef<HTMLElement>;
   private readonly router = inject(Router);
-
-  // Ordinea taburilor pentru navigare cu swipe
-  private readonly tabOrder: string[] = [
-    TAB_PATHS.schedule,
-    TAB_PATHS.teams,
-    TAB_PATHS.youths,
-    TAB_PATHS.parents,
-    TAB_PATHS.rules,
-  ];
-
-  // Praguri swipe (px)
-  private readonly SWIPE_THRESHOLD = 80; // distanță minimă orizontală
-  private readonly MAX_VERTICAL = 60;     // mișcare verticală maximă tolerată
 
   private touchStartX = 0;
   private touchStartY = 0;
@@ -68,16 +56,14 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   private onTouchStart = (ev: TouchEvent): void => {
     if (ev.touches.length !== 1) { this.touchActive = false; return; }
-    const t = ev.touches[0];
-    this.touchStartX = t.clientX;
-    this.touchStartY = t.clientY;
+    this.touchStartX = ev.touches[0].clientX;
+    this.touchStartY = ev.touches[0].clientY;
     this.touchActive = true;
   };
 
-  private onTouchCancel = (): void => {
-    this.touchActive = false;
-  };
+  private onTouchCancel = (): void => { this.touchActive = false; };
 
+  /** Deslizar a la izquierda → pestaña siguiente; a la derecha → anterior. */
   private onTouchEnd = (ev: TouchEvent): void => {
     if (!this.touchActive) return;
     this.touchActive = false;
@@ -85,23 +71,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (!t) return;
     const dx = t.clientX - this.touchStartX;
     const dy = t.clientY - this.touchStartY;
-
-    // Trebuie sa fie mișcat (pentru a evita simple tap-uri ratate ca swipe)
-    if (Math.abs(dx) < this.SWIPE_THRESHOLD) return;
-    // Mișcare verticală mică, ca să nu interfereze cu scroll-ul
-    if (Math.abs(dy) > this.MAX_VERTICAL) return;
-
-    // Stânga (dx < 0) → tab următor; Dreapta (dx > 0) → tab precedent
-    const direction = dx < 0 ? 1 : -1;
-    this.navigateTab(direction);
+    // Debe ser un gesto horizontal claro para no interferir con el scroll.
+    if (Math.abs(dx) < SWIPE_MIN_X || Math.abs(dy) > SWIPE_MAX_Y) return;
+    this.navigateTab(dx < 0 ? 1 : -1);
   };
 
   private navigateTab(delta: number): void {
     const currentPath = this.router.url.split('?')[0].split('#')[0].replace(/^\//, '');
-    const currentIdx = this.tabOrder.indexOf(currentPath);
+    const currentIdx = TAB_ORDER.indexOf(currentPath);
     if (currentIdx === -1) return;
     const nextIdx = currentIdx + delta;
-    if (nextIdx < 0 || nextIdx >= this.tabOrder.length) return;
-    this.router.navigateByUrl('/' + this.tabOrder[nextIdx]);
+    if (nextIdx < 0 || nextIdx >= TAB_ORDER.length) return;
+    this.router.navigateByUrl('/' + TAB_ORDER[nextIdx]);
   }
 }

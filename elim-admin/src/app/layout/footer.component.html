@@ -1,0 +1,60 @@
+<footer class="ui-footer">
+  <div class="footer">
+    <div class="footer__main">
+      <!-- Identidad -->
+      <section class="footer__col footer__identity">
+        <app-brand-logo size="md" tone="dark" [link]="null" />
+        <p class="footer__tagline">{{ 'footer.department' | translate }}</p>
+        <p class="footer__text">{{ 'header.subtitle' | translate }}</p>
+      </section>
+
+      <!-- Padres: implicarse -->
+      <section class="footer__col">
+        <h2 class="footer__title">{{ 'contact.involve_title' | translate }}</h2>
+        <p class="footer__text">{{ 'contact.involve_text' | translate }}</p>
+        <app-whatsapp-button [onDark]="true" [label]="'contact.involve_label' | translate" [message]="'contact.involve_message' | translate" />
+      </section>
+
+      <!-- Preguntas -->
+      <section class="footer__col">
+        <h2 class="footer__title">{{ 'contact.ask_title' | translate }}</h2>
+        <p class="footer__text">{{ 'contact.ask_text' | translate }}</p>
+        <app-whatsapp-button [onDark]="true" [label]="'contact.ask_label' | translate" [message]="'contact.ask_message' | translate" />
+        <a class="footer__phone num" [href]="'tel:+' + contact.whatsappNumber">{{ contact.whatsappDisplay }}</a>
+      </section>
+
+      <!-- Distribuir / instalar -->
+      <section class="footer__col">
+        <h2 class="footer__title">{{ 'share.title' | translate }}</h2>
+        <p class="footer__text">{{ 'share.footer_text' | translate }}</p>
+        <div class="footer__actions">
+          <app-share-button [onDark]="true" />
+          @if (install.canInstall()) {
+            <button type="button" class="ui-btn ui-btn--on-dark" (click)="install.install()">
+              <span class="icon" aria-hidden="true">install_mobile</span>
+              {{ 'pwa_install.cta_long' | translate }}
+            </button>
+          }
+        </div>
+        @if (install.isIos() && !install.isStandalone()) {
+          <p class="footer__hint">{{ 'pwa_install.ios_footer_hint' | translate }}</p>
+        }
+      </section>
+    </div>
+
+    <!-- Franja legal -->
+    <div class="footer__legal">
+      <div class="footer__dept">
+        <img src="assets/logo_admin-trans-192.png" alt="" class="footer__emblem" width="28" height="28">
+        <span class="footer__legal-text">
+          {{ 'footer.department' | translate }} &middot; {{ 'footer.church' | translate }} &copy; {{ year }}
+          <span class="footer__version">{{ version }}</span>
+        </span>
+      </div>
+      <a class="footer__partner" [href]="contact.partnerUrl" target="_blank" rel="noopener noreferrer"
+         [attr.aria-label]="'footer.partner' | translate" [title]="'footer.partner' | translate">
+        <img src="assets/logo-ineb.png" alt="" width="70" height="22" loading="lazy" decoding="async">
+      </a>
+    </div>
+  </div>
+</footer>

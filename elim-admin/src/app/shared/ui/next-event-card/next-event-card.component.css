@@ -1,0 +1,70 @@
+:host { display: block; }
+
+.next { border-left: 3px solid var(--team-color); }
+
+.next__body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--sp-3);
+  align-items: start;
+}
+.next__date { width: 44px; }
+.next__day { font-size: var(--fs-2xl); }
+
+.next__main { display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; }
+.next__line { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; min-width: 0; }
+.next__team {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--c-text);
+  border-radius: var(--r-sm);
+}
+.next__team:hover { color: var(--c-primary); }
+.next__star { color: var(--c-warning); }
+
+/* Horas: tres pares etiqueta/valor en una línea; se apilan en móvil. */
+.next__times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-4);
+  margin-top: var(--sp-1);
+}
+.next__times > div { display: flex; align-items: baseline; gap: var(--sp-2); }
+.next__times dt { font-size: var(--fs-sm); color: var(--c-text-3); }
+.next__times dd { font-size: var(--fs-md); font-weight: 600; }
+.next__food { color: var(--c-warning); }
+
+.next__countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  padding: var(--sp-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background: var(--c-surface-2);
+  line-height: var(--lh-tight);
+}
+.next__countdown--today { background: var(--c-success-soft); border-color: transparent; color: var(--c-success); }
+.next__cd-num { font-size: var(--fs-2xl); font-weight: 600; }
+.next__cd-label { font-size: var(--fs-xs); color: var(--c-text-2); text-transform: uppercase; letter-spacing: 0.04em; }
+.next__countdown--today .next__cd-label { color: inherit; font-size: var(--fs-md); text-transform: none; letter-spacing: 0; font-weight: 600; }
+
+.next__people {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-3);
+  border-top: 1px solid var(--c-border);
+}
+.next__people .ui-eyebrow { display: flex; align-items: center; gap: var(--sp-1); }
+
+@media (max-width: 599px) {
+  .next__body { grid-template-columns: auto 1fr; }
+  .next__countdown { grid-column: 1 / -1; flex-direction: row; gap: var(--sp-1); align-items: baseline; padding: var(--sp-1) var(--sp-2); }
+  .next__cd-num { font-size: var(--fs-lg); }
+}

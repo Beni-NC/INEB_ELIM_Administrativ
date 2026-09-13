@@ -1,82 +1,13 @@
-/* Global styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Entrada de estilos globales. Orden: tokens → base → layout → primitivas. */
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/layout.css';
+@import './styles/components.css';
 
-html {
-  scroll-behavior: smooth;
-  /* Permite el desplazamiento vertical (pan-y) sobre cualquier elemento, incluso interactivos.
-     Evita que botones/tarjetas/tooltips bloqueen el scroll en móviles (PWA). */
-  touch-action: pan-y;
-}
-
-body {
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
-  background: #f5f7fa;
-  color: #263238;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: auto;
-}
-
-html, body { height: 100%; margin: 0; }
-
-/* ==========================================================================
-   Mejora de scroll táctil (PWA / móviles)
-   - touch-action: manipulation permite que el navegador interprete el gesto
-     como scroll cuando el dedo se desliza, en lugar de bloquearlo en el
-     control. Elimina además el delay de 300ms del doble tap.
-   - Aplicado a TODOS los elementos clicables/interactivos para que ningún
-     botón, tarjeta o bloque "capture" el dedo y detenga el desplazamiento.
-   ========================================================================== */
-button,
-a,
-[role="button"],
-[tabindex],
-input,
-select,
-textarea,
-label,
-.mat-mdc-button-base,
-.mat-mdc-icon-button,
-.mat-mdc-list-item,
-.mat-mdc-card,
-.mat-mdc-chip,
-.mat-mdc-menu-item,
-.mat-mdc-tab,
-.mat-mdc-tab-link,
-.mat-expansion-panel-header,
-.mdc-button,
-.mdc-icon-button,
-.coord-summary-row,
-.linkable,
-[ngxtooltip],
-[mattooltip],
-[matTooltip] {
-  touch-action: manipulation;
-}
-
-/* Material Symbols Rounded - global icon class */
-.material-symbols-rounded {
-  font-family: 'Material Symbols Rounded', 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+/* Impresión: solo contenido, en una columna (va al final para ganar la cascada sin !important). */
+@media print {
+  body { background: #fff; }
+  .ui-header, .ui-tabs, .ui-footer, .ui-btn, app-pwa-install-prompt { display: none; }
+  .ui-main { padding: 0; max-width: none; }
+  .ui-card { break-inside: avoid; }
 }

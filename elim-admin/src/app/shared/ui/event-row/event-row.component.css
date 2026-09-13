@@ -1,0 +1,16 @@
+:host { display: block; }
+
+/* Los extras (nota, padres) se alinean con el texto de la fila: fecha (40) + gap (12) + padding (12). */
+.ev__extra {
+  padding: 0 var(--sp-3) var(--sp-2) calc(40px + var(--sp-3) + var(--sp-3));
+  align-items: center;
+}
+.ev__extra-label { font-size: var(--fs-xs); color: var(--c-text-3); margin-right: var(--sp-1); }
+.ev__done { color: var(--c-success); }
+.ev__star { color: var(--c-warning); }
+.ev__persons { color: var(--c-text-3); white-space: nowrap; }
+
+/* En pantallas estrechas las personas estimadas no caben en la misma línea que las horas. */
+@media (max-width: 599px) {
+  .ev__persons { display: none; }
+}

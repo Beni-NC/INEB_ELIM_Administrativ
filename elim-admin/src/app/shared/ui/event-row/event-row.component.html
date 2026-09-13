@@ -1,0 +1,93 @@
+<div class="ui-row ev"
+     [class.ui-row--muted]="past()"
+     [class.ui-row--expandable]="clickable()"
+     [style.--team-color]="teamColor()">
+
+  <div class="ui-row__lead">
+    <div class="ui-date" [class.ui-date--muted]="past()">
+      <span class="ui-date__dow">{{ entry().date | ldate:'dow' }}</span>
+      <span class="ui-date__day">{{ entry().date.getDate() }}</span>
+      @if (showMonth()) {
+        <span class="ui-date__mon">{{ entry().date | ldate:'mon' }}@if (showYear()) { {{ entry().date.getFullYear() % 100 }}}</span>
+      }
+    </div>
+  </div>
+
+  @if (clickable()) {
+    <button type="button" class="ui-row__btn" (click)="open($event)"
+            [title]="(historical() ? 'teams.view_team_history_composition' : 'schedule.view_team') | translate">
+      <span class="ui-row__text"><ng-container *ngTemplateOutlet="content" /></span>
+    </button>
+  } @else {
+    <div class="ui-row__main">
+      <ng-container *ngTemplateOutlet="content" />
+    </div>
+  }
+
+  <div class="ui-row__trail">
+    @if (past()) {
+      <span class="icon icon--sm ev__done" [title]="'event.completed' | translate" aria-hidden="true">check_circle</span>
+    } @else if (isToday()) {
+      <span class="ui-badge ui-badge--success">{{ 'common.today_excl' | translate }}</span>
+    } @else {
+      <span class="ui-badge" [class.ui-badge--primary]="isThisWeek()">
+        {{ daysUntil() }} {{ (daysUntil() === 1 ? 'common.day' : 'common.days') | translate }}
+      </span>
+    }
+    @if (!past() && showCalendar()) {
+      <app-calendar-button [event]="entry()" />
+    }
+  </div>
+</div>
+
+@if (hasNote()) {
+  <div class="ev__extra">
+    <div class="ui-note">
+      <span class="icon" aria-hidden="true">sticky_note_2</span>
+      <span>{{ entry().observations }}</span>
+    </div>
+  </div>
+}
+
+@if (parents().length > 0) {
+  <div class="ev__extra ui-chip-group">
+    <span class="ev__extra-label">{{ 'common.parents' | translate }}:</span>
+    @for (p of parents(); track p.id) {
+      <button type="button" class="ui-chip" (click)="nav.goTo('parent', p.id, $event)" [title]="'schedule.view_parent' | translate">
+        <span class="ui-avatar">{{ p.initials }}</span>
+        {{ p.name }}
+      </button>
+    }
+  </div>
+}
+
+<ng-template #content>
+  <span class="ui-row__title">
+    @if (showTeam()) {
+      <span class="ui-team-badge" [class.ui-team-badge--muted]="past()">{{ teamNumber() }}</span>
+      <span class="truncate">{{ entry().team }}</span>
+    } @else {
+      <span class="truncate">{{ entry().programType }}</span>
+    }
+    @if (role() === 'coordonator') {
+      <span class="icon icon--sm icon--fill ui-star" [title]="'common.coordinator' | translate" aria-hidden="true">star</span>
+    }
+    @if (historical()) {
+      <span class="ui-badge">{{ 'teams.history_short' | translate }}</span>
+    }
+  </span>
+  <span class="ui-row__meta">
+    <span class="truncate">{{ coordinatorName() }}</span>
+    @if (!past()) {
+      <span class="ui-times" [title]="'schedule.tooltip_times_full' | translate: { food: times().parentsFoodArrival }">
+        <span class="icon" aria-hidden="true">schedule</span>
+        <span class="num">{{ times().youthsArrival }}</span>
+        <span class="ui-times__sep">→</span>
+        <span class="num">{{ times().programStart }}</span>
+        <span class="icon ui-times__food-icon" aria-hidden="true">restaurant</span>
+        <span class="ui-times__food num">{{ times().parentsFoodArrival }}</span>
+      </span>
+      <span class="ev__persons num">{{ entry().estimatedPersons }} {{ 'common.people' | translate }}</span>
+    }
+  </span>
+</ng-template>

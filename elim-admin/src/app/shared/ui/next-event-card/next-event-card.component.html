@@ -1,0 +1,88 @@
+<section class="ui-card next" [style.--team-color]="teamColor()">
+  <header class="ui-card__header">
+    <span class="ui-section__title">{{ titleKey() | translate }}</span>
+    <span class="ui-section__spacer"></span>
+    <app-calendar-button [event]="entry()" [withLabel]="true" />
+  </header>
+
+  <div class="ui-card__body next__body">
+    <div class="ui-date next__date">
+      <span class="ui-date__dow">{{ entry().date | ldate:'dow' }}</span>
+      <span class="ui-date__day next__day">{{ entry().date.getDate() }}</span>
+      <span class="ui-date__mon">{{ entry().date | ldate:'mon' }}</span>
+    </div>
+
+    <div class="next__main">
+      <div class="next__line">
+        <button type="button" class="next__team" (click)="nav.goTo('team', entry().team, $event)" [title]="'schedule.view_team' | translate">
+          <span class="ui-team-badge ui-team-badge--lg">{{ teamNumber() }}</span>
+          <span>{{ entry().team }}</span>
+        </button>
+        <span class="faint">·</span>
+        <span class="muted">{{ entry().programType }}</span>
+      </div>
+
+      <div class="next__line muted">
+        <span class="icon icon--sm icon--fill ui-star" aria-hidden="true">star</span>
+        @if (coordinator(); as c) {
+          <button type="button" class="ui-link" (click)="nav.goTo('youth', c.id, $event)" [title]="'schedule.view_coordinator' | translate">{{ entry().coordinator }}</button>
+        } @else {
+          <span>{{ entry().coordinator }}</span>
+        }
+        <span class="faint">·</span>
+        <span class="num">{{ entry().estimatedPersons }} {{ 'common.people' | translate }}</span>
+      </div>
+
+      <dl class="next__times">
+        <div><dt>{{ 'schedule.youths_present' | translate }}</dt><dd class="num">{{ times().youthsArrival }}</dd></div>
+        <div><dt>{{ 'event.program' | translate }}</dt><dd class="num">{{ times().programStart }}</dd></div>
+        <div><dt>{{ 'schedule.parents_food' | translate }}</dt><dd class="num next__food">{{ times().parentsFoodArrival }}</dd></div>
+      </dl>
+
+      @if (hasNote()) {
+        <div class="ui-note">
+          <span class="icon" aria-hidden="true">sticky_note_2</span>
+          <span>{{ entry().observations }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="next__countdown" [class.next__countdown--today]="isToday()">
+      @if (isToday()) {
+        <span class="next__cd-label">{{ 'common.today_excl' | translate }}</span>
+      } @else {
+        <span class="next__cd-num num">{{ daysUntil() }}</span>
+        <span class="next__cd-label">{{ (daysUntil() === 1 ? 'common.day' : 'common.days') | translate }}</span>
+      }
+    </div>
+  </div>
+
+  @if (showRoster() && roster().length > 0) {
+    <div class="next__people">
+      <span class="ui-eyebrow">{{ 'schedule.preparing_team' | translate }} <span class="ui-count">{{ roster().length }}</span></span>
+      <div class="ui-chip-group">
+        @for (y of roster(); track y.id) {
+          <button type="button" class="ui-chip" (click)="nav.goTo('youth', y.id, $event)">
+            <span class="ui-avatar">{{ y.initials }}</span>
+            {{ y.fullName }}
+            @if (data.isActiveCoordinator(y.id)) { <span class="icon icon--fill ui-star" aria-hidden="true">star</span> }
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (parents().length > 0) {
+    <div class="next__people">
+      <span class="ui-eyebrow">{{ 'schedule.support_parents' | translate }} <span class="ui-count">{{ parents().length }}</span></span>
+      <div class="ui-chip-group">
+        @for (p of parents(); track p.id) {
+          <button type="button" class="ui-chip" (click)="nav.goTo('parent', p.id, $event)" [title]="'schedule.view_parent' | translate">
+            <span class="ui-avatar">{{ p.initials }}</span>
+            {{ p.name }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</section>

@@ -1,0 +1,163 @@
+/* ============================================================================
+   TOKENS DE DISEÑO — única fuente de valores de la interfaz.
+   Cualquier color, tamaño, radio o duración usado en la app sale de aquí.
+   Documentación y reglas de uso: docs/GUIA-ESTILOS.md §2.
+   ============================================================================ */
+:root {
+  /* ---- Color: neutros (slate) ---- */
+  --c-bg: #f6f7f9;
+  --c-surface: #ffffff;
+  --c-surface-2: #f1f3f6;
+  --c-surface-3: #e9ecf1;
+  --c-border: #e3e7ee;
+  --c-border-strong: #c9d1dc;
+  --c-text: #1b2433;
+  --c-text-2: #4b5565;
+  --c-text-3: #7d8797;
+
+  /* ---- Color: acento único ---- */
+  --c-primary: #0b57d0;
+  --c-primary-hover: #0947ab;
+  --c-primary-soft: #e7effc;
+  --c-on-primary: #ffffff;
+  --c-focus: var(--c-primary);
+
+  /* ---- Color: marca (solo wordmark ELIM y footer; no es color de acción) ---- */
+  --c-brand-ink: #1a365d;          /* wordmark sobre superficie clara */
+  --c-brand-ink-hover: #122844;
+  --c-brand-gold: #d4af37;         /* acento sobre fondo oscuro */
+  --c-brand-gold-deep: #9c7a1e;    /* acento sobre fondo claro (AA) */
+  --c-brand-surface: #1a365d;      /* banda del footer */
+  --c-on-brand: #faf9f6;
+  --c-on-brand-muted: #b9cbe6;
+  /* Verde de WhatsApp: solo en el glifo del botón de contacto (marca de terceros, no acento). */
+  --c-whatsapp: #25d366;
+
+  /* ---- Color: semánticos ---- */
+  --c-success: #1a7f37;
+  --c-success-soft: #e3f5e8;
+  --c-warning: #9a6700;
+  --c-warning-soft: #fff4d6;
+  --c-danger: #b42318;
+  --c-danger-soft: #fde8e6;
+
+  /* ---- Color: equipos (solo badges, barras de 3 px y puntos) ---- */
+  --team-1: #2563eb;
+  --team-2: #7c3aed;
+  --team-3: #059669;
+  --team-4: #ea580c;
+  --team-5: #dc2626;
+  --team-6: #0891b2;
+  --team-7: #db2777;
+  --team-default: #64748b;
+  --team-badge-ink: #ffffff;
+
+  /* ---- Tipografía ---- */
+  --font: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Solo para el wordmark de la iglesia (misma marca que MEDIA-ELIM). */
+  --font-brand: "Playfair Display", Georgia, "Times New Roman", serif;
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-lg: 15px;
+  --fs-xl: 18px;
+  --fs-2xl: 24px;
+  --lh: 1.4;
+  --lh-tight: 1.2;
+
+  /* ---- Espaciado (rejilla de 4 px) ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+
+  /* ---- Tamaños ---- */
+  --h-header: 48px;
+  --h-nav: 40px;
+  --h-row: 36px;
+  --h-control: 28px;
+  --icon-sm: 16px;
+  --icon: 18px;
+  --icon-lg: 20px;
+  --avatar: 24px;
+  --avatar-lg: 32px;
+  --content-max: 1080px;
+  /* Altura de la barra de tabs sticky + margen: destino de scroll de las anclas. */
+  --sticky-offset: 64px;
+  --page-pad: var(--sp-3);
+
+  /* ---- Radios ---- */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-full: 999px;
+
+  /* ---- Sombra (solo overlays: banner PWA, menús, diálogos) ---- */
+  --shadow-overlay: 0 4px 16px rgba(15, 23, 42, 0.12), 0 1px 3px rgba(15, 23, 42, 0.08);
+
+  /* ---- Movimiento ---- */
+  --dur: 120ms;
+  --dur-flash: 1600ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---- Capas ---- */
+  --z-sticky: 10;
+  --z-overlay: 100;
+
+  color-scheme: light;
+}
+
+/* ---- Modo oscuro (MANUAL: lo activa el usuario y se guarda en el dispositivo; nunca sigue al
+   sistema). Solo se redefinen tokens, ningún componente cambia. ---- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --c-bg: #11151c;
+  --c-surface: #181d26;
+  --c-surface-2: #1f2530;
+  --c-surface-3: #293140;
+  --c-border: #2a3240;
+  --c-border-strong: #3b4557;
+  --c-text: #e6e9ef;
+  --c-text-2: #aeb6c2;
+  --c-text-3: #7f8896;
+
+  --c-primary: #7cacf8;
+  --c-primary-hover: #a4c4fa;
+  --c-primary-soft: rgba(124, 172, 248, 0.16);
+  --c-on-primary: #0b1a33;
+
+  --c-brand-ink: #dbe4f3;
+  --c-brand-ink-hover: #ffffff;
+  --c-brand-gold-deep: #e3c766;
+  --c-brand-surface: #122844;
+
+  --c-success: #4ade80;
+  --c-success-soft: rgba(74, 222, 128, 0.14);
+  --c-warning: #f5c542;
+  --c-warning-soft: rgba(245, 197, 66, 0.14);
+  --c-danger: #f87171;
+  --c-danger-soft: rgba(248, 113, 113, 0.14);
+
+  /* Equipos: tonos más claros con tinta oscura para mantener contraste en el badge. */
+  --team-1: #60a5fa;
+  --team-2: #a78bfa;
+  --team-3: #34d399;
+  --team-4: #fb923c;
+  --team-5: #f87171;
+  --team-6: #22d3ee;
+  --team-7: #f472b6;
+  --team-default: #94a3b8;
+  --team-badge-ink: #0b1220;
+
+  --shadow-overlay: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 600px) {
+  :root { --page-pad: var(--sp-4); }
+}
+
+/* Sin movimiento si el usuario lo pide: al salir todo de tokens no hace falta !important. */
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; --dur-flash: 0ms; }
+}

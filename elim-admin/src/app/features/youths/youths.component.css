@@ -1,0 +1,6 @@
+:host { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+.youth__team { display: inline-flex; align-items: center; gap: var(--sp-1); white-space: nowrap; }
+.youth__team .ui-team-badge { width: 16px; height: 16px; font-size: 10px; }
+.youth__chip-badge { width: 16px; height: 16px; font-size: 10px; }
+.youth__star { color: var(--c-warning); }

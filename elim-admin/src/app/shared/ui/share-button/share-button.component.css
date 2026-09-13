@@ -1,0 +1,46 @@
+:host { display: inline-flex; }
+
+.share__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-2);
+}
+.share__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-1);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  color: var(--c-text-2);
+  text-decoration: none;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.share__option:hover { background: var(--c-surface-2); color: var(--c-text); text-decoration: none; }
+.share__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+  background: var(--c-surface-3);
+  color: var(--c-text-2);
+}
+.share__badge .icon { font-size: var(--icon-lg); }
+/* Colores de marca de terceros, solo en su propio glifo. */
+.share__badge--wa { color: var(--c-whatsapp); }
+.share__badge--tg { color: #229ed9; }
+
+/* Enlace visible para copiarlo a mano si el portapapeles no está disponible. */
+.share__url {
+  display: block;
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--c-border);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-xs);
+  color: var(--c-text-2);
+  word-break: break-all;
+  user-select: all;
+}

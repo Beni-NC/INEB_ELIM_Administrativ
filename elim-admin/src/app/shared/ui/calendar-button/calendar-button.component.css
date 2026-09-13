@@ -1,0 +1,11 @@
+:host { display: inline-flex; }
+
+/* La URL del feed es larga: se muestra entera, partida donde haga falta, para poder copiarla a mano. */
+.ui-menu__url {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-xs);
+  color: var(--c-text-2);
+  word-break: break-all;
+  user-select: all;
+}

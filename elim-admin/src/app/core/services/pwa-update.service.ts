@@ -1,15 +1,19 @@
 import { ApplicationRef, Injectable, inject } from '@angular/core';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
-import { concat, filter, first, interval } from 'rxjs';
+import { concat, filter, first, fromEvent, interval, merge } from 'rxjs';
+
+/** Cada cuánto se comprueba si hay versión nueva mientras la app está abierta. */
+const CHECK_EVERY_MS = 15 * 60 * 1000;
 
 /**
  * Gestor de actualizaciones del Service Worker.
  *
- * - Comprueba periódicamente si hay versión nueva (cada 1h) además de cada
- *   vez que la app se inicializa.
- * - Cuando detecta una nueva versión, activa el SW y recarga la página
- *   automáticamente para que el usuario nunca quede atrapado en una
- *   versión cacheada antigua.
+ * La programación cambia a menudo y lo importante es que quien abra la app vea **siempre lo
+ * último publicado**, sin pedirle nada. Por eso:
+ *  - Se comprueba si hay versión nueva al arrancar, cada 15 minutos y cada vez que la app vuelve
+ *    a primer plano (en el móvil la PWA suele quedar abierta en segundo plano durante días).
+ *  - En cuanto la nueva versión está descargada, se activa y se recarga la página.
+ *  - Si el SW detecta ficheros corruptos o inconsistentes, recarga limpia.
  */
 @Injectable({ providedIn: 'root' })
 export class PwaUpdateService {
@@ -19,14 +23,13 @@ export class PwaUpdateService {
   init(): void {
     if (!this.swUpdate.isEnabled) return;
 
-    // Polling: una vez la app está estable, comprobar cada hora.
     const stable$ = this.appRef.isStable.pipe(first(s => s));
-    const everyHour$ = interval(60 * 60 * 1000);
-    concat(stable$, everyHour$).subscribe(() => {
-      this.swUpdate.checkForUpdate().catch(() => { /* ignore */ });
+    const periodic$ = interval(CHECK_EVERY_MS);
+    const foreground$ = fromEvent(document, 'visibilitychange').pipe(filter(() => document.visibilityState === 'visible'));
+    concat(stable$, merge(periodic$, foreground$)).subscribe(() => {
+      this.swUpdate.checkForUpdate().catch(() => { /* sin red: se reintenta en la siguiente comprobación */ });
     });
 
-    // Cuando hay una nueva versión preparada → activar y recargar.
     this.swUpdate.versionUpdates
       .pipe(filter((e): e is VersionReadyEvent => e.type === 'VERSION_READY'))
       .subscribe(async () => {
@@ -37,9 +40,6 @@ export class PwaUpdateService {
         }
       });
 
-    // Si el SW detecta archivos corruptos o inconsistentes → recarga limpia.
-    this.swUpdate.unrecoverable.subscribe(() => {
-      document.location.reload();
-    });
+    this.swUpdate.unrecoverable.subscribe(() => document.location.reload());
   }
 }

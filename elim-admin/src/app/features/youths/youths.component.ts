@@ -1,85 +1,75 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatRippleModule } from '@angular/material/core';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
-import { CalendarSyncButtonComponent } from '../../shared/components/calendar-sync-button/calendar-sync-button.component';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DataService } from '../../core/services/data.service';
 import { NavigationService } from '../../core/services/navigation.service';
-import { EventNotesService } from '../../core/services/event-notes.service';
-import { ScheduleEntry } from '../../core/models';
-import { formatDate, formatDateShort, daysBetween, isSameDay } from '../../core/utils/date.utils';
+import { ScheduleEntry, Youth, YouthFilter, YouthRole } from '../../core/models';
+import { LDatePipe } from '../../core/i18n/ldate.pipe';
+import { entryKey } from '../../core/utils/schedule.utils';
+import { daysBetween, isSameDay } from '../../core/utils/date.utils';
 import { getTeamColor, getTeamNumber } from '../../core/utils/team.utils';
+import { EventRowComponent } from '../../shared/ui/event-row/event-row.component';
+import { CalendarButtonComponent } from '../../shared/ui/calendar-button/calendar-button.component';
 
+/** Tineri: directorio con búsqueda y filtro, perfil expandible en línea y archivo de antiguos miembros. */
 @Component({
-  selector: 'app-youths',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule, FormsModule, MatButtonModule, MatCardModule, MatChipsModule,
-    MatDividerModule, MatIconModule, MatRippleModule, MatTooltipModule, TranslateModule,
-    CalendarSyncButtonComponent,
-  ],
-  templateUrl: './youths.component.html',
+    selector: 'app-youths',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [NgTemplateOutlet, FormsModule, TranslatePipe, LDatePipe, EventRowComponent, CalendarButtonComponent],
+    templateUrl: './youths.component.html',
+    styleUrl: './youths.component.css'
 })
-export class YouthsComponent implements OnInit {
+export class YouthsComponent {
   protected readonly data = inject(DataService);
   protected readonly nav = inject(NavigationService);
-  protected readonly notes = inject(EventNotesService);
 
-  readonly expanded = signal<string | null>(null);
+  readonly expanded = this.nav.expandedYouthId;
   readonly showArchived = signal(false);
-  readonly pastEventsOpen = signal<Set<string>>(new Set());
+  /** El archivo se abre solo si el joven expandido (por enlace cruzado) está archivado. */
+  readonly archivedOpen = computed(() => {
+    const id = this.expanded();
+    return this.showArchived() || (!!id && this.data.inactiveYouths.some(y => y.id === id));
+  });
+  readonly pastOpen = signal<Set<string>>(new Set());
 
-  togglePastEvents(id: string, ev: Event): void {
-    ev.stopPropagation();
-    const next = new Set(this.pastEventsOpen());
-    if (next.has(id)) next.delete(id); else next.add(id);
-    this.pastEventsOpen.set(next);
-  }
-  isPastEventsOpen(id: string): boolean { return this.pastEventsOpen().has(id); }
+  readonly filters: YouthFilter[] = ['toti', 'coordonatori', 'membri'];
 
-  openNotes(entry: ScheduleEntry, ev: Event): void {
-    ev.stopPropagation();
-    this.notes.open(entry);
-  }
-
-  /** Echipe la care părintele a sprijinit programări coincidente cu echipele active ale tânărului. */
-  getInvolvedTeams(youthId: string, parentId: string): string[] {
-    const youthTeams = new Set(
-      this.data.getActiveTeamsForYouth(youthId).map(t => t.teamName)
-    );
-    if (youthTeams.size === 0) return [];
-    const parentEventTeams = new Set<string>([
-      ...this.data.getUpcomingEventsForParent(parentId).map(e => e.team),
-      ...this.data.getPastEventsForParent(parentId).map(e => e.team),
-    ]);
-    return [...parentEventTeams].filter(t => youthTeams.has(t));
-  }
-
-  protected readonly formatDate = formatDate;
-  protected readonly formatDateShort = formatDateShort;
+  protected readonly entryKey = entryKey;
   protected readonly getTeamColor = getTeamColor;
   protected readonly getTeamNumber = getTeamNumber;
 
-  ngOnInit(): void {
-    const id = this.nav.consumeExpanded('youth');
-    if (id) {
-      this.expanded.set(id);
-      if (this.data.inactiveYouths().some(y => y.id === id)) {
-        this.showArchived.set(true);
-      }
-    }
+  toggle(y: Youth): void { this.nav.toggle('youth', y.id); }
+
+  togglePast(id: string): void {
+    const next = new Set(this.pastOpen());
+    if (next.has(id)) next.delete(id); else next.add(id);
+    this.pastOpen.set(next);
+  }
+  isPastOpen(id: string): boolean { return this.pastOpen().has(id); }
+
+  /**
+   * Equipos activos del joven con su próxima programación ya resuelta. Se precalcula aquí
+   * porque un alias `@if (...; as x)` anidado dentro de `@for` en un `ng-template` falla en
+   * tiempo de ejecución con Angular 17 ("tmp_x_0 is not defined").
+   */
+  activeTeams(y: Youth): Array<{ teamName: string; role: YouthRole; next?: ScheduleEntry }> {
+    return this.data.getActiveTeamsForYouth(y.id).map(t => ({ ...t, next: this.data.getNextEventForTeam(t.teamName) }));
   }
 
-  toggle(id: string): void {
-    this.expanded.update(v => v === id ? null : id);
+  /**
+   * Clave de `track` para equipos anteriores (un joven puede haber pasado dos veces por el
+   * mismo equipo). Va en un método porque el compilador de Angular 17 no soporta `?.`/`??`
+   * dentro de la expresión `track`.
+   */
+  historyTrack(h: { teamName: string; endDate?: Date }): string {
+    return h.teamName + '|' + (h.endDate ? h.endDate.getTime() : 0);
+  }
+
+  /** Rol del joven en el equipo de una programación futura (estrella si la coordina). */
+  roleFor(y: Youth, team: string): YouthRole | null {
+    const t = this.data.getActiveTeamsForYouth(y.id).find(x => x.teamName === team);
+    return t ? t.role : null;
   }
 
   daysUntil(date: Date): number { return daysBetween(date, this.data.today); }

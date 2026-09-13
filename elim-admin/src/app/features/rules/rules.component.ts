@@ -1,95 +1,103 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatCardModule } from '@angular/material/card';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 interface RuleSection {
-  tone: 'primary' | 'success' | 'info' | 'warn';
-  num: number;
+  id: string;
   icon: string;
-  eyebrow: string;
   title: string;
   items: string[];
 }
 
+/** Reguli: cinco secciones de texto (desde i18n) en formato documento, con índice de anclas. */
 @Component({
-  selector: 'app-rules',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatCardModule, TranslateModule],
-  template: `
-    <div class="rules-hero">
-      <div class="rules-hero-icon">
-        <span class="material-symbols-rounded">menu_book</span>
+    selector: 'app-rules',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [TranslatePipe],
+    template: `
+    <section class="ui-section">
+      <div class="ui-section__head">
+        <h2 class="ui-section__title">{{ 'rules.title' | translate }}</h2>
+        <span class="ui-count">{{ sections().length }}</span>
       </div>
-      <div class="rules-hero-text">
-        <h2 class="rules-hero-title">{{ 'rules.title' | translate }}</h2>
-        <p class="rules-hero-sub">{{ 'rules.subtitle' | translate }}</p>
-      </div>
-    </div>
+      <p class="muted rules__intro">{{ 'rules.subtitle' | translate }}</p>
 
-    <div class="rules-meta-row">
-      <div class="rules-meta-pill">
-        <span class="material-symbols-rounded">workspaces</span>
-        {{ 'rules.sections_count' | translate: { count: sections().length } }}
-      </div>
-      <div class="rules-meta-pill">
-        <span class="material-symbols-rounded">checklist_rtl</span>
-        {{ 'rules.rules_to_apply' | translate }}
-      </div>
-      <div class="rules-meta-pill">
-        <span class="material-symbols-rounded">groups</span>
-        {{ 'rules.for_all_teams' | translate }}
-      </div>
-    </div>
+      <nav class="ui-chip-group" [attr.aria-label]="'rules.index' | translate">
+        @for (s of sections(); track s.id; let i = $index) {
+          <button type="button" class="ui-chip" (click)="scrollTo(s.id)">
+            <span class="rules__num">{{ i + 1 }}</span>{{ s.title }}
+          </button>
+        }
+      </nav>
 
-    <div class="rules-grid">
-      @for (s of sections(); track s.num) {
-        <mat-card class="rule-card-pro" appearance="outlined">
-          <div class="rule-card-head" [attr.data-tone]="s.tone">
-            <div class="rule-card-num">{{ s.num }}</div>
-            <div class="rule-card-icon">
-              <span class="material-symbols-rounded">{{ s.icon }}</span>
-            </div>
-            <div class="rule-card-title-block">
-              <span class="rule-card-eyebrow">{{ s.eyebrow }}</span>
-              <h3 class="rule-card-title">{{ s.title }}</h3>
-            </div>
-          </div>
-          <div class="rule-card-body">
-            <ol class="rule-steps">
+      <div class="ui-grid-2">
+        @for (s of sections(); track s.id; let i = $index) {
+          <article class="ui-card" [id]="'rule-' + s.id">
+            <header class="ui-card__header">
+              <span class="icon faint" aria-hidden="true">{{ s.icon }}</span>
+              <h3 class="ui-card__title rules__title"><span class="rules__num">{{ i + 1 }}</span>{{ s.title }}</h3>
+            </header>
+            <ol class="ui-card__body rules__list">
               @for (item of s.items; track $index) {
-                <li>
-                  <span class="rule-step-num">{{ $index + 1 }}</span>
-                  <span class="rule-step-text">{{ item }}</span>
+                <li class="rules__item">
+                  <span class="rules__marker num">{{ $index + 1 }}.</span>
+                  <span>{{ item }}</span>
                 </li>
               }
             </ol>
-          </div>
-        </mat-card>
-      }
-    </div>
+          </article>
+        }
+      </div>
+    </section>
   `,
+    styles: [`
+    :host { display: flex; flex-direction: column; gap: var(--sp-4); }
+    .rules__intro { font-size: var(--fs-sm); margin-top: calc(-1 * var(--sp-1)); }
+    .rules__num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      border-radius: var(--r-sm);
+      background: var(--c-primary-soft);
+      color: var(--c-primary);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .rules__title { display: flex; align-items: center; gap: var(--sp-2); }
+    .rules__list { display: flex; flex-direction: column; gap: var(--sp-2); }
+    .rules__item { display: flex; gap: var(--sp-2); line-height: 1.5; }
+    .rules__marker { color: var(--c-text-3); flex-shrink: 0; min-width: 18px; text-align: right; }
+  `]
 })
 export class RulesComponent {
   private readonly translate = inject(TranslateService);
   private readonly langChange = toSignal(this.translate.onLangChange, { initialValue: null });
 
+  /**
+   * Índice por scroll en vez de `href="#id"`: con `<base href="/INEB_ELIM_Administrativ/">` un
+   * enlace de solo fragmento se resuelve contra la base y saca al usuario de la pestaña.
+   */
+  scrollTo(id: string): void {
+    document.getElementById('rule-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   readonly sections = computed<RuleSection[]>(() => {
-    // depend on language changes
-    void this.langChange();
+    void this.langChange(); // recalcula al cambiar de idioma
     const t = (k: string) => this.translate.instant(k) as string;
     const arr = (k: string): string[] => {
       const v = this.translate.instant(k);
       return Array.isArray(v) ? (v as string[]) : [];
     };
     return [
-      { tone: 'primary', num: 1, icon: 'person',            eyebrow: t('rules.section_role'),         title: t('rules.coordinator_role'),         items: arr('rules.items.coordinator_role') },
-      { tone: 'success', num: 2, icon: 'checklist',         eyebrow: t('rules.section_organization'), title: t('rules.coordinator_organization'), items: arr('rules.items.coordinator_organization') },
-      { tone: 'info',    num: 3, icon: 'schedule',          eyebrow: t('rules.section_before'),       title: t('rules.before_program'),           items: arr('rules.items.before_program') },
-      { tone: 'warn',    num: 4, icon: 'cleaning_services', eyebrow: t('rules.section_after'),        title: t('rules.after_program'),            items: arr('rules.items.after_program') },
-      { tone: 'primary', num: 5, icon: 'family_restroom',   eyebrow: t('rules.section_parents'),      title: t('rules.parents_role'),             items: arr('rules.items.parents_role') },
+      { id: 'role',         icon: 'star',              title: t('rules.coordinator_role'),         items: arr('rules.items.coordinator_role') },
+      { id: 'organization', icon: 'checklist',         title: t('rules.coordinator_organization'), items: arr('rules.items.coordinator_organization') },
+      { id: 'before',       icon: 'schedule',          title: t('rules.before_program'),           items: arr('rules.items.before_program') },
+      { id: 'after',        icon: 'cleaning_services', title: t('rules.after_program'),            items: arr('rules.items.after_program') },
+      { id: 'parents',      icon: 'family_restroom',   title: t('rules.parents_role'),             items: arr('rules.items.parents_role') },
     ];
   });
 }

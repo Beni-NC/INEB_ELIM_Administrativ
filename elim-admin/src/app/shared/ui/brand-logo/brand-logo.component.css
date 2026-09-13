@@ -1,0 +1,42 @@
+:host { display: inline-block; line-height: 1; }
+:host(.is-sm) { --brand-size: 24px; }
+:host(.is-md) { --brand-size: 32px; }
+:host(.is-light) { --brand-ink: var(--c-brand-ink); --brand-ink-hover: var(--c-brand-ink-hover); --brand-accent: var(--c-brand-gold-deep); }
+:host(.is-dark) { --brand-ink: var(--c-on-brand); --brand-ink-hover: var(--c-brand-gold); --brand-accent: var(--c-brand-gold); }
+
+.brand {
+  display: grid;
+  grid-template-columns: max-content;
+  row-gap: 0.14em;
+  line-height: 1;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--r-sm);
+}
+.brand:hover { text-decoration: none; }
+.brand__name {
+  justify-self: start;
+  font-family: var(--font-brand);
+  font-size: var(--brand-size);
+  font-weight: 600;
+  /* El tracking da el aire institucional; el margen negativo devuelve el hueco tras la «M». */
+  letter-spacing: 0.22em;
+  margin-inline-end: -0.22em;
+  text-transform: uppercase;
+  color: var(--brand-ink);
+  transition: color var(--dur) var(--ease);
+}
+.brand__city {
+  width: 0;            /* no aporta ancho a la columna… */
+  min-width: 100%;     /* …pero la ocupa entera */
+  font-family: var(--font);
+  font-size: calc(var(--brand-size) * 0.289);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-inline-end: -0.06em;
+  text-transform: uppercase;
+  /* Exige 2+ palabras y es incompatible con white-space: nowrap. */
+  text-align-last: justify;
+  color: var(--brand-accent);
+}
+a.brand:hover .brand__name { color: var(--brand-ink-hover); }

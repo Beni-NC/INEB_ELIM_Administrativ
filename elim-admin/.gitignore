@@ -42,3 +42,4 @@ testem.log
 Thumbs.db
 
 /dist-mirror
+/src/assets/calendars/

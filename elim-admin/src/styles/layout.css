@@ -1,0 +1,140 @@
+/* ============================================================================
+   LAYOUT — shell de la aplicación: cabecera, tabs, contenido y footer.
+   Estructura: docs/GUIA-ESTILOS.md §3.
+   ============================================================================ */
+
+/* ---- Cabecera ---- */
+.ui-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  height: var(--h-header);
+  padding: 0 var(--page-pad);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+}
+.ui-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+  flex: 1;
+  color: inherit;
+}
+.ui-header__brand:hover { text-decoration: none; }
+.ui-header__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--c-border-strong);
+  flex-shrink: 0;
+}
+.ui-header__text { min-width: 0; overflow: hidden; }
+.ui-header__title {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ui-header__subtitle {
+  display: none;
+  font-size: var(--fs-sm);
+  color: var(--c-text-3);
+  white-space: nowrap;
+}
+.ui-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-shrink: 0;
+}
+.ui-header__today {
+  display: none; /* en móvil la fecha ya la muestra el propio teléfono */
+  font-size: var(--fs-sm);
+  color: var(--c-text-2);
+  white-space: nowrap;
+}
+
+@media (min-width: 600px) {
+  .ui-header__text { display: flex; align-items: baseline; gap: var(--sp-2); }
+  .ui-header__subtitle { display: block; overflow: hidden; text-overflow: ellipsis; }
+  .ui-header__today { display: block; }
+}
+
+/* ---- Tabs de navegación (sticky) ---- */
+.ui-tabs {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  padding: 0 var(--page-pad);
+}
+.ui-tabs__inner {
+  display: flex;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.ui-tab {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: var(--sp-1) var(--sp-2);
+  color: var(--c-text-2);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+.ui-tab:hover { color: var(--c-text); background: var(--c-surface-2); text-decoration: none; }
+.ui-tab.is-active { color: var(--c-primary); }
+.ui-tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: var(--sp-2);
+  right: var(--sp-2);
+  bottom: -1px;
+  height: 2px;
+  background: var(--c-primary);
+  border-radius: 1px 1px 0 0;
+}
+.ui-tab .icon { font-size: var(--icon-lg); }
+
+@media (min-width: 600px) {
+  .ui-tab {
+    flex: 0 0 auto;
+    flex-direction: row;
+    gap: var(--sp-2);
+    min-height: var(--h-nav);
+    padding: 0 var(--sp-3);
+    font-size: var(--fs-md);
+  }
+  .ui-tab .icon { font-size: var(--icon); }
+}
+
+/* ---- Contenido principal ---- */
+.ui-main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--page-pad);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+/* ---- Footer: banda navy de marca (única superficie oscura); su contenido en footer.component.css ---- */
+.ui-footer {
+  background: var(--c-brand-surface);
+  color: var(--c-on-brand-muted);
+  padding: var(--sp-6) var(--page-pad) var(--sp-4);
+}

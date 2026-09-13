@@ -1,0 +1,9 @@
+:host { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+/* El resumen de coordinadores es corto: en escritorio va a dos columnas. */
+@media (min-width: 900px) {
+  .coord-list { display: grid; grid-template-columns: 1fr 1fr; }
+  .coord-list > * + * { border-top: 0; }
+  .coord-list > :nth-child(n + 3) { border-top: 1px solid var(--c-border); }
+  .coord-list > :nth-child(2n) { border-left: 1px solid var(--c-border); }
+}

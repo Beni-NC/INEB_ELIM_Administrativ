@@ -1,0 +1,129 @@
+/* ============================================================================
+   BASE — reset, tipografía, iconos, foco, utilidades mínimas e impresión.
+   ============================================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  /* El scroll vertical debe ganar siempre al toque sobre controles (PWA móvil). */
+  touch-action: pan-y;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font);
+  font-size: var(--fs-md);
+  line-height: var(--lh);
+  color: var(--c-text);
+  background: var(--c-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  overscroll-behavior-y: auto;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4 {
+  font-size: inherit;
+  font-weight: 600;
+  line-height: var(--lh-tight);
+}
+
+p { margin: 0; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+
+a {
+  color: var(--c-primary);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: inherit;
+  /* Sin retardo de doble toque y sin bloquear el scroll en móvil. */
+  touch-action: manipulation;
+}
+a, [role="button"] { touch-action: manipulation; }
+
+/* Foco visible y consistente en todo lo interactivo (solo con teclado). */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ---- Iconos: Material Symbols Rounded, contorno (FILL 0) ---- */
+.icon {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: var(--icon);
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  direction: ltr;
+  flex-shrink: 0;
+  font-feature-settings: 'liga';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  /* Un icono sin texto no se lee; el significado va en el texto o en aria-label. */
+  user-select: none;
+}
+.icon--sm { font-size: var(--icon-sm); }
+.icon--lg { font-size: var(--icon-lg); }
+.icon--fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+
+/* ---- Utilidades (pocas y explícitas) ---- */
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--c-text-2); }
+.faint { color: var(--c-text-3); }
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Las anclas (filas expandidas, secciones de Reguli) no quedan bajo las tabs sticky. */
+[id] { scroll-margin-top: var(--sticky-offset); }
+
+/* Resalte breve del elemento destino de una navegación cruzada. */
+.flash-highlight {
+  animation: flash-highlight var(--dur-flash) var(--ease);
+}
+@keyframes flash-highlight {
+  0%, 40% { box-shadow: 0 0 0 2px var(--c-primary); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}

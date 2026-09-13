@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
   <meta charset="utf-8">
-  <!-- Desactiva la caché del navegador para el index.html (asegura cargar siempre las últimas versiones) -->
+  <!-- El index.html no se cachea: garantiza que el SW detecte siempre la última versión. -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -11,18 +11,21 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Programarea pregătirii mesei - Departament Tineret, Biserica ELIM Arganda del Rey">
-  <meta name="theme-color" content="#1e3a5f">
+  <meta name="theme-color" content="#ffffff">
+  <!-- Tema guardado por el usuario (ThemeService): se aplica antes del primer pintado para evitar el destello claro. -->
+  <script>try{if(localStorage.getItem('app.theme')==='dark'){document.documentElement.dataset.theme='dark';document.querySelector('meta[name="theme-color"]').content='#181d26';}}catch(e){}</script>
   <link rel="icon" type="image/png" href="assets/logo_admin-192.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <!-- iOS no respeta máscaras adaptativas: usamos el icono "any" con su fondo
-       de marca para evitar bordes negros del sistema. -->
+  <!-- iOS no respeta iconos maskable: se usa el icono "any" con fondo de marca. -->
   <link rel="apple-touch-icon" href="assets/logo_admin-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="ELIM Tineret">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Fuentes externas: iconos (contorno, 20 px) y Playfair Display 600 solo para el wordmark ELIM
+       (misma marca que MEDIA-ELIM). La fuente de texto es la del sistema. -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,400,0..1,0&display=block" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
   <app-root></app-root>

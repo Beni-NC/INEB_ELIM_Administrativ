@@ -1,0 +1,278 @@
+# Guía de estilos — ELIM Admin
+
+> **Vinculante** para cualquier cambio de interfaz (humano o IA). Si algo no está aquí, se
+> resuelve con el criterio "¿qué haría Gmail en modo compacto o Atlassian en su última versión?":
+> claro, denso, sobrio, un solo acento. Antes de inventar un patrón nuevo, buscar uno existente
+> en §6. Todos los valores viven en `src/styles/tokens.css`; **nunca** se escriben colores,
+> tamaños o radios literales en componentes.
+
+## 1. Principios
+
+1. **Un acento, muchos neutros.** El color transmite significado (equipo, estado), nunca decora.
+   Superficie blanca sobre fondo gris muy claro; texto slate; un azul de acción.
+2. **Denso pero respirable.** Filas de 36 px, texto de 13 px, rejilla de 4 px. Se muestra más
+   información por pantalla, no menos; el espacio en blanco se usa para agrupar, no para rellenar.
+3. **Plano.** Sin gradientes, sin sombras en superficies (solo en overlays), bordes de 1 px,
+   radios pequeños (4–8 px).
+4. **La jerarquía la hace la tipografía**, no el color ni el tamaño de las cajas: peso 600 para
+   lo primario, 400 secundario en gris, 11 px para metadatos.
+5. **Listas, no rejillas de tarjetas**, para colecciones (personas, equipos, eventos). Una fila =
+   una entidad; el detalle se expande en línea.
+6. **Nada decorativo sin función**: cada icono, badge o chip debe aportar información que no
+   esté ya en el texto. Un icono por fila como máximo en la zona de texto.
+7. **Accesible por defecto**: lo clicable es `<button>` o `<a>`, foco visible, `aria-expanded`,
+   contraste AA (texto ≥ 4.5:1).
+
+## 2. Tokens (`src/styles/tokens.css`)
+
+### 2.1 Color
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--c-bg` | `#f6f7f9` | Fondo de la app |
+| `--c-surface` | `#ffffff` | Tarjetas, cabecera, filas |
+| `--c-surface-2` | `#f1f3f6` | Hover de filas, chips neutros, fondos de bloque secundario |
+| `--c-surface-3` | `#e9ecf1` | Fondo activo / pressed |
+| `--c-border` | `#e3e7ee` | Bordes por defecto |
+| `--c-border-strong` | `#c9d1dc` | Bordes de controles (input, botón) |
+| `--c-text` | `#1b2433` | Texto primario |
+| `--c-text-2` | `#4b5565` | Texto secundario |
+| `--c-text-3` | `#7d8797` | Metadatos, iconos inactivos, placeholders |
+| `--c-primary` | `#0b57d0` | Acción, enlace, tab activo, foco |
+| `--c-primary-hover` | `#0947ab` | Hover de acción |
+| `--c-primary-soft` | `#e7effc` | Fondo de badge/selección primaria |
+| `--c-on-primary` | `#ffffff` | Texto sobre primario |
+| `--c-success` / `--c-success-soft` | `#1a7f37` / `#e3f5e8` | Completado, hoy (positivo) |
+| `--c-warning` / `--c-warning-soft` | `#9a6700` / `#fff4d6` | Aviso, comida padres |
+| `--c-danger` / `--c-danger-soft` | `#b42318` / `#fde8e6` | Error, inactivo con énfasis |
+| `--c-focus` | `var(--c-primary)` | Anillo de foco |
+| `--c-brand-ink` / `--c-brand-ink-hover` | `#1a365d` / `#122844` | Tinta del wordmark ELIM sobre superficie clara |
+| `--c-brand-gold` / `--c-brand-gold-deep` | `#d4af37` / `#9c7a1e` | Acento oro del wordmark (oscuro / claro, AA) |
+| `--c-brand-surface` / `--c-on-brand` / `--c-on-brand-muted` | `#1a365d` / `#faf9f6` / `#b9cbe6` | Banda navy del footer y su texto |
+
+Los tokens de **marca** son los de MEDIA-ELIM (navy 700 / oro 500) y solo se usan en el wordmark
+y el footer; **nunca** como color de acción (eso es `--c-primary`).
+
+**Modo oscuro**: **manual**. Se activa con el botón de la cabecera (`ThemeService`), se guarda en
+el dispositivo (`localStorage`, clave `app.theme`) y por defecto la app es siempre clara; **no** se
+sigue `prefers-color-scheme`. `tokens.css` redefine solo tokens bajo `:root[data-theme="dark"]`
+(superficies, texto, primario más claro, semánticos, equipos en tono 400 con tinta oscura
+`--team-badge-ink`). Ningún componente lleva reglas propias de modo oscuro: si algo se ve mal en
+oscuro, se arregla en el token, no en el componente. `index.html` aplica el tema guardado con un
+script inline antes del primer pintado.
+
+**Colores de terceros**: `--c-whatsapp` (#25d366) y el azul de Telegram solo en su propio glifo
+(botón de WhatsApp, opciones de compartir). Nunca como fondo ni como acento de la app.
+
+**Colores de equipo** (`--team-1` … `--team-7`): `#2563eb`, `#7c3aed`, `#059669`, `#ea580c`,
+`#dc2626`, `#0891b2`, `#db2777`. Se usan **solo** en: badge numerado (`ui-team-badge`), barra
+lateral de 3 px de una fila, punto de leyenda. Nunca como fondo de un área mayor que un badge.
+Fondo suave derivado: `color-mix(in srgb, var(--team-color) 12%, white)`.
+
+Prohibido: gradientes, `accentColor` de personas como color de UI, hex literales en componentes.
+
+### 2.2 Tipografía
+
+- Familia: `--font: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`.
+  Números tabulares en fechas y contadores: `font-variant-numeric: tabular-nums`.
+- Única excepción: `--font-brand` (Playfair Display 600, Google Fonts) **solo** en el wordmark
+  `app-brand-logo`. No se usa en títulos ni en ningún otro texto.
+- Escala (solo estos valores):
+
+| Token | px | Uso |
+|---|---|---|
+| `--fs-xs` | 11 | Metadatos, etiquetas de sección en mayúsculas (`letter-spacing: .04em`), badges |
+| `--fs-sm` | 12 | Texto secundario de fila, chips |
+| `--fs-md` | 13 | **Base**: cuerpo, texto primario de fila, controles |
+| `--fs-lg` | 15 | Título de tarjeta / entidad expandida |
+| `--fs-xl` | 18 | Título de página (solo uno por vista) |
+| `--fs-2xl` | 24 | Cifra destacada (día del mes en tarjeta de próximo evento, KPI) |
+
+Pesos: 400 normal, 500 medio (labels de tab, nombre en fila), 600 seminegrita (títulos, cifras).
+Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-section__title` y
+`ui-eyebrow`. Sin cursivas salvo estados vacíos.
+
+### 2.3 Espaciado, tamaños, radios
+
+- Rejilla 4 px: `--sp-1: 4px` `--sp-2: 8px` `--sp-3: 12px` `--sp-4: 16px` `--sp-6: 24px` `--sp-8: 32px`.
+- Alturas: `--h-header: 48px` `--h-nav: 40px` `--h-row: 36px` `--h-control: 28px`.
+- Iconos: `--icon-sm: 16px` `--icon: 18px` `--icon-lg: 20px`. Avatar `--avatar: 24px`
+  (`--avatar-lg: 32px` solo en tarjeta de próximo evento).
+- Radios: `--r-sm: 4px` (chips, badges, inputs) `--r-md: 6px` (tarjetas, botones)
+  `--r-full: 999px` (avatares, contador circular).
+- Ancho máximo de contenido `--content-max: 1080px`; padding lateral de página `--sp-4`
+  (`--sp-3` en < 600 px).
+- Sombra: solo `--shadow-overlay` en menús/diálogos/banner PWA.
+- Movimiento: `--dur: 120ms` `--ease: cubic-bezier(.2, 0, 0, 1)`; solo `background-color`,
+  `border-color`, `color`, `opacity`. Sin `transform` en hover, sin animaciones de entrada.
+
+## 3. Layout
+
+```
+┌ header (48px, blanco, borde inferior) ──────────────────────────────┐
+│ ELIM│ Departament de Tineret · subtítulo         SÂM 12 SEP [RO|ES] │
+│ ARGANDA DEL REY (wordmark)                                          │
+├ tabs (40px, sticky, subrayado 2px primario) ────────────────────────┤
+│ ▣ Programare   Echipe   Tineri   Părinți   Reguli                    │
+├ main (bg --c-bg, padding 16, max 1080 centrado) ────────────────────┤
+│  secciones apiladas con gap 16                                      │
+├ footer (banda navy de marca) ───────────────────────────────────────┤
+│ ELIM (tone dark)  [emblema] Departament… © año · versión   [INEB]   │
+```
+
+- **Header**: `ui-header`. Wordmark `app-brand-logo size="sm"` (24 px) + divisor 1 px + título
+  15/600 y subtítulo 12 gris (oculto < 600 px). Derecha: fecha de hoy (solo ≥ 600 px) y control
+  segmentado de idioma. Sin imágenes, sin degradados.
+- **Marca** (`app-brand-logo`): el mismo wordmark tipográfico de MEDIA-ELIM ("ELIM" en
+  `--font-brand`, tracking 0.22em; "ARGANDA DEL REY" en oro, justificado al ancho del nombre).
+  Es la **única** representación de la iglesia; los PNG blancos (`logo-elim.png`) no se usan en
+  la UI. `tone="light"` sobre claro, `tone="dark"` sobre la banda navy.
+- **Tabs**: `ui-tabs` con `<a>` por pestaña; icono 18 + label 13/500; activo = texto primario
+  y subrayado 2 px; en < 600 px icono sobre label (11 px).
+- **Secciones** (`ui-section`): título en mayúsculas 11/600 gris con contador opcional
+  (`ui-count`) y acción a la derecha; contenido en `ui-card` o lista.
+- **Footer** (`ui-footer` + `footer.component.css`): la única superficie oscura de la app, en
+  `--c-brand-surface` (misma banda y misma estructura que MEDIA-ELIM). Cuatro columnas
+  (1 / 2 / 4 según ancho): **identidad** (wordmark `tone="dark" size="md"` + departamento),
+  **Implică-te** (padres → WhatsApp con mensaje preescrito), **Întrebări** (WhatsApp directo +
+  teléfono) y **Distribuie** (compartir + instalar app si el navegador lo permite; en iOS, el
+  gesto). Debajo, franja legal: emblema del departamento (28 px), © + versión, logo INEB (22 px)
+  como "Desarrollado por". Títulos de columna 11/600 mayúsculas en oro; texto 12 en
+  `--c-on-brand-muted`; botones `ui-btn--on-dark`. Los PNG (emblema, INEB) están pensados para
+  fondo oscuro: por eso viven aquí y en ningún otro sitio.
+- **Dock flotante** (`ui-dock`, `app-floating-dock`): pastilla fija abajo a la derecha, como en
+  MEDIA-ELIM, con **Compartir** y **WhatsApp** siempre, y **Volver arriba** solo tras bajar más de
+  1,5 pantallas. Se oculta cuando el footer está en pantalla (repite sus acciones) y se eleva
+  sobre el banner de instalación. Sin desplegable: tres acciones como máximo, un toque cada una.
+  Si alguna vez hiciera falta una cuarta, se sustituye por otra; no se apilan.
+- Responsive: mobile-first; puntos de corte `600px` y `900px`. Las listas ocupan siempre el
+  ancho completo; en ≥ 900 px las secciones cortas pueden ir a 2 columnas (`ui-grid-2`).
+
+## 4. Iconografía
+
+Material Symbols Rounded, **outlined** (`FILL 0, wght 400, GRAD 0, opsz 20`), clase `.icon`
+(18 px) con variantes `.icon--sm` (16) `.icon--lg` (20). Color heredado del texto
+(`currentColor`); en metadatos `--c-text-3`. Vocabulario fijo (no añadir sinónimos):
+
+| Concepto | Icono |
+|---|---|
+| Programare / fecha | `calendar_month`, `event` |
+| Equipo | `groups` |
+| Joven / persona | `person` |
+| Padres | `family_restroom` |
+| Reglas (pestaña) | `menu_book` |
+| Reglas — secciones | `star`, `checklist`, `schedule`, `cleaning_services`, `family_restroom` (en ese orden) |
+| Coordinador | `star` relleno (`.icon--fill.ui-star`, ámbar). Es la **única** marca de coordinador en filas y chips; el badge de texto "Coordonator" no se usa. |
+| Hora | `schedule` |
+| Comida (padres) | `restaurant` |
+| Personas estimadas | `group` |
+| Completado | `check_circle` |
+| Histórico / archivado | `history` |
+| Nota | `sticky_note_2` |
+| Expandir / contraer | `expand_more` / `expand_less` |
+| Ir a (enlace cruzado) | `chevron_right` |
+| Buscar / limpiar | `search` / `close` |
+| Calendario (menú descargar / suscribirse) | `event_available` |
+| Descargar .ics | `download` |
+| Compartir | `share` |
+| Volver arriba | `arrow_upward` |
+| Tema claro / oscuro | `light_mode` / `dark_mode` |
+| Instalar la app | `install_mobile` |
+| Implicarse (voluntariado) | `volunteer_activism` |
+| WhatsApp | glifo SVG propio de `app-whatsapp-button` (no hay símbolo en Material) |
+| Suscripción / sincronizar | `sync` |
+| Información / vacío | `info` |
+
+## 5. Estados
+
+- **Hover** de fila/botón: `background: var(--c-surface-2)`. **Activo**: `--c-surface-3`.
+- **Foco**: `outline: 2px solid var(--c-focus); outline-offset: 2px` en `:focus-visible`.
+- **Seleccionado / expandido**: borde izquierdo 3 px `--c-primary` en la fila cabecera.
+- **Hoy**: badge `ui-badge--success` con texto "Azi". **Esta semana**: fondo `--c-primary-soft`
+  del badge de días. **Completado**: icono `check_circle` en `--c-success`. **Inactivo /
+  archivado**: `opacity: .7` en la fila + badge neutro "Inactiv".
+- **Vacío** (`ui-empty`): icono `info` 20 px gris + una frase 13 px `--c-text-2`. Siempre que
+  una lista pueda quedar vacía, tiene su `ui-empty`.
+- **Deshabilitado**: `opacity: .5; pointer-events: none`.
+
+## 6. Catálogo de primitivas (`src/styles/components.css`)
+
+Todas globales, prefijo `ui-`, BEM ligero (`bloque__elemento--modificador`). Los componentes
+de feature solo componen estas clases y añaden CSS encapsulado para su disposición.
+
+| Clase | Qué es | Reglas |
+|---|---|---|
+| `ui-card` | Superficie blanca, borde 1 px, radio 6. `ui-card__header` (título 15/600 + acciones), `ui-card__body` (padding 12). | Sin sombra. Una tarjeta = una entidad o un bloque de sección. |
+| `ui-list` | Contenedor de filas; separador 1 px entre filas (`ui-list > * + *`). | Dentro de `ui-card` sin padding. |
+| `ui-row` | Fila de 36 px mín.: `ui-row__lead` (badge/avatar/fecha), zona principal y `ui-row__trail` (badges, acciones, chevron). La zona principal es **o bien** `div.ui-row__main` (no clicable) **o bien** `button.ui-row__btn` que contiene opcionalmente un avatar/badge y un `span.ui-row__text`. Tanto `__main` como `__text` son la columna `ui-row__title` (13/500) + `ui-row__meta` (12 gris). `ui-row--expandable` (hover), `ui-row--expanded` (fondo gris + barra izquierda primaria), `ui-row--muted` (pasado/inactivo). | Máx. 2 líneas de texto. Acciones secundarias como hijos de `__trail`, nunca dentro del botón. El `button` lleva `aria-expanded` si despliega. |
+| `ui-row-detail` | Bloque de detalle bajo una fila expandida: fondo `--c-surface-2`, padding 12, borde izquierdo 3 px primario. Contiene `ui-subsection` (`ui-subsection__title` 11 mayúsculas + contenido). Si el título despliega su contenido es un `<button class="ui-subsection__title" aria-expanded>`. Las `ui-list` internas van con fondo blanco y borde. | Un nivel de anidación como máximo. |
+| `ui-kv` | Par clave/valor compacto (`ui-kv__k` 96 px gris, `ui-kv__v`). | Datos de ficha ("Membru din 2026"). |
+| `ui-group-head` | Cabecera de grupo dentro de una `ui-list` (p. ej. mes): 28 px, fondo gris, 11 mayúsculas + `ui-count`. | |
+| `ui-star` | Estrella ámbar de coordinador (`icon icon--sm icon--fill ui-star`, con `title`). | Ver §4. |
+| `ui-date` | Bloque de fecha de 40 px: `ui-date__dow` (11 mayúsculas gris) sobre `ui-date__day` (15/600 tabular) y `ui-date__mon` opcional (11). | Alineado al inicio de la fila. |
+| `ui-team-badge` | Cuadrado 20×20, radio 4, fondo `--team-color`, número blanco 11/600. `--lg` 28 px (fila de equipo y tarjeta de próximo evento), `--muted` para composiciones históricas. Recibe el color por `[style.--team-color]="getTeamColor(team)"`. | Única forma de mostrar el color de un equipo. |
+| `ui-avatar` | Círculo 24 px, fondo `--c-surface-3`, iniciales 10/600 `--c-text-2`. `--lg` 32 px. | Siempre neutro. |
+| `ui-badge` | Etiqueta 11/500, altura 18, radio 4, padding 0 6. Variantes `--primary` (esta semana), `--success` (hoy), `--warning`, `--danger` (indisponible), `--team` (tinte del equipo), neutro por defecto. | Estados y contadores cortos ("Azi!", "5 zile", "8 mai · 2z", "istoric"). |
+| `ui-chip` | Como badge pero 24 px con icono opcional; clicable (`<button>`) para enlaces cruzados (p. ej. padre en una fila). | Máx. una fila de chips; si hay más de 4, "+N". |
+| `ui-count` | Contador numérico neutro junto a un título (`ui-badge--neutral`). | |
+| `ui-btn` | Botón 28 px, radio 6, 13/500. Variantes `--primary` (relleno), `--ghost` (texto, hover gris), `--icon` (28×28 solo icono, `aria-label` obligatorio). | Sin sombras. Acción primaria única por vista. |
+| `ui-segmented` | Grupo de botones pegados (idioma, filtros): 28 px, borde 1 px, activo con `--c-primary-soft` y texto primario, `aria-pressed`. | Sustituye a chips de filtro y a menús de 2–3 opciones. |
+| `ui-input` | Campo 28 px, borde `--c-border-strong`, radio 4, icono `search` a la izquierda. | Foco = borde primario. |
+| `ui-toolbar` | Barra de sección: búsqueda + segmentado + contador, `gap 8`, `flex-wrap`. | Encima de una lista. |
+| `ui-kpis` | Fila de KPIs: `ui-kpi` = cifra 18/600 tabular + label 11 gris; separados por borde. | Sin iconos ni colores. |
+| `ui-section` | Bloque de página: `ui-section__head` (título 11 mayúsculas + `ui-count` + acciones) y contenido. `gap 8`. | |
+| `ui-disclosure` | Botón de fila completa "Istoric programări (31) ▾" que abre una sección colapsada; `aria-expanded`. | Para históricos y archivos. |
+| `ui-times` | Trío inline de horas: `🕒 19:30 → 20:30 🍴 20:00`; la de comida con `ui-times__food-icon` + `ui-times__food` (ámbar). | Los dos únicos iconos permitidos dentro de la meta de una fila. |
+| `ui-note` | Nota en línea bajo una fila: icono `sticky_note_2` + texto 12 gris, fondo `--c-warning-soft` suave. | Solo si `observations` no está vacío. |
+| `ui-empty` | Estado vacío. | Ver §5. |
+| `ui-banner` | Barra flotante inferior (fija, máx. 520 px, sombra overlay): `ui-banner__img`/`__icon` + `ui-banner__text` (título 13/600 + `ui-banner__hint` 12 gris) + acciones `ui-btn`. | Solo para el aviso de instalación de la PWA. No hay barra de "nueva versión": la app se actualiza sola. |
+| `ui-dock` | Pastilla fija abajo-derecha con `ui-btn--icon` redondos de 36 px y `ui-dock__sep`; `--hidden` la oculta. | Ver §3. |
+| `ui-dialog` | `<dialog>` abierto con `showModal()`: `ui-dialog__panel` (máx. 520 px, sombra overlay) con `__header` (título 15/600 + cerrar), `__text`. Velo en `::backdrop`. Se cierra con Escape y clic en el velo. | Único patrón de modal. Contenido corto (compartir); un flujo largo es una pantalla. |
+| `ui-btn--on-dark` | Variante de `ui-btn` para la banda navy: contorno y texto claros. | Solo dentro del footer. |
+| `ui-menu` | Menú mínimo anclado a un botón: `ui-menu__panel` (260–320 px, sombra overlay, abajo-derecha) con `ui-menu__item` (icono + `ui-menu__title` 13/500 + `ui-menu__desc` 11 gris) y `ui-menu__note` opcional. Cierra con clic fuera y Escape. | Solo para 2–3 acciones (calendario). Más opciones = otra pantalla, no un menú. |
+| `ui-eyebrow` | Texto 11 mayúsculas gris con `letter-spacing`. | Etiquetas encima de un valor. |
+| `ui-link` | Enlace/botón de texto primario sin subrayado; subrayado en hover. | Enlaces cruzados en texto corrido. |
+
+**Patrones compuestos (componentes Angular en `shared/ui/`)**: `app-event-row` (fila de
+programación en cualquier contexto), `app-next-event-card` (tarjeta destacada del próximo
+evento/apoyo), `app-calendar-button` (descarga `.ics`). Ver [ARQUITECTURA.md](ARQUITECTURA.md).
+
+## 7. Reglas de escritura de CSS
+
+1. Tokens siempre (`var(--…)`); prohibido `!important` (si "hace falta", el selector está mal).
+2. Global: solo `tokens.css`, `base.css`, `layout.css`, `components.css`. Todo lo demás en el
+   `styleUrl` del componente (encapsulado), y solo para **disposición** de las primitivas.
+3. Un componente no redefine una primitiva `ui-*`; si necesita una variante, se añade en
+   `components.css` como modificador documentado aquí.
+4. Mobile-first: estilos base para móvil, `@media (min-width: 600px)` y `(min-width: 900px)`.
+5. Sin `px` mágicos: alturas y anchos salen de tokens; anchos de columna con `grid` y `minmax`.
+6. Nombres en inglés (`ui-row__title`), comentarios en español, breves y explicando el porqué.
+7. Un elemento `position: sticky` debe ser el **host** del componente (o hijo directo de
+   `app-root`): un sticky solo se pega dentro de su padre. `TabsNavComponent` aplica `ui-tabs`
+   con `host: { class }` por eso.
+8. Los destinos de scroll (`[id]`) llevan `scroll-margin-top: var(--sticky-offset)` (en
+   `base.css`) para no quedar bajo las tabs.
+
+## 8. Textos e i18n
+
+- Toda cadena visible pasa por `translate` (`assets/i18n/ro.json` y `es.json`, **ambos**).
+- Fechas: pipe `ldate` (`'full' | 'short' | 'dayMonth' | 'monthYear' | 'dow' | 'dowLetter' |
+  'mon'`). Nunca formatear fechas a mano ni con arrays de meses.
+- Tono: neutro y corto. Títulos en frase (no Title Case), sin signos de exclamación salvo "Azi!".
+- Números: `12 persoane`, `în 5 zile`, `acum 3 zile`; contadores como badge, no entre paréntesis.
+
+## 9. No hacer (lista negra)
+
+- Gradientes, sombras en tarjetas, `transform` en hover, animaciones de entrada.
+- Cabeceras de tarjeta coloreadas; fondos de color detrás de nombres de personas.
+- Tarjetas para listar colecciones; más de 2 líneas de texto por fila.
+- Iconos junto a cada dato de una fila; pastillas ("pills") con icono + texto para metadatos que
+  caben como texto gris.
+- Mayúsculas fuera de `ui-section__title` / `ui-eyebrow`; negritas 700.
+- `<div (click)>` para acciones: usar `<button>` / `<a>`.
+- Reintroducir librerías de UI (Material, PrimeNG, Bootstrap…). Las primitivas de §6 bastan;
+  si falta una, se añade a `components.css` y a esta guía.
+- Modo oscuro automático o avisos de "nueva versión": el tema lo elige el usuario y la app se
+  actualiza sola (decisiones del propietario).
+- Mostrar un dato que en los datos siempre está vacío (p. ej. `role`, `skills`, `available`)
+  sin condicional.

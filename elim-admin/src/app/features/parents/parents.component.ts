@@ -1,91 +1,52 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatRippleModule } from '@angular/material/core';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DataService } from '../../core/services/data.service';
 import { NavigationService } from '../../core/services/navigation.service';
-import { EventNotesService } from '../../core/services/event-notes.service';
-import { ScheduleEntry, getEntryTimes } from '../../core/models';
-import {
-  formatDate, formatDateShort, formatJoinedDate, daysBetween, isSameDay,
-} from '../../core/utils/date.utils';
-import { getTeamColor, getTeamNumber } from '../../core/utils/team.utils';
-import { CalendarSyncButtonComponent } from '../../shared/components/calendar-sync-button/calendar-sync-button.component';
+import { Parent } from '../../core/models';
+import { LDatePipe } from '../../core/i18n/ldate.pipe';
+import { entryKey } from '../../core/utils/schedule.utils';
+import { daysBetween, isSameDay } from '../../core/utils/date.utils';
+import { EventRowComponent } from '../../shared/ui/event-row/event-row.component';
+import { NextEventCardComponent } from '../../shared/ui/next-event-card/next-event-card.component';
+import { CalendarButtonComponent } from '../../shared/ui/calendar-button/calendar-button.component';
+import { WhatsappButtonComponent } from '../../shared/ui/whatsapp-button/whatsapp-button.component';
 
+/** Părinți: próximo apoyo, programaciones con padres y directorio de padres con perfil expandible. */
 @Component({
-  selector: 'app-parents',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule, MatButtonModule, MatCardModule, MatChipsModule,
-    MatDividerModule, MatRippleModule, MatTooltipModule, TranslateModule,
-    CalendarSyncButtonComponent,
-  ],
-  templateUrl: './parents.component.html',
+    selector: 'app-parents',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [NgTemplateOutlet, TranslatePipe, LDatePipe, EventRowComponent, NextEventCardComponent, CalendarButtonComponent, WhatsappButtonComponent],
+    templateUrl: './parents.component.html',
+    styleUrl: './parents.component.css'
 })
-export class ParentsComponent implements OnInit {
+export class ParentsComponent {
   protected readonly data = inject(DataService);
   protected readonly nav = inject(NavigationService);
-  protected readonly notes = inject(EventNotesService);
 
-  readonly expanded = signal<string | null>(null);
+  readonly expanded = this.nav.expandedParentId;
   readonly showArchived = signal(false);
-  readonly pastEventsOpen = signal<Set<string>>(new Set());
-  readonly isGlobalHistoryOpen = signal(false);
+  readonly archivedOpen = computed(() => {
+    const id = this.expanded();
+    return this.showArchived() || (!!id && this.data.inactiveParents.some(p => p.id === id));
+  });
+  readonly showPastGlobal = signal(false);
+  readonly pastOpen = signal<Set<string>>(new Set());
 
-  toggleGlobalHistory(): void {
-    this.isGlobalHistoryOpen.update(v => !v);
-  }
+  protected readonly entryKey = entryKey;
 
-  togglePastEvents(id: string, ev: Event): void {
-    ev.stopPropagation();
-    const next = new Set(this.pastEventsOpen());
+  toggle(p: Parent): void { this.nav.toggle('parent', p.id); }
+
+  togglePast(id: string): void {
+    const next = new Set(this.pastOpen());
     if (next.has(id)) next.delete(id); else next.add(id);
-    this.pastEventsOpen.set(next);
+    this.pastOpen.set(next);
   }
-  isPastEventsOpen(id: string): boolean { return this.pastEventsOpen().has(id); }
+  isPastOpen(id: string): boolean { return this.pastOpen().has(id); }
 
-  openNotes(entry: ScheduleEntry, ev: Event): void {
-    ev.stopPropagation();
-    this.notes.open(entry);
-  }
-
-  getTooltipNames(people: {id: string, name: string}[]): string {
-    return people.map(p => p.name).join(', ');
-  }
-
-  protected readonly formatDate = formatDate;
-  protected readonly formatDateShort = formatDateShort;
-  protected readonly formatJoinedDate = formatJoinedDate;
-  protected readonly getTeamColor = getTeamColor;
-  protected readonly getTeamNumber = getTeamNumber;
-  protected readonly getEntryTimes = getEntryTimes;
-
-  constructor() {
-    effect(() => {
-      const id = this.nav.expandedParentId();
-      if (id) {
-        this.expanded.set(id);
-        if (this.data.inactiveParents().some(p => p.id === id)) {
-          this.showArchived.set(true);
-        }
-        // Consumăm semnalul ca să nu ruleze de mai multe ori amprenta de extindere
-        this.nav.consumeExpanded('parent');
-      }
-    }, { allowSignalWrites: true });
-  }
-
-  ngOnInit(): void {
-    // Înlocuit cu efectul de mai sus pentru a suporta și click-urile din aceeași pagină.
-  }
-
-  toggle(id: string): void {
-    this.expanded.update(v => v === id ? null : id);
+  /** Nombres de los hijos en el departamento, para la línea secundaria de la fila. */
+  childrenNames(p: Parent): string {
+    return this.data.getYouthsForParent(p.id).map(l => l.youth.fullName).join(', ');
   }
 
   daysUntil(date: Date): number { return daysBetween(date, this.data.today); }

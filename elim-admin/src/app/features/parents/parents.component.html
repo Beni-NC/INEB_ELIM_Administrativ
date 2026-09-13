@@ -1,448 +1,229 @@
-@if (data.nextParentEvent; as nextSp) {
-  <mat-card class="next-event-card support-hero" appearance="outlined">
-    <div class="next-event-ribbon" [style.background-color]="getTeamColor(nextSp.entry.team)">
-      <span class="material-symbols-rounded">family_restroom</span>
-      {{ 'parents.next_support' | translate }}
-    </div>
-    <mat-card-content class="next-event-body">
-      <div class="next-event-header linkable-chip"
-           (click)="nav.goTo('team', nextSp.entry.team, $event)"
-           [matTooltip]="'parents.view_team_details' | translate"
-           style="cursor: pointer;">
-        <div class="next-event-team-badge" [style.background-color]="getTeamColor(nextSp.entry.team)">
-          {{ getTeamNumber(nextSp.entry.team) }}
-        </div>
-        <div class="next-event-info">
-          <div style="display: flex; align-items: baseline; gap: 8px;">
-            <h2 class="next-event-team-name">{{ nextSp.entry.team }}</h2>
-            <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">
-              • {{ 'parents.coord_short' | translate }} {{ nextSp.entry.coordinator }}
-            </span>
-          </div>
-          <p class="next-event-date" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <span>
-              <span class="material-symbols-rounded">event</span>
-              {{ formatDate(nextSp.entry.date) }}
-            </span>
-            <span style="display: flex; align-items: center; gap: 4px;">
-              <span class="material-symbols-rounded" style="font-size: 14px;">restaurant</span>
-              {{ nextSp.entry.estimatedPersons }}
-            </span>
-            <span style="display: flex; align-items: center; gap: 4px;">
-              <span class="material-symbols-rounded" style="font-size: 14px;">celebration</span>
-              {{ nextSp.entry.programType }}
-            </span>
-            <span style="display: flex; align-items: center; gap: 4px;" [matTooltip]="'parents.program_start' | translate">
-              <span class="material-symbols-rounded" style="font-size: 14px;">event</span>
-              {{ getEntryTimes(nextSp.entry).programStart }}
-            </span>
-            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; background: #fff7ed; color: #c2410c; font-weight: 700;"
-                  [matTooltip]="'parents.food_tooltip' | translate">
-              <span class="material-symbols-rounded" style="font-size: 14px;">restaurant_menu</span>
-              {{ 'parents.food' | translate }} {{ getEntryTimes(nextSp.entry).parentsFoodArrival }}
-            </span>
-          </p>
-        </div>
-      </div>
-
-      <div class="support-hero-people">
-        <div class="support-hero-label" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-          <span class="material-symbols-rounded">groups_2</span>
-          <span style="font-weight: 700;">{{ nextSp.people.length }} {{ 'parents.allocated' | translate }}</span>
-          <span style="color: #64748b; font-size: 0.8rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding-left: 4px; border-left: 1px solid rgba(0,0,0,0.1);">
-            <span class="material-symbols-rounded" style="font-size: 14px;">school</span>
-            {{ data.getYouthsForTeam(nextSp.entry.team).length }} {{ 'parents.youths_in' | translate: { team: nextSp.entry.team } }}
-          </span>
-        </div>
-        <div class="support-hero-people-list">
-          @for (sp of nextSp.people; track sp.id) {
-            <div class="support-hero-person linkable" 
-                 style="cursor: pointer;" 
-                 (click)="nav.goTo('parent', sp.id, $event)">
-              <span class="team-support-avatar lg"
-                    [style.background]="'linear-gradient(135deg, ' + sp.accentColor + ', ' + sp.accentColor + 'cc)'">{{ sp.initials }}</span>
-              <div>
-                <div class="support-hero-person-name">{{ sp.name }}</div>
-                @if (sp.role) {
-                  <div class="support-hero-person-role">{{ sp.role }}</div>
-                }
-              </div>
-              <app-calendar-sync-button class="parent-cal-sync"
-                                       [parentId]="sp.id" [parentName]="sp.name" [iconOnly]="true" />
-            </div>
-          }
-        </div>
-      </div>
-
-      @if (daysUntil(nextSp.entry.date) > 0) {
-        <div class="next-event-countdown">
-          <div class="countdown-circle" [style.border-color]="getTeamColor(nextSp.entry.team)">
-            <span class="countdown-number">{{ daysUntil(nextSp.entry.date) }}</span>
-            <span class="countdown-unit">{{ daysUntil(nextSp.entry.date) === 1 ? ('common.day' | translate) : ('common.days' | translate) }}</span>
-          </div>
-        </div>
-      }
-      @if (isToday(nextSp.entry.date)) {
-        <div class="next-event-countdown today-pulse">
-          <div class="countdown-circle today-circle">
-            <span class="material-symbols-rounded today-icon">priority_high</span>
-            <span class="countdown-unit">{{ 'common.today' | translate }}!</span>
-          </div>
-        </div>
-      }
-    </mat-card-content>
-  </mat-card>
+<!-- Próximo apoyo -->
+@if (data.nextParentEvent; as next) {
+  <app-next-event-card [entry]="next.entry" titleKey="parents.next_support" [showRoster]="false" />
 }
 
+<!-- Próximas programaciones con padres -->
 @if (data.upcomingParentEvents.length > 0) {
-  <div class="parents-upcoming-summary">
-    <div class="purs-header">
-      <span class="material-symbols-rounded">calendar_month</span>
-      {{ 'parents.upcoming_with_parents' | translate }}
-      <span class="purs-count">{{ data.upcomingParentEvents.length }}</span>
+  <section class="ui-section">
+    <div class="ui-section__head">
+      <h2 class="ui-section__title">{{ 'parents.upcoming_with_parents' | translate }}</h2>
+      <span class="ui-count">{{ data.upcomingParentEvents.length }}</span>
     </div>
-    <div class="purs-list">
-      @for (up of data.upcomingParentEvents; track up.entry.date.getTime() + '|' + up.entry.team) {
-        <div class="purs-item" [style.--accent]="getTeamColor(up.entry.team)" (click)="nav.goTo('team', up.entry.team)">
-          <div class="purs-date">
-            <span class="purs-day">{{ up.entry.date.getDate() }}</span>
-            <span class="purs-mo">{{ formatDateShort(up.entry.date).split(' ')[1] }}</span>
-          </div>
-          <div class="purs-bar"></div>
-          <div class="purs-info">
-            <span class="purs-team">
-              {{ up.entry.team }}
-            </span>
-            <div class="purs-people-names">
-              @for (p of up.people; track p.id) {
-                <span class="purs-person linkable-chip"
-                      style="cursor: pointer;"
-                      (click)="nav.goTo('parent', p.id, $event)">
-                  <span class="material-symbols-rounded">person</span>
-                  {{ p.name }}
-                </span>
-              }
-            </div>
-          </div>
-          <div class="purs-badge">{{ 'parents.in_days_short' | translate: { n: daysUntil(up.entry.date) } }}</div>
-          <app-calendar-sync-button class="purs-cal-sync"
-                                   [event]="up.entry" [iconOnly]="true" />
-        </div>
-      }
+    <div class="ui-card">
+      <div class="ui-list">
+        @for (pe of data.upcomingParentEvents; track entryKey(pe.entry)) {
+          <app-event-row [entry]="pe.entry" [showMonth]="true" />
+        }
+      </div>
     </div>
-  </div>
+  </section>
 }
 
+<!-- Directorio -->
+<section class="ui-section">
+  <div class="ui-section__head">
+    <h2 class="ui-section__title">{{ 'parents.support_parents' | translate }}</h2>
+    <span class="ui-count">{{ data.activeParents.length }}</span>
+  </div>
+  <p class="muted parents__intro">{{ 'parents.support_intro' | translate }}</p>
+  <div class="ui-card">
+    @if (data.activeParents.length === 0) {
+      <div class="ui-empty"><span class="icon" aria-hidden="true">info</span>{{ 'parents.empty' | translate }}</div>
+    } @else {
+      <div class="ui-list">
+        @for (p of data.activeParents; track p.id) {
+          <ng-container *ngTemplateOutlet="parentRow; context: { $implicit: p }" />
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Histórico de programaciones con padres -->
 @if (data.pastParentEvents.length > 0) {
-  <div class="parents-upcoming-summary parents-history-summary">
-    <div class="purs-header" style="cursor: pointer; user-select: none;" (click)="toggleGlobalHistory()">
-      <span class="material-symbols-rounded">history</span>
+  <section class="ui-section">
+    <button type="button" class="ui-disclosure" (click)="showPastGlobal.set(!showPastGlobal())" [attr.aria-expanded]="showPastGlobal()">
+      <span class="icon" aria-hidden="true">history</span>
       {{ 'parents.history_with_parents' | translate }}
-      <span class="purs-count">{{ data.pastParentEvents.length }}</span>
-      <span class="material-symbols-rounded" style="margin-left: auto; color: #78909c;">
-        {{ isGlobalHistoryOpen() ? 'expand_less' : 'expand_more' }}
-      </span>
-    </div>
-    
-    @if (isGlobalHistoryOpen()) {
-      <div class="purs-list">
-        @for (up of data.pastParentEvents; track up.entry.date.getTime() + '|' + up.entry.team) {
-          <div class="purs-item purs-item-past" [style.--accent]="getTeamColor(up.entry.team)" (click)="nav.goTo('team', up.entry.team)">
-            <div class="purs-date">
-              <span class="purs-day">{{ up.entry.date.getDate() }}</span>
-              <span class="purs-mo">{{ formatDateShort(up.entry.date).split(' ')[1] }}</span>
-            </div>
-            <div class="purs-bar"></div>
-            <div class="purs-info">
-              <span class="purs-team">
-                {{ up.entry.team }}
-              </span>
-              <div class="purs-people-names">
-                @for (p of up.people; track p.id) {
-                  <span class="purs-person linkable-chip"
-                        style="cursor: pointer;"
-                        (click)="nav.goTo('parent', p.id, $event)">
-                    <span class="material-symbols-rounded">person</span>
-                    {{ p.name }}
-                  </span>
-                }
-              </div>
-            </div>
-            <div class="purs-badge purs-badge-past">{{ 'parents.days_ago_short' | translate: { n: -daysUntil(up.entry.date) } }}</div>
-          </div>
-        }
-      </div>
-    }
-  </div>
-}
-
-<h3 class="section-heading">
-  <span class="material-symbols-rounded heading-icon">diversity_3</span>
-  {{ 'parents.support_parents' | translate }}
-  <span class="heading-count">{{ data.activeParents().length }}</span>
-</h3>
-<p class="support-intro">
-  {{ 'parents.support_intro' | translate }}
-</p>
-
-<div class="support-grid">
-  @for (sp of data.activeParents(); track sp.id) {
-    <ng-container *ngTemplateOutlet="parentCardTpl; context: { $implicit: sp }"></ng-container>
-  }
-</div>
-
-<ng-template #parentCardTpl let-sp>
-    <mat-card class="support-card"
-              [id]="'card-parent-' + sp.id"
-              [class.expanded]="expanded() === sp.id"
-              [class.is-inactive]="sp.active === false"
-              appearance="outlined"
-              (click)="toggle(sp.id)"
-              >
-      <div class="support-card-header"
-           [style.background]="sp.active === false
-             ? 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)'
-             : 'linear-gradient(135deg, ' + sp.accentColor + ' 0%, ' + sp.accentColor + 'cc 100%)'">
-        <div class="support-avatar-lg">{{ sp.initials }}</div>
-        <div class="support-header-text">
-          <span class="support-name">{{ sp.name }}</span>
-          @if (sp.active === false) {
-            <span class="support-role-pill inactive-pill">
-              <span class="material-symbols-rounded">history</span>
-              {{ 'parents.inactive' | translate }}
-            </span>
-          } @else if (sp.role) {
-            <span class="support-role-pill">
-              <span class="material-symbols-rounded">work</span>
-              {{ sp.role }}
-            </span>
-          }
-        </div>
-        @if (sp.active !== false) {
-          <span class="support-status-dot"
-                [class.offline]="!sp.available"
-                [matTooltip]="sp.available ? ('parents.available' | translate) : ('parents.unavailable' | translate)"></span>
-        }
-      </div>
-
-      @if (sp.active === false) {
-        <div class="team-next-banner youth-inactive-banner">
-          <span class="material-symbols-rounded">event_busy</span>
-          <span>
-            {{ 'parents.inactive' | translate }}@if (sp.inactiveSince) { {{ 'parents.inactive_since' | translate }} <strong>{{ formatDateShort(sp.inactiveSince) }}</strong> }
-          </span>
-        </div>
-      } @else {
-        @if (data.getNextEventForParent(sp.id); as nextEv) {
-        <div class="team-next-banner support-next-banner">
-          <span class="material-symbols-rounded">event_available</span>
-          <span>{{ 'parents.next_short' | translate }} <strong>{{ nextEv.team }}</strong> &mdash; {{ formatDateShort(nextEv.date) }}</span>
-          @if (!isToday(nextEv.date)) {
-            <span class="tl-days-badge support-days-badge"
-                  [style.background-color]="getTeamColor(nextEv.team) + '22'"
-                  [style.color]="getTeamColor(nextEv.team)">
-              {{ daysUntil(nextEv.date) }}{{ 'common.day_letter' | translate }}
-            </span>
-          } @else {
-            <span class="tl-days-badge today-badge">{{ 'parents.today_excl' | translate }}</span>
-          }
-          <app-calendar-sync-button class="parent-cal-sync"
-                                   [parentId]="sp.id" [parentName]="sp.name" [iconOnly]="true" />
-        </div>
-      } @else {
-        <div class="team-next-banner support-no-assignment">
-          <span class="material-symbols-rounded">event_busy</span>
-          {{ 'parents.no_team' | translate }}
-        </div>
-        }
-      }
-
-      @if (expanded() === sp.id) {
-        <mat-card-content class="support-body" (click)="$event.stopPropagation()">
-          @if (sp.skills.length > 0) {
-            <div class="support-section-label">
-              <span class="material-symbols-rounded">stars</span>
-              {{ 'parents.skills' | translate }}
-            </div>
-            <mat-chip-set class="support-skills">
-              @for (s of sp.skills; track s) {
-                <mat-chip class="support-skill-chip" [style.border-color]="sp.accentColor + '55'">{{ s }}</mat-chip>
-              }
-            </mat-chip-set>
-          }
-
-          @if (data.getYouthsForParent(sp.id).length > 0) {
-            <div class="support-section-label">
-              <span class="material-symbols-rounded">escalator_warning</span>
-              {{ 'parents.children' | translate }}
-            </div>
-            <div class="parent-children-list">
-              @for (link of data.getYouthsForParent(sp.id); track link.youth.id) {
-                <div class="parent-child-row" (click)="nav.goTo('youth', link.youth.id, $event)">
-                  <span class="team-support-avatar"
-                        [style.background]="'linear-gradient(135deg, ' + link.youth.accentColor + ', ' + link.youth.accentColor + 'cc)'">
-                    {{ link.youth.initials }}
-                  </span>
-                  <div class="parent-child-info">
-                    <span class="parent-child-name">{{ link.youth.fullName }}</span>
-                    <span class="parent-child-rel">{{ link.relationship }}</span>
-                  </div>
-                  <span class="material-symbols-rounded parent-child-arrow">chevron_right</span>
-                </div>
-              }
-            </div>
-          }
-
-          @if (data.getUpcomingEventsForParent(sp.id).length > 0) {
-            <div class="support-section-label">
-              <span class="material-symbols-rounded">event_upcoming</span>
-              {{ 'parents.upcoming_schedules' | translate }}
-              <span class="section-count-pill">{{ data.getUpcomingEventsForParent(sp.id).length }}</span>
-            </div>
-            <div class="event-history-list">
-              @for (e of data.getUpcomingEventsForParent(sp.id); track e.date.getTime() + e.team) {
-                <div class="event-history-row" [style.border-left-color]="getTeamColor(e.team)">
-                  <div class="event-history-date">
-                    <span class="event-history-day">{{ e.date.getDate() }}</span>
-                    <span class="event-history-mo">{{ formatDateShort(e.date).split(' ')[1] }}</span>
-                  </div>
-                  <div class="event-history-info">
-                    <span class="event-history-team">
-                      <span class="team-number-circle event-history-mini"
-                            [style.background-color]="getTeamColor(e.team)">
-                        {{ getTeamNumber(e.team) }}
-                      </span>
-                      {{ e.team }}
-                    </span>
-                    <span class="event-history-type">{{ e.programType }}</span>
-                  </div>
-                  @if (isToday(e.date)) {
-                    <span class="event-history-badge today-badge">{{ 'parents.today_excl' | translate }}</span>
-                  } @else {
-                    <span class="event-history-badge"
-                          [style.background-color]="getTeamColor(e.team) + '22'"
-                          [style.color]="getTeamColor(e.team)">
-                      {{ 'parents.in_days_short' | translate: { n: daysUntil(e.date) } }}
-                    </span>
-                  }
-                  @if (notes.hasNotes(e)) {
-                    <div class="sr-note">
-                      <span class="material-symbols-rounded">sticky_note_2</span>
-                      <span class="sr-note-text">{{ e.observations }}</span>
-                    </div>
-                  }
-                </div>
-              }
-            </div>
-          }
-
-          @if (data.getPastEventsForParent(sp.id).length > 0) {
-            <div class="support-section-label history-toggle-label"
-                 (click)="togglePastEvents(sp.id, $event)"
-                 role="button">
-              <span class="material-symbols-rounded">restaurant_menu</span>
-              {{ 'parents.schedule_history' | translate }}
-              <span class="section-count-pill">{{ data.getPastEventsForParent(sp.id).length }}</span>
-              <span class="material-symbols-rounded history-toggle-chevron">
-                {{ isPastEventsOpen(sp.id) ? 'expand_less' : 'expand_more' }}
-              </span>
-            </div>
-            @if (isPastEventsOpen(sp.id)) {
-              <div class="event-history-list past-events-list">
-                @for (e of data.getPastEventsForParent(sp.id); track e.date.getTime() + e.team) {
-                  <div class="event-history-row past"
-                       [class.is-historical-comp]="data.isHistoricalEvent(e)"
-                       [class.linkable]="data.isHistoricalEvent(e)"
-                       [style.border-left-color]="getTeamColor(e.team) + '99'"
-                       [matTooltip]="data.isHistoricalEvent(e) ? ('teams.view_team_history_composition' | translate) : ''"
-                       (click)="data.isHistoricalEvent(e) && nav.goToHistoricalTeam(data.getHistoryKeyForEvent(e)!, $event)">
-                    <div class="event-history-date">
-                      <span class="event-history-day">{{ e.date.getDate() }}</span>
-                      <span class="event-history-mo">{{ formatDateShort(e.date).split(' ')[1] }}</span>
-                    </div>
-                    <div class="event-history-info">
-                      <span class="event-history-team">
-                        <span class="team-number-circle event-history-mini"
-                              [style.background-color]="getTeamColor(e.team) + 'cc'">
-                          {{ getTeamNumber(e.team) }}
-                        </span>
-                        {{ e.team }}
-                        @if (data.isHistoricalEvent(e)) {
-                          <span class="historical-comp-pill inline"
-                                [matTooltip]="'teams.composition_ended_on' | translate: { date: formatDateShort(data.getCompositionForEvent(e)!.end!) }">
-                            <span class="material-symbols-rounded">history</span>
-                            {{ 'teams.history_short' | translate }}
-                          </span>
-                        }
-                      </span>
-                      <span class="event-history-type">{{ e.programType }}</span>
-                    </div>
-                    <span class="event-history-year">{{ e.date.getFullYear() }}</span>
-                    @if (notes.hasNotes(e)) {
-                      <div class="sr-note">
-                        <span class="material-symbols-rounded">sticky_note_2</span>
-                        <span class="sr-note-text">{{ e.observations }}</span>
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-            }
-          }
-
-          <div class="support-meta-row">
-            <div class="support-meta-pill">
-              <span class="material-symbols-rounded">how_to_reg</span>
-              {{ 'parents.member_from' | translate: { date: formatJoinedDate(sp.joinedDate) } }}
-            </div>
-            @if (sp.active === false && sp.inactiveSince) {
-              <div class="support-meta-pill inactive-personal-pill">
-                <span class="material-symbols-rounded">event_busy</span>
-                {{ 'parents.inactive_from' | translate: { date: formatDateShort(sp.inactiveSince) } }}
-              </div>
-            }
-          </div>
-
-          @if (sp.active === false && sp.inactiveReason) {
-            <div class="support-notes inactive-reason-notes">
-              <span class="material-symbols-rounded">info</span>
-              <p>{{ sp.inactiveReason }}</p>
-            </div>
-          }
-
-          @if (sp.notes) {
-            <div class="support-notes">
-              <span class="material-symbols-rounded">sticky_note_2</span>
-              <p>{{ sp.notes }}</p>
-            </div>
-          }
-        </mat-card-content>
-      }
-
-      <div class="team-expand-hint">
-        <span class="material-symbols-rounded">{{ expanded() === sp.id ? 'expand_less' : 'expand_more' }}</span>
-        {{ expanded() === sp.id ? ('parents.close_profile' | translate) : ('parents.view_profile' | translate) }}
-      </div>
-    </mat-card>
-</ng-template>
-
-<!-- ── Foşti părinţi de sprijin (arhivă) ── -->
-@if (data.inactiveParents().length > 0) {
-  <mat-divider class="past-divider"></mat-divider>
-  <div class="past-section">
-    <button mat-button class="past-toggle" type="button"
-            (click)="showArchived.set(!showArchived())">
-      <span class="material-symbols-rounded">{{ showArchived() ? 'expand_less' : 'history' }}</span>
-      {{ 'parents.former_support' | translate }} ({{ data.inactiveParents().length }})
-      <span class="material-symbols-rounded">{{ showArchived() ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</span>
+      <span class="ui-count">{{ data.pastParentEvents.length }}</span>
+      <span class="icon ui-disclosure__chevron" aria-hidden="true">{{ showPastGlobal() ? 'expand_less' : 'expand_more' }}</span>
     </button>
+    @if (showPastGlobal()) {
+      <div class="ui-disclosure__panel">
+        <div class="ui-list">
+          @for (pe of data.pastParentEvents; track entryKey(pe.entry)) {
+            <app-event-row [entry]="pe.entry" [past]="true" [showMonth]="true" [showYear]="true" />
+          }
+        </div>
+      </div>
+    }
+  </section>
+}
 
-    @if (showArchived()) {
-      <div class="support-grid archived-grid">
-        @for (sp of data.inactiveParents(); track sp.id) {
-          <ng-container *ngTemplateOutlet="parentCardTpl; context: { $implicit: sp }"></ng-container>
+<!-- Antiguos padres de apoyo -->
+@if (data.inactiveParents.length > 0) {
+  <section class="ui-section">
+    <button type="button" class="ui-disclosure" (click)="showArchived.set(!archivedOpen())" [attr.aria-expanded]="archivedOpen()">
+      <span class="icon" aria-hidden="true">history</span>
+      {{ 'parents.former_support' | translate }}
+      <span class="ui-count">{{ data.inactiveParents.length }}</span>
+      <span class="icon ui-disclosure__chevron" aria-hidden="true">{{ archivedOpen() ? 'expand_less' : 'expand_more' }}</span>
+    </button>
+    @if (archivedOpen()) {
+      <div class="ui-disclosure__panel">
+        <div class="ui-list">
+          @for (p of data.inactiveParents; track p.id) {
+            <ng-container *ngTemplateOutlet="parentRow; context: { $implicit: p }" />
+          }
+        </div>
+      </div>
+    }
+  </section>
+}
+
+<!-- Llamada a implicarse: más hijos u otros padres que quieran ayudar → WhatsApp del responsable -->
+<section class="ui-card parents__cta">
+  <div class="ui-card__body parents__cta-body">
+    <span class="icon icon--lg faint" aria-hidden="true">volunteer_activism</span>
+    <div class="parents__cta-text">
+      <h2 class="ui-card__title">{{ 'contact.parents_card_title' | translate }}</h2>
+      <p class="muted">{{ 'contact.involve_text' | translate }}</p>
+    </div>
+    <app-whatsapp-button [label]="'contact.involve_label' | translate" [message]="'contact.involve_message' | translate" />
+  </div>
+</section>
+
+<!-- Fila + perfil de un padre (activo o archivado) -->
+<ng-template #parentRow let-p>
+  <div [id]="'card-parent-' + p.id">
+    <div class="ui-row ui-row--expandable"
+         [class.ui-row--expanded]="expanded() === p.id"
+         [class.ui-row--muted]="p.active === false">
+      <div class="ui-row__lead"><span class="ui-avatar">{{ p.initials }}</span></div>
+      <button type="button" class="ui-row__btn" (click)="toggle(p)" [attr.aria-expanded]="expanded() === p.id" [attr.aria-controls]="'detail-parent-' + p.id">
+        <span class="ui-row__text">
+          <span class="ui-row__title">
+            <span class="truncate">{{ p.name }}</span>
+            @if (p.active === false) {
+              <span class="ui-badge">{{ 'parents.inactive' | translate }}</span>
+            } @else if (!p.available) {
+              <span class="ui-badge ui-badge--danger">{{ 'parents.unavailable' | translate }}</span>
+            }
+            @if (p.role) { <span class="ui-badge">{{ p.role }}</span> }
+          </span>
+          <span class="ui-row__meta">
+            @if (childrenNames(p); as names) {
+              <span class="truncate">{{ names }}</span>
+            } @else {
+              <span class="faint">{{ 'parents.no_children' | translate }}</span>
+            }
+          </span>
+        </span>
+      </button>
+      <div class="ui-row__trail">
+        @if (data.getNextEventForParent(p.id); as next) {
+          @if (isToday(next.date)) {
+            <span class="ui-badge ui-badge--success">{{ 'common.today_excl' | translate }}</span>
+          } @else {
+            <span class="ui-badge" [class.ui-badge--primary]="daysUntil(next.date) <= 7" [title]="'parents.next_short' | translate">
+              {{ next.date | ldate:'dayMonth' }} · {{ daysUntil(next.date) }}{{ 'common.day_letter' | translate }}
+            </span>
+          }
+          <app-calendar-button [parentId]="p.id" [parentName]="p.name" />
+        }
+        <span class="icon faint" aria-hidden="true">{{ expanded() === p.id ? 'expand_less' : 'expand_more' }}</span>
+      </div>
+    </div>
+
+    @if (expanded() === p.id) {
+      <div class="ui-row-detail" [id]="'detail-parent-' + p.id">
+        <div class="ui-subsection">
+          <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.member_from' | translate }}</span><span class="ui-kv__v">{{ p.joinedDate | ldate:'monthYear' }}</span></div>
+          @if (p.active === false && p.inactiveSince) {
+            <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.inactive_from' | translate }}</span><span class="ui-kv__v">{{ p.inactiveSince | ldate:'short' }}</span></div>
+          }
+          @if (p.inactiveReason) {
+            <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.inactive_reason' | translate }}</span><span class="ui-kv__v">{{ p.inactiveReason }}</span></div>
+          }
+          @if (p.phone) {
+            <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.phone' | translate }}</span><a class="ui-kv__v num" [href]="'tel:' + p.phone">{{ p.phone }}</a></div>
+          }
+          @if (p.email) {
+            <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.email' | translate }}</span><a class="ui-kv__v" [href]="'mailto:' + p.email">{{ p.email }}</a></div>
+          }
+        </div>
+
+        @if (p.skills.length > 0) {
+          <div class="ui-subsection">
+            <span class="ui-subsection__title">{{ 'parents.skills' | translate }}</span>
+            <div class="ui-chip-group">
+              @for (s of p.skills; track s) { <span class="ui-chip">{{ s }}</span> }
+            </div>
+          </div>
+        }
+
+        <!-- Hijos en el departamento -->
+        @if (data.getYouthsForParent(p.id).length > 0) {
+          <div class="ui-subsection">
+            <span class="ui-subsection__title">{{ 'parents.children' | translate }} <span class="ui-count">{{ data.getYouthsForParent(p.id).length }}</span></span>
+            <div class="ui-list">
+              @for (link of data.getYouthsForParent(p.id); track link.youth.id) {
+                <div class="ui-row ui-row--expandable">
+                  <button type="button" class="ui-row__btn" (click)="nav.goTo('youth', link.youth.id, $event)" [title]="'youths.view_profile' | translate">
+                    <span class="ui-avatar">{{ link.youth.initials }}</span>
+                    <span class="ui-row__text">
+                      <span class="ui-row__title">
+                        <span class="truncate">{{ link.youth.fullName }}</span>
+                        @if (data.isActiveCoordinator(link.youth.id)) { <span class="icon icon--sm icon--fill ui-star" [title]="'common.coordinator' | translate" aria-hidden="true">star</span> }
+                      </span>
+                      <span class="ui-row__meta">{{ link.relationship }}</span>
+                    </span>
+                  </button>
+                  <div class="ui-row__trail"><span class="icon faint" aria-hidden="true">chevron_right</span></div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Próximas programaciones -->
+        @if (data.getUpcomingEventsForParent(p.id).length > 0) {
+          <div class="ui-subsection">
+            <span class="ui-subsection__title">{{ 'parents.upcoming_schedules' | translate }} <span class="ui-count">{{ data.getUpcomingEventsForParent(p.id).length }}</span></span>
+            <div class="ui-list">
+              @for (e of data.getUpcomingEventsForParent(p.id); track entryKey(e)) {
+                <app-event-row [entry]="e" [showMonth]="true" [showParents]="false" [showCalendar]="false" />
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Histórico -->
+        @if (data.getPastEventsForParent(p.id).length > 0) {
+          <div class="ui-subsection">
+            <button type="button" class="ui-subsection__title" (click)="togglePast(p.id)" [attr.aria-expanded]="isPastOpen(p.id)">
+              <span class="icon icon--sm" aria-hidden="true">history</span>
+              {{ 'parents.schedule_history' | translate }} <span class="ui-count">{{ data.getPastEventsForParent(p.id).length }}</span>
+              <span class="icon icon--sm" aria-hidden="true">{{ isPastOpen(p.id) ? 'expand_less' : 'expand_more' }}</span>
+            </button>
+            @if (isPastOpen(p.id)) {
+              <div class="ui-list">
+                @for (e of data.getPastEventsForParent(p.id); track entryKey(e)) {
+                  <app-event-row [entry]="e" [past]="true" [showMonth]="true" [showYear]="true" [showParents]="false" />
+                }
+              </div>
+            }
+          </div>
+        }
+
+        @if (p.notes) {
+          <div class="ui-note">
+            <span class="icon" aria-hidden="true">sticky_note_2</span>
+            <span>{{ p.notes }}</span>
+          </div>
         }
       </div>
     }
   </div>
-}
+</ng-template>

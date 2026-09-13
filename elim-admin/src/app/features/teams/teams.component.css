@@ -1,0 +1,5 @@
+:host { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+.team__coord { display: inline-flex; align-items: center; gap: 3px; min-width: 0; }
+.team__star { color: var(--c-warning); }
+.team__next { max-width: 100%; }

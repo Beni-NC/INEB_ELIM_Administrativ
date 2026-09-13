@@ -1,54 +1,8 @@
-/* Centralized localization & theming constants. Frozen for safety. */
-
-export const DAYS_LONG = Object.freeze(
-  ['Duminică', 'Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă']
-);
-export const DAYS_SHORT = Object.freeze(
-  ['DUM', 'LUN', 'MAR', 'MIE', 'JOI', 'VIN', 'SÂM']
-);
-export const DAYS_LETTER = Object.freeze(['D', 'L', 'M', 'M', 'J', 'V', 'S']);
-
-export const MONTHS_LONG = Object.freeze([
-  'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
-  'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie',
-]);
-export const MONTHS_LONG_LOWER = Object.freeze([
-  'ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie',
-  'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie',
-]);
-export const MONTHS_SHORT = Object.freeze(
-  ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-);
-export const MONTHS_SHORT_UPPER = Object.freeze(
-  ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
-);
-
-export const TEAM_COLORS: Readonly<Record<string, string>> = Object.freeze({
-  'Echipa 1': '#1565c0',
-  'Echipa 2': '#6a1b9a',
-  'Echipa 3': '#2e7d32',
-  'Echipa 4': '#e65100',
-  'Echipa 5': '#c62828',
-  'Echipa 6': '#00838f',
-  'Echipa 7': '#ad1457',
-});
-
-export const TEAM_ICONS: Readonly<Record<string, string>> = Object.freeze({
-  'Echipa 1': 'looks_one',
-  'Echipa 2': 'looks_two',
-  'Echipa 3': 'looks_3',
-  'Echipa 4': 'looks_4',
-  'Echipa 5': 'looks_5',
-  'Echipa 6': 'looks_6',
-  'Echipa 7': 'filter_7',
-});
-
-export const RULE_ICONS = Object.freeze(
-  ['person', 'checklist', 'schedule', 'cleaning_services']
-);
+/** Constantes de la aplicación (rutas, colores de equipo, iconos). Congeladas. */
 
 export const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
+/** Rutas de las pestañas (el orden define el swipe y la barra de navegación). */
 export const TAB_PATHS = Object.freeze({
   schedule: '',
   teams: 'echipe',
@@ -57,6 +11,22 @@ export const TAB_PATHS = Object.freeze({
   rules: 'reguli',
 });
 
-export const TAB_ORDER = Object.freeze(
-  ['', 'echipe', 'tineri', 'parinti', 'reguli'] as const
-);
+export const TAB_ORDER: readonly string[] = Object.freeze([
+  TAB_PATHS.schedule, TAB_PATHS.teams, TAB_PATHS.youths, TAB_PATHS.parents, TAB_PATHS.rules,
+]);
+
+/**
+ * Color de identidad de cada equipo. Se resuelve al token CSS (`--team-N` en tokens.css)
+ * para que la paleta viva en un único sitio; la UI lo aplica vía `[style.--team-color]`.
+ */
+export const TEAM_COLORS: Readonly<Record<string, string>> = Object.freeze({
+  'Echipa 1': 'var(--team-1)',
+  'Echipa 2': 'var(--team-2)',
+  'Echipa 3': 'var(--team-3)',
+  'Echipa 4': 'var(--team-4)',
+  'Echipa 5': 'var(--team-5)',
+  'Echipa 6': 'var(--team-6)',
+  'Echipa 7': 'var(--team-7)',
+});
+
+export const TEAM_COLOR_DEFAULT = 'var(--team-default)';
