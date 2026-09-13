@@ -10,13 +10,12 @@ import { daysBetween, isSameDay } from '../../core/utils/date.utils';
 import { EventRowComponent } from '../../shared/ui/event-row/event-row.component';
 import { NextEventCardComponent } from '../../shared/ui/next-event-card/next-event-card.component';
 import { CalendarButtonComponent } from '../../shared/ui/calendar-button/calendar-button.component';
-import { WhatsappButtonComponent } from '../../shared/ui/whatsapp-button/whatsapp-button.component';
 
 /** Părinți: próximo apoyo, programaciones con padres y directorio de padres con perfil expandible. */
 @Component({
     selector: 'app-parents',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgTemplateOutlet, TranslatePipe, LDatePipe, EventRowComponent, NextEventCardComponent, CalendarButtonComponent, WhatsappButtonComponent],
+    imports: [NgTemplateOutlet, TranslatePipe, LDatePipe, EventRowComponent, NextEventCardComponent, CalendarButtonComponent],
     templateUrl: './parents.component.html',
     styleUrl: './parents.component.css'
 })

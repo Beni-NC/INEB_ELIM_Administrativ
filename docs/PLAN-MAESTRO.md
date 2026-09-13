@@ -166,10 +166,10 @@ verdad (feeds publicados en el deploy); quien la añada a su calendario recibir�
 - Scripts legacy eliminados; `karma`/`jasmine` sustituidos por vitest.
 
 ### Entregado (2026-09-13, cuarto bloque) — `v.2.3.0`
-- **Footer tipo MEDIA-ELIM**: cuatro columnas que se autodimensionan (1/2/4 según ancho) —
-  identidad, *Implică-te* (padres con más hijos u otros padres que quieran ayudar → WhatsApp
-  con mensaje preescrito), *Întrebări* (WhatsApp directo al responsable + teléfono),
-  *Distribuie* (compartir + instalar la app) — y franja legal con emblema, © y INEB (logo
+- **Footer tipo MEDIA-ELIM**: tres columnas que se autodimensionan (1/3 según ancho) —
+  identidad, *Contact* (un único botón de WhatsApp al responsable para preguntas e implicarse:
+  hijos u otros padres que quieran ayudar; mensaje preescrito + teléfono), *Distribuie*
+  (compartir + instalar la app) — y franja legal con emblema, © y INEB (logo
   reescalado de 6000 px a 320 px; `logo-elim.png` y `logo_admin-trans-512.png` eliminados por no
   usarse).
 - **Dock flotante** abajo-derecha (patrón MEDIA-ELIM): Compartir + WhatsApp siempre; Volver
@@ -177,7 +177,9 @@ verdad (feeds publicados en el deploy); quien la añada a su calendario recibir�
   con ≤ 3 acciones un toque extra solo esconde lo que se busca).
 - **Compartir**: hoja nativa del sistema en móvil; en escritorio `<dialog>` con WhatsApp,
   Telegram, e-mail y copiar enlace (sin QR, por indicación del propietario).
-- **Sección para padres** al final de Părinți ("Vrei să te implici?") con el mismo botón.
+- Contacto **unificado**: se descartó repetir el botón de WhatsApp (tarjeta en Părinți + dos
+  columnas del footer + dock) — mismo número, mismo destino. Regla: una sola entrada visible en
+  cada momento (dock al navegar, footer al llegar abajo).
 - **Modo oscuro manual**: botón en la cabecera, guardado en el dispositivo, claro por defecto;
   eliminado el automático por `prefers-color-scheme`.
 - Botón de calendario **global** ("Toate programările" → `toate.ics`) que faltaba.

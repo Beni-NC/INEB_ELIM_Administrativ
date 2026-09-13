@@ -132,11 +132,13 @@ Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-section__t
 - **Secciones** (`ui-section`): título en mayúsculas 11/600 gris con contador opcional
   (`ui-count`) y acción a la derecha; contenido en `ui-card` o lista.
 - **Footer** (`ui-footer` + `footer.component.css`): la única superficie oscura de la app, en
-  `--c-brand-surface` (misma banda y misma estructura que MEDIA-ELIM). Cuatro columnas
-  (1 / 2 / 4 según ancho): **identidad** (wordmark `tone="dark" size="md"` + departamento),
-  **Implică-te** (padres → WhatsApp con mensaje preescrito), **Întrebări** (WhatsApp directo +
-  teléfono) y **Distribuie** (compartir + instalar app si el navegador lo permite; en iOS, el
-  gesto). Debajo, franja legal: emblema del departamento (28 px), © + versión, logo INEB (22 px)
+  `--c-brand-surface` (misma banda y misma estructura que MEDIA-ELIM). Tres columnas (1 / 3
+  según ancho): **identidad** (wordmark `tone="dark" size="md"` + departamento), **Contact**
+  (**un solo** botón de WhatsApp para preguntas e implicarse, con mensaje preescrito, + teléfono)
+  y **Distribuie** (compartir + instalar app si el navegador lo permite; en iOS, el gesto).
+  Regla: **una única entrada de contacto visible en cada momento** — el dock mientras se navega,
+  el botón del footer al llegar abajo (el dock se oculta). No se añaden CTAs de contacto en las
+  pestañas. Debajo, franja legal: emblema del departamento (28 px), © + versión, logo INEB (22 px)
   como "Desarrollado por". Títulos de columna 11/600 mayúsculas en oro; texto 12 en
   `--c-on-brand-muted`; botones `ui-btn--on-dark`. Los PNG (emblema, INEB) están pensados para
   fondo oscuro: por eso viven aquí y en ningún otro sitio.

@@ -8,18 +8,11 @@
         <p class="footer__text">{{ 'header.subtitle' | translate }}</p>
       </section>
 
-      <!-- Padres: implicarse -->
+      <!-- Contacto: una sola entrada de WhatsApp (preguntas e implicarse) -->
       <section class="footer__col">
-        <h2 class="footer__title">{{ 'contact.involve_title' | translate }}</h2>
-        <p class="footer__text">{{ 'contact.involve_text' | translate }}</p>
-        <app-whatsapp-button [onDark]="true" [label]="'contact.involve_label' | translate" [message]="'contact.involve_message' | translate" />
-      </section>
-
-      <!-- Preguntas -->
-      <section class="footer__col">
-        <h2 class="footer__title">{{ 'contact.ask_title' | translate }}</h2>
-        <p class="footer__text">{{ 'contact.ask_text' | translate }}</p>
-        <app-whatsapp-button [onDark]="true" [label]="'contact.ask_label' | translate" [message]="'contact.ask_message' | translate" />
+        <h2 class="footer__title">{{ 'contact.title' | translate }}</h2>
+        <p class="footer__text">{{ 'contact.text' | translate }}</p>
+        <app-whatsapp-button [onDark]="true" [label]="'contact.label' | translate" [message]="'contact.message' | translate" />
         <a class="footer__phone num" [href]="'tel:+' + contact.whatsappNumber">{{ contact.whatsappDisplay }}</a>
       </section>
 

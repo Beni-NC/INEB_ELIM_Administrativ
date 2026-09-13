@@ -37,15 +37,10 @@
     "partner": "Dezvoltat de INEB"
   },
   "contact": {
-    "involve_title": "Implică-te",
-    "involve_text": "Mai ai copii care vor să se implice în lucrarea administrativă a tineretului? Cunoști alți părinți care doresc să ajute? Scrie-ne pe WhatsApp.",
-    "involve_label": "Vreau să mă implic",
-    "involve_message": "Bună! Aș dori să mă implic (sau să implic pe cineva) în lucrarea administrativă a tineretului ELIM Arganda.",
-    "ask_title": "Întrebări",
-    "ask_text": "Nelămuriri despre programare, echipe sau ore? Scrie direct responsabilului.",
-    "ask_label": "Întrebări pe WhatsApp",
-    "ask_message": "Bună! Am o întrebare despre programarea tineretului ELIM Arganda: ",
-    "parents_card_title": "Vrei să te implici?"
+    "title": "Contact",
+    "text": "Întrebări despre programare, echipe sau ore? Vrei să te implici — tu, copiii tăi sau alți părinți pe care îi cunoști — în lucrarea administrativă a tineretului? Scrie-ne pe WhatsApp.",
+    "label": "Scrie-ne pe WhatsApp",
+    "message": "Bună! Vă scriu în legătură cu programarea tineretului ELIM Arganda: "
   },
   "share": {
     "button": "Distribuie aplicația",

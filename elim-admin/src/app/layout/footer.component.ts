@@ -9,11 +9,11 @@ import { WhatsappButtonComponent } from '../shared/ui/whatsapp-button/whatsapp-b
 import { ShareButtonComponent } from '../shared/ui/share-button/share-button.component';
 
 /**
- * Pie institucional en banda navy (mismo lenguaje que MEDIA-ELIM), en columnas:
- * identidad · implicarse (padres → WhatsApp) · preguntas (WhatsApp) · distribuir (compartir e
- * instalar). Debajo, la franja legal con el emblema del departamento, © + versión y el crédito
- * a INEB. Es la única superficie oscura de la app: los PNG del departamento y de INEB están
- * diseñados para fondo oscuro y aquí se ven bien.
+ * Pie institucional en banda navy (mismo lenguaje que MEDIA-ELIM), en columnas: identidad ·
+ * contacto (UN solo botón de WhatsApp para preguntas e implicarse; el dock flotante se oculta
+ * aquí para no duplicarlo) · distribuir (compartir e instalar). Debajo, la franja legal con el
+ * emblema del departamento, © + versión y el crédito a INEB. Es la única superficie oscura de la
+ * app: los PNG del departamento y de INEB están diseñados para fondo oscuro y aquí se ven bien.
  */
 @Component({
   selector: 'app-footer',

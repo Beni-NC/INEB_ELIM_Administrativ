@@ -8,14 +8,13 @@
   gap: var(--sp-4);
 }
 
-/* Columnas: 1 en móvil, 2 en tablet, 4 en escritorio; la identidad pesa algo más. */
+/* Columnas: 1 en móvil, 3 desde tablet (identidad · contacto · distribuir); la identidad pesa algo más. */
 .footer__main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--sp-4) var(--sp-6);
 }
-@media (min-width: 600px) { .footer__main { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 900px) { .footer__main { grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 600px) { .footer__main { grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr)); } }
 
 .footer__col {
   display: flex;

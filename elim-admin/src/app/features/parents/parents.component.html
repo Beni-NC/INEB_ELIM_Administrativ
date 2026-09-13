@@ -82,18 +82,6 @@
   </section>
 }
 
-<!-- Llamada a implicarse: más hijos u otros padres que quieran ayudar → WhatsApp del responsable -->
-<section class="ui-card parents__cta">
-  <div class="ui-card__body parents__cta-body">
-    <span class="icon icon--lg faint" aria-hidden="true">volunteer_activism</span>
-    <div class="parents__cta-text">
-      <h2 class="ui-card__title">{{ 'contact.parents_card_title' | translate }}</h2>
-      <p class="muted">{{ 'contact.involve_text' | translate }}</p>
-    </div>
-    <app-whatsapp-button [label]="'contact.involve_label' | translate" [message]="'contact.involve_message' | translate" />
-  </div>
-</section>
-
 <!-- Fila + perfil de un padre (activo o archivado) -->
 <ng-template #parentRow let-p>
   <div [id]="'card-parent-' + p.id">

@@ -30,7 +30,7 @@ import { WhatsappButtonComponent } from '../shared/ui/whatsapp-button/whatsapp-b
         <span class="ui-dock__sep" aria-hidden="true"></span>
       }
       <app-share-button [iconOnly]="true" />
-      <app-whatsapp-button [iconOnly]="true" [label]="'contact.ask_label' | translate" [message]="'contact.ask_message' | translate" />
+      <app-whatsapp-button [iconOnly]="true" [label]="'contact.label' | translate" [message]="'contact.message' | translate" />
     </div>
   `,
   styles: [`

@@ -37,15 +37,10 @@
     "partner": "Desarrollado por INEB"
   },
   "contact": {
-    "involve_title": "Implícate",
-    "involve_text": "¿Tienes más hijos que quieran implicarse en el trabajo administrativo de jóvenes? ¿Conoces a otros padres que deseen ayudar? Escríbenos por WhatsApp.",
-    "involve_label": "Quiero implicarme",
-    "involve_message": "¡Hola! Me gustaría implicarme (o implicar a alguien) en el trabajo administrativo de jóvenes de ELIM Arganda.",
-    "ask_title": "Preguntas",
-    "ask_text": "¿Dudas sobre la programación, los equipos o los horarios? Escribe directamente al responsable.",
-    "ask_label": "Preguntas por WhatsApp",
-    "ask_message": "¡Hola! Tengo una pregunta sobre la programación de jóvenes de ELIM Arganda: ",
-    "parents_card_title": "¿Quieres implicarte?"
+    "title": "Contacto",
+    "text": "¿Dudas sobre la programación, los equipos o los horarios? ¿Quieres implicarte —tú, tus hijos u otros padres que conozcas— en el trabajo administrativo de jóvenes? Escríbenos por WhatsApp.",
+    "label": "Escríbenos por WhatsApp",
+    "message": "¡Hola! Os escribo en relación con la programación de jóvenes de ELIM Arganda: "
   },
   "share": {
     "button": "Compartir la aplicación",

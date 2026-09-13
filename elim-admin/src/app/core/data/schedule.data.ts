@@ -35,6 +35,10 @@ export const SCHEDULE_DATA: ScheduleEntry[] = [
   { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 5, 5),  observations: '', completed: false, parentSupporters: ['p-001', 'p-004']},
   { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 5, 12),   observations: '', completed: false, parentSupporters: ['p-003', 'p-002']},
   { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'Seară de tineret', estimatedPersons: 45, date: new Date(2026, 5, 19),  observations: '', completed: false, parentSupporters: ['p-006', 'p-011']},
+  
+  { team: 'Echipa 4', coordinator: 'Mic Karina', programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 8, 11),  observations: '', completed: false},
+  { team: 'Echipa 5', coordinator: 'Toader Noemi', programType: 'Seară de tineret', estimatedPersons: 60, date: new Date(2026, 8, 18),  observations: '', completed: false, parentSupporters: ['p-007', 'p-009']},
+
 
   /* 
   ### TABARA + VACANTA.
