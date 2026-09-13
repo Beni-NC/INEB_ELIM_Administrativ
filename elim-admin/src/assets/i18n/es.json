@@ -34,7 +34,11 @@
   "footer": {
     "church": "Iglesia ELIM — Arganda del Rey",
     "department": "Departamento Administrativo de Jóvenes",
-    "partner": "Desarrollado por INEB"
+    "partner": "Desarrollado por INEB",
+    "version": "Versión de la aplicación",
+    "build": "Compilación",
+    "commit": "Revisión",
+    "built_at": "Publicada"
   },
   "contact": {
     "title": "Contacto",
@@ -46,12 +50,12 @@
     "button": "Compartir la aplicación",
     "title": "Compartir la aplicación",
     "intro": "Envíala a un compañero de equipo, a un padre o a quien quiera saber cuándo le toca.",
-    "footer_text": "¿Conoces a alguien que debería tener la aplicación? Envíale el enlace o instálala en el móvil.",
     "message": "Programación de la preparación de la cena — Departamento de Jóvenes ELIM Arganda. Mira cuándo le toca a tu equipo:",
     "subject": "Programación Jóvenes ELIM Arganda",
     "email": "Correo",
     "copy": "Copiar enlace",
-    "copied": "¡Copiado!"
+    "copied": "¡Copiado!",
+    "text": "¿Conoces a alguien que debería tener la aplicación? Envíale el enlace o instálala en el móvil."
   },
   "dock": {
     "aria": "Acciones rápidas",

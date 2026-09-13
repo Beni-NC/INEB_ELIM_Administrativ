@@ -35,7 +35,7 @@
                 </span>
                 <app-calendar-button [team]="team.teamName" />
               }
-              <span class="icon faint" aria-hidden="true">{{ expanded() === team.teamName ? 'expand_less' : 'expand_more' }}</span>
+              <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggle(team)" tabindex="-1" aria-hidden="true"><span class="icon" aria-hidden="true">{{ expanded() === team.teamName ? 'expand_less' : 'expand_more' }}</span></button>
             </div>
           </div>
 
@@ -142,7 +142,7 @@
                   </span>
                 </button>
                 <div class="ui-row__trail">
-                  <span class="icon faint" aria-hidden="true">{{ expandedHistory() === hist.historyKey ? 'expand_less' : 'expand_more' }}</span>
+                  <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggleHistory(hist)" tabindex="-1" aria-hidden="true"><span class="icon" aria-hidden="true">{{ expandedHistory() === hist.historyKey ? 'expand_less' : 'expand_more' }}</span></button>
                 </div>
               </div>
 

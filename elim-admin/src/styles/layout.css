@@ -3,16 +3,30 @@
    Estructura: docs/GUIA-ESTILOS.md §3.
    ============================================================================ */
 
+/* ---- Contenedor de la columna de contenido: lo comparten tabs, main y footer ----
+   Con border-box el ancho útil es siempre --content-max − 2·--page-pad, así los tres quedan
+   alineados al píxel. La cabecera va a ancho completo, como cualquier barra de aplicación. */
+.ui-container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding-left: var(--page-pad);
+  padding-right: var(--page-pad);
+}
+
 /* ---- Cabecera ---- */
 .ui-header {
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+}
+.ui-header__inner {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
   height: var(--h-header);
-  padding: 0 var(--page-pad);
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
 }
+/* El wordmark manda en la cabecera: 28 px en móvil y 32–40 px en escritorio (cabecera de 64 px). */
+.ui-header app-brand-logo { --brand-size: clamp(28px, 3vw, 40px); }
 .ui-header__brand {
   display: flex;
   align-items: center;
@@ -24,11 +38,12 @@
 .ui-header__brand:hover { text-decoration: none; }
 .ui-header__divider {
   width: 1px;
-  height: 24px;
+  height: 32px;
   background: var(--c-border-strong);
   flex-shrink: 0;
 }
-.ui-header__text { min-width: 0; overflow: hidden; }
+/* Título y subtítulo en dos filas (el subtítulo solo desde 600 px: en móvil no cabe con los controles). */
+.ui-header__text { min-width: 0; overflow: hidden; display: flex; flex-direction: column; gap: 1px; }
 .ui-header__title {
   font-size: var(--fs-lg);
   font-weight: 600;
@@ -40,8 +55,11 @@
 .ui-header__subtitle {
   display: none;
   font-size: var(--fs-sm);
+  line-height: var(--lh-tight);
   color: var(--c-text-3);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .ui-header__right {
   display: flex;
@@ -56,9 +74,19 @@
   white-space: nowrap;
 }
 
+@media (max-width: 599px) {
+  /* En móvil no cabe en una línea junto al wordmark y los controles: 13 px y hasta dos líneas. */
+  .ui-header__title {
+    font-size: var(--fs-md);
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.15;
+  }
+}
 @media (min-width: 600px) {
-  .ui-header__text { display: flex; align-items: baseline; gap: var(--sp-2); }
-  .ui-header__subtitle { display: block; overflow: hidden; text-overflow: ellipsis; }
+  .ui-header__subtitle { display: block; }
   .ui-header__today { display: block; }
 }
 
@@ -70,14 +98,8 @@
   display: flex;
   background: var(--c-surface);
   border-bottom: 1px solid var(--c-border);
-  padding: 0 var(--page-pad);
 }
-.ui-tabs__inner {
-  display: flex;
-  width: 100%;
-  max-width: var(--content-max);
-  margin: 0 auto;
-}
+.ui-tabs__inner { display: flex; }
 .ui-tab {
   position: relative;
   flex: 1;
@@ -123,18 +145,79 @@
 /* ---- Contenido principal ---- */
 .ui-main {
   flex: 1;
-  width: 100%;
-  max-width: var(--content-max);
-  margin: 0 auto;
-  padding: var(--page-pad);
+  padding-top: var(--page-pad);
+  padding-bottom: var(--page-pad);
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
 }
 
-/* ---- Footer: banda navy de marca (única superficie oscura); su contenido en footer.component.css ---- */
+/* ---- Footer: franja mínima en banda navy (única superficie oscura) ----
+   Los logos son los protagonistas: márgenes mínimos y tamaño fluido (28–44 px) con el ancho. */
 .ui-footer {
   background: var(--c-brand-surface);
   color: var(--c-on-brand-muted);
-  padding: var(--sp-6) var(--page-pad) var(--sp-4);
+  padding: var(--sp-2) 0;
+  font-size: var(--fs-xs);
+}
+.ui-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+}
+.ui-footer app-brand-logo { --brand-size: clamp(28px, 3.2vw, 44px); }
+.ui-footer__text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px; line-height: 1.35; }
+.ui-footer__line--strong { color: var(--c-on-brand); font-weight: 500; }
+/* Acciones compactas (WhatsApp, compartir) y crédito, agrupados a la derecha. */
+.ui-footer__actions { display: flex; align-items: center; gap: var(--sp-1); margin-left: auto; }
+.ui-footer__sep { width: 1px; height: 24px; margin: 0 var(--sp-2); background: rgba(255, 255, 255, 0.18); }
+.ui-footer__partner { display: inline-flex; align-items: center; opacity: 0.9; border-radius: var(--r-sm); transition: opacity var(--dur) var(--ease); }
+.ui-footer__partner:hover { opacity: 1; }
+.ui-footer__partner img { height: clamp(24px, 3.2vw, 44px); width: auto; }
+
+/* Chip de versión: el detalle técnico aparece en un tooltip al pasar el ratón o enfocar. */
+.ui-footer__version {
+  position: relative;
+  display: inline-block;
+  margin-left: var(--sp-1);
+  padding: 0 6px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--r-full);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-on-brand-muted);
+  cursor: help;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.ui-footer__version:hover,
+.ui-footer__version:focus-visible { color: var(--c-on-brand); border-color: rgba(255, 255, 255, 0.4); }
+.ui-footer__build {
+  position: absolute;
+  bottom: calc(100% + var(--sp-2));
+  left: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  gap: 2px;
+  min-width: 220px;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--c-surface);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-overlay);
+  font-size: var(--fs-xs);
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur) var(--ease), visibility var(--dur) var(--ease);
+}
+.ui-footer__version:hover .ui-footer__build,
+.ui-footer__version:focus-visible .ui-footer__build { opacity: 1; visibility: visible; }
+.ui-footer__build-row { display: flex; justify-content: space-between; gap: var(--sp-4); color: var(--c-text-2); }
+.ui-footer__build-row b { font-weight: 600; color: var(--c-text); }
+
+@media (max-width: 599px) {
+  /* En móvil el texto pasa a segunda fila; el tooltip se ancla a la derecha para no salirse. */
+  .ui-footer__text { flex-basis: 100%; order: 3; }
+  .ui-footer__build { left: auto; right: 0; }
 }

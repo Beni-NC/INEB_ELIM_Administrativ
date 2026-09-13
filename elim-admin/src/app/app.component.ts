@@ -19,7 +19,7 @@ const SWIPE_MAX_Y = 60;
     template: `
     <app-header />
     <app-tabs-nav />
-    <main class="ui-main" #mainContent>
+    <main class="ui-main ui-container" #mainContent>
       <router-outlet />
     </main>
     <app-footer />

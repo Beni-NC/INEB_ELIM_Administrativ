@@ -108,7 +108,7 @@
           }
           <app-calendar-button [youthId]="y.id" [youthName]="y.fullName" />
         }
-        <span class="icon faint" aria-hidden="true">{{ expanded() === y.id ? 'expand_less' : 'expand_more' }}</span>
+        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggle(y)" tabindex="-1" aria-hidden="true"><span class="icon" aria-hidden="true">{{ expanded() === y.id ? 'expand_less' : 'expand_more' }}</span></button>
       </div>
     </div>
 

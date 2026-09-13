@@ -19,7 +19,7 @@ interface NavTab {
     // padre del host es <app-root>, que abarca toda la página.
     host: { class: 'ui-tabs' },
     template: `
-    <nav class="ui-tabs__inner" [attr.aria-label]="'tabs.aria' | translate">
+    <nav class="ui-tabs__inner ui-container" [attr.aria-label]="'tabs.aria' | translate">
         @for (t of tabs; track t.path) {
           <a class="ui-tab"
              [routerLink]="['/' + t.path]"

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ContactCardComponent } from '../../shared/ui/contact-card/contact-card.component';
 
 interface RuleSection {
   id: string;
@@ -9,11 +10,11 @@ interface RuleSection {
   items: string[];
 }
 
-/** Reguli: cinco secciones de texto (desde i18n) en formato documento, con índice de anclas. */
+/** Reguli: cinco secciones de texto (desde i18n) en formato documento, índice de anclas y bloque de contacto al final. */
 @Component({
     selector: 'app-rules',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TranslatePipe],
+    imports: [TranslatePipe, ContactCardComponent],
     template: `
     <section class="ui-section">
       <div class="ui-section__head">
@@ -30,7 +31,7 @@ interface RuleSection {
         }
       </nav>
 
-      <div class="ui-grid-2">
+      <div class="ui-columns-2">
         @for (s of sections(); track s.id; let i = $index) {
           <article class="ui-card" [id]="'rule-' + s.id">
             <header class="ui-card__header">
@@ -49,6 +50,9 @@ interface RuleSection {
         }
       </div>
     </section>
+
+    <!-- Contacto y distribución de la app: al final de la guía, donde surgen las dudas. -->
+    <app-contact-card />
   `,
     styles: [`
     :host { display: flex; flex-direction: column; gap: var(--sp-4); }

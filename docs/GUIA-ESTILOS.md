@@ -95,7 +95,7 @@ Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-section__t
 ### 2.3 Espaciado, tamaños, radios
 
 - Rejilla 4 px: `--sp-1: 4px` `--sp-2: 8px` `--sp-3: 12px` `--sp-4: 16px` `--sp-6: 24px` `--sp-8: 32px`.
-- Alturas: `--h-header: 48px` `--h-nav: 40px` `--h-row: 36px` `--h-control: 28px`.
+- Alturas: `--h-header: 48px` (64 px desde 600 px) `--h-nav: 40px` `--h-row: 36px` `--h-control: 28px`.
 - Iconos: `--icon-sm: 16px` `--icon: 18px` `--icon-lg: 20px`. Avatar `--avatar: 24px`
   (`--avatar-lg: 32px` solo en tarjeta de próximo evento).
 - Radios: `--r-sm: 4px` (chips, badges, inputs) `--r-md: 6px` (tarjetas, botones)
@@ -109,7 +109,7 @@ Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-section__t
 ## 3. Layout
 
 ```
-┌ header (48px, blanco, borde inferior) ──────────────────────────────┐
+┌ header (48px móvil / 64px escritorio, blanco, borde inferior) ──────────────────────────────┐
 │ ELIM│ Departament de Tineret · subtítulo         SÂM 12 SEP [RO|ES] │
 │ ARGANDA DEL REY (wordmark)                                          │
 ├ tabs (40px, sticky, subrayado 2px primario) ────────────────────────┤
@@ -120,9 +120,10 @@ Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-section__t
 │ ELIM (tone dark)  [emblema] Departament… © año · versión   [INEB]   │
 ```
 
-- **Header**: `ui-header`. Wordmark `app-brand-logo size="sm"` (24 px) + divisor 1 px + título
-  15/600 y subtítulo 12 gris (oculto < 600 px). Derecha: fecha de hoy (solo ≥ 600 px) y control
-  segmentado de idioma. Sin imágenes, sin degradados.
+- **Header**: `ui-header`. Wordmark `app-brand-logo` (28–40 px según el ancho, `clamp`) + divisor
+  1 px + texto en **dos filas**: título 15/600 y, debajo, subtítulo 12 gris (oculto < 600 px).
+  Derecha: fecha de hoy (solo ≥ 600 px), control segmentado de idioma y botón de tema. Sin
+  imágenes, sin degradados.
 - **Marca** (`app-brand-logo`): el mismo wordmark tipográfico de MEDIA-ELIM ("ELIM" en
   `--font-brand`, tracking 0.22em; "ARGANDA DEL REY" en oro, justificado al ancho del nombre).
   Es la **única** representación de la iglesia; los PNG blancos (`logo-elim.png`) no se usan en
@@ -131,24 +132,37 @@ Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-section__t
   y subrayado 2 px; en < 600 px icono sobre label (11 px).
 - **Secciones** (`ui-section`): título en mayúsculas 11/600 gris con contador opcional
   (`ui-count`) y acción a la derecha; contenido en `ui-card` o lista.
-- **Footer** (`ui-footer` + `footer.component.css`): la única superficie oscura de la app, en
-  `--c-brand-surface` (misma banda y misma estructura que MEDIA-ELIM). Tres columnas (1 / 3
-  según ancho): **identidad** (wordmark `tone="dark" size="md"` + departamento), **Contact**
-  (**un solo** botón de WhatsApp para preguntas e implicarse, con mensaje preescrito, + teléfono)
-  y **Distribuie** (compartir + instalar app si el navegador lo permite; en iOS, el gesto).
-  Regla: **una única entrada de contacto visible en cada momento** — el dock mientras se navega,
-  el botón del footer al llegar abajo (el dock se oculta). No se añaden CTAs de contacto en las
-  pestañas. Debajo, franja legal: emblema del departamento (28 px), © + versión, logo INEB (22 px)
-  como "Desarrollado por". Títulos de columna 11/600 mayúsculas en oro; texto 12 en
-  `--c-on-brand-muted`; botones `ui-btn--on-dark`. Los PNG (emblema, INEB) están pensados para
-  fondo oscuro: por eso viven aquí y en ningún otro sitio.
+- **Footer** (`ui-footer`): **franja mínima** en `--c-brand-surface` (misma banda que
+  MEDIA-ELIM), alineada con la columna de contenido (`ui-container`) y con **márgenes mínimos**
+  (8 px): wordmark `tone="dark"` (28–44 px según el ancho, `clamp`) · dos líneas de texto
+  ("Departament Administrativ Tineret" / "Biserica ELIM — Arganda del Rey © año" + chip de
+  versión) · acciones compactas (WhatsApp y compartir como `ui-btn--icon ui-btn--on-dark`) ·
+  separador · logo INEB (24–44 px, mismo `clamp`); las acciones compactas son volver arriba,
+  WhatsApp y compartir. Los logos son lo que más se ve del pie:
+  escalan con el espacio disponible, el texto no. El **chip de versión** muestra el semver y, al
+  pasar el ratón o enfocarlo, un tooltip con build, revisión y fecha de publicación (mismo sistema
+  que MEDIA-ELIM; `src/version.ts` lo genera `scripts/generate-version.mjs`). Nada más: la app es de uso móvil y todo lo que no sea
+  identidad y esas dos acciones sobra al pie de las cinco pestañas. El PNG de INEB es para fondo
+  oscuro: vive aquí y en ningún otro sitio.
+- **Contacto y distribución** (`app-contact-card`): un solo bloque, al final de **Reguli** (donde
+  se acaba de leer cómo funciona todo y surgen las dudas): texto de preguntas/implicación,
+  botón de WhatsApp con mensaje preescrito, teléfono; compartir e instalar la app. Regla: **una
+  única entrada de contacto visible en cada momento** — el dock mientras se navega; se esconde
+  cuando el footer o este bloque están en pantalla (`DockOverlapService`). No se añaden CTAs de
+  contacto en otras pestañas.
 - **Dock flotante** (`ui-dock`, `app-floating-dock`): pastilla fija abajo a la derecha, como en
   MEDIA-ELIM, con **Compartir** y **WhatsApp** siempre, y **Volver arriba** solo tras bajar más de
-  1,5 pantallas. Se oculta cuando el footer está en pantalla (repite sus acciones) y se eleva
-  sobre el banner de instalación. Sin desplegable: tres acciones como máximo, un toque cada una.
+  1,5 pantallas. Se esconde mientras el footer o el bloque de contacto de Reguli están en
+  pantalla (repiten sus acciones) y se eleva sobre el banner de instalación. Sin desplegable: tres acciones como máximo, un toque cada una.
   Si alguna vez hiciera falta una cuarta, se sustituye por otra; no se apilan.
+- **Columna de contenido**: `ui-container` (máx. `--content-max`, padding `--page-pad`,
+  border-box) la comparten cabecera, tabs, `main` y footer, así quedan alineados al píxel: las
+  bandas (fondo, bordes) van a ancho completo y su contenido dentro del contenedor. Ningún bloque
+  define su propio `max-width`.
 - Responsive: mobile-first; puntos de corte `600px` y `900px`. Las listas ocupan siempre el
-  ancho completo; en ≥ 900 px las secciones cortas pueden ir a 2 columnas (`ui-grid-2`).
+  ancho completo; en ≥ 900 px los bloques de texto de alturas distintas van en dos columnas tipo
+  periódico (`ui-columns-2`, CSS `columns`), nunca en una rejilla por filas: la rejilla estira cada
+  fila a la tarjeta más alta y deja huecos (Reguli es el caso).
 
 ## 4. Iconografía
 
@@ -230,7 +244,7 @@ de feature solo componen estas clases y añaden CSS encapsulado para su disposic
 | `ui-banner` | Barra flotante inferior (fija, máx. 520 px, sombra overlay): `ui-banner__img`/`__icon` + `ui-banner__text` (título 13/600 + `ui-banner__hint` 12 gris) + acciones `ui-btn`. | Solo para el aviso de instalación de la PWA. No hay barra de "nueva versión": la app se actualiza sola. |
 | `ui-dock` | Pastilla fija abajo-derecha con `ui-btn--icon` redondos de 36 px y `ui-dock__sep`; `--hidden` la oculta. | Ver §3. |
 | `ui-dialog` | `<dialog>` abierto con `showModal()`: `ui-dialog__panel` (máx. 520 px, sombra overlay) con `__header` (título 15/600 + cerrar), `__text`. Velo en `::backdrop`. Se cierra con Escape y clic en el velo. | Único patrón de modal. Contenido corto (compartir); un flujo largo es una pantalla. |
-| `ui-btn--on-dark` | Variante de `ui-btn` para la banda navy: contorno y texto claros. | Solo dentro del footer. |
+| `ui-btn--on-dark` | Variante de `ui-btn` para la banda navy: contorno y texto claros; con `--icon`, transparente con glifo claro. | Solo sobre `--c-brand-surface` (footer). |
 | `ui-menu` | Menú mínimo anclado a un botón: `ui-menu__panel` (260–320 px, sombra overlay, abajo-derecha) con `ui-menu__item` (icono + `ui-menu__title` 13/500 + `ui-menu__desc` 11 gris) y `ui-menu__note` opcional. Cierra con clic fuera y Escape. | Solo para 2–3 acciones (calendario). Más opciones = otra pantalla, no un menú. |
 | `ui-eyebrow` | Texto 11 mayúsculas gris con `letter-spacing`. | Etiquetas encima de un valor. |
 | `ui-link` | Enlace/botón de texto primario sin subrayado; subrayado en hover. | Enlaces cruzados en texto corrido. |

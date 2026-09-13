@@ -166,20 +166,26 @@ verdad (feeds publicados en el deploy); quien la añada a su calendario recibir�
 - Scripts legacy eliminados; `karma`/`jasmine` sustituidos por vitest.
 
 ### Entregado (2026-09-13, cuarto bloque) — `v.2.3.0`
-- **Footer tipo MEDIA-ELIM**: tres columnas que se autodimensionan (1/3 según ancho) —
-  identidad, *Contact* (un único botón de WhatsApp al responsable para preguntas e implicarse:
-  hijos u otros padres que quieran ayudar; mensaje preescrito + teléfono), *Distribuie*
-  (compartir + instalar la app) — y franja legal con emblema, © y INEB (logo
+- **Footer mínimo**: wordmark ELIM · dos líneas (departamento / iglesia © año + chip de versión
+  con tooltip de build, revisión y fecha, generados por `scripts/generate-version.mjs` como en
+  MEDIA-ELIM) · iconos compactos de WhatsApp y compartir · INEB; márgenes mínimos y logos fluidos
+  (28–44 px). Franja alineada con la columna de contenido vía `ui-container`, contenedor único
+  compartido por cabecera, tabs, main y footer. El
+  footer "de sitio web" con columnas se probó y se descartó: la app es de uso móvil y repetía
+  contenido al pie de las cinco pestañas. El contacto (WhatsApp al responsable para preguntas e
+  implicarse — hijos u otros padres que quieran ayudar —, teléfono) y la distribución (compartir,
+  instalar) van en **un bloque al final de Reguli** (`app-contact-card`) (logo INEB
   reescalado de 6000 px a 320 px; `logo-elim.png` y `logo_admin-trans-512.png` eliminados por no
   usarse).
 - **Dock flotante** abajo-derecha (patrón MEDIA-ELIM): Compartir + WhatsApp siempre; Volver
-  arriba tras 1,5 pantallas; se oculta al llegar al footer. Sin desplegable (decisión de diseño:
+  arriba tras 1,5 pantallas; se oculta mientras el footer o el bloque de contacto de Reguli
+  están en pantalla. Sin desplegable (decisión de diseño:
   con ≤ 3 acciones un toque extra solo esconde lo que se busca).
 - **Compartir**: hoja nativa del sistema en móvil; en escritorio `<dialog>` con WhatsApp,
   Telegram, e-mail y copiar enlace (sin QR, por indicación del propietario).
 - Contacto **unificado**: se descartó repetir el botón de WhatsApp (tarjeta en Părinți + dos
   columnas del footer + dock) — mismo número, mismo destino. Regla: una sola entrada visible en
-  cada momento (dock al navegar, footer al llegar abajo).
+  cada momento (dock siempre; bloque de Reguli cuando se lee la guía).
 - **Modo oscuro manual**: botón en la cabecera, guardado en el dispositivo, claro por defecto;
   eliminado el automático por `prefers-color-scheme`.
 - Botón de calendario **global** ("Toate programările" → `toate.ics`) que faltaba.

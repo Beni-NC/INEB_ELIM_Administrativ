@@ -1,17 +1,20 @@
 {
   "name": "elim-admin",
-  "version": "2.3.0",
+  "version": "2.3.2",
   "engines": {
     "node": "^22.22.0 || ^24.15.0 || >=26.0.0"
   },
   "scripts": {
     "ng": "ng",
+    "generate": "node scripts/generate-version.mjs && node scripts/generate-calendars.mjs",
     "calendars": "node scripts/generate-calendars.mjs",
-    "prestart": "npm run calendars",
+    "postinstall": "node scripts/generate-version.mjs",
+    "prestart": "npm run generate",
     "start": "ng serve",
-    "prebuild": "npm run calendars",
+    "prebuild": "npm run generate",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "pretest": "node scripts/generate-version.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

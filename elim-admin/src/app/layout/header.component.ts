@@ -14,6 +14,7 @@ import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component
     imports: [RouterLink, TranslatePipe, LDatePipe, BrandLogoComponent],
     template: `
     <header class="ui-header">
+      <div class="ui-header__inner ui-container">
       <app-brand-logo size="sm" tone="light" link="/" />
       <span class="ui-header__divider" aria-hidden="true"></span>
       <a routerLink="/" class="ui-header__brand" [attr.aria-label]="'common.back_to_main' | translate">
@@ -39,6 +40,7 @@ import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component
                 [title]="(theme.current() === 'dark' ? 'theme.light' : 'theme.dark') | translate">
           <span class="icon" aria-hidden="true">{{ theme.current() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
         </button>
+      </div>
       </div>
     </header>
   `

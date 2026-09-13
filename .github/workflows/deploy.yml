@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # el número de build es el recuento de commits: hace falta el historial
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -36,9 +38,9 @@ jobs:
         run: npm ci
         working-directory: elim-admin
 
-      # Feeds .ics de suscripción (assets/calendars/*.ics) generados a partir de los datos
-      - name: Generate calendar feeds
-        run: npm run calendars
+      # version.ts (semver + build + commit + fecha) y feeds .ics (assets/calendars/*.ics)
+      - name: Generate version and calendar feeds
+        run: npm run generate
         working-directory: elim-admin
 
       # Build for THIS repo (Beni-NC/INEB_ELIM_Administrativ)

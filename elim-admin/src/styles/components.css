@@ -43,10 +43,15 @@
 .ui-card__title { font-size: var(--fs-lg); font-weight: 600; }
 .ui-card__body { padding: var(--sp-3); }
 
-/* Rejilla opcional de dos columnas para bloques cortos en escritorio. */
-.ui-grid-2 { display: grid; gap: var(--sp-4); }
+/* Dos columnas tipo periódico para tarjetas de alturas distintas (texto): cada una ocupa lo que
+   necesita y la siguiente se coloca debajo, sin los huecos que deja una rejilla por filas. */
+.ui-columns-2 { display: block; }
+.ui-columns-2 > * { break-inside: avoid; margin-bottom: var(--sp-4); }
+.ui-columns-2 > :last-child { margin-bottom: 0; }
 @media (min-width: 900px) {
-  .ui-grid-2 { grid-template-columns: 1fr 1fr; align-items: start; }
+  .ui-columns-2 { columns: 2; column-gap: var(--sp-4); }
+  /* Con `columns`, el margen inferior del último elemento de cada columna sí cuenta: se iguala en todos. */
+  .ui-columns-2 > :last-child { margin-bottom: var(--sp-4); }
 }
 
 /* ---- Lista y filas ---- */
@@ -323,6 +328,8 @@ button.ui-chip:hover { border-color: var(--c-border-strong); color: var(--c-text
 /* Sobre la banda navy del footer: contorno claro, texto claro. */
 .ui-btn--on-dark { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.28); color: var(--c-on-brand); }
 .ui-btn--on-dark:hover { background: rgba(255, 255, 255, 0.14); color: var(--c-on-brand); }
+.ui-btn--on-dark.ui-btn--icon { background: transparent; border-color: transparent; color: var(--c-on-brand-muted); }
+.ui-btn--on-dark.ui-btn--icon:hover { background: rgba(255, 255, 255, 0.1); color: var(--c-on-brand); }
 
 /* Enlace de texto (botón sin caja). */
 .ui-link {

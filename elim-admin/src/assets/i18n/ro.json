@@ -34,7 +34,11 @@
   "footer": {
     "church": "Biserica ELIM — Arganda del Rey",
     "department": "Departament Administrativ Tineret",
-    "partner": "Dezvoltat de INEB"
+    "partner": "Dezvoltat de INEB",
+    "version": "Versiunea aplicației",
+    "build": "Compilare",
+    "commit": "Revizie",
+    "built_at": "Publicată"
   },
   "contact": {
     "title": "Contact",
@@ -46,12 +50,12 @@
     "button": "Distribuie aplicația",
     "title": "Distribuie aplicația",
     "intro": "Trimite-o unui coleg de echipă, unui părinte sau oricui vrea să știe când îi vine rândul.",
-    "footer_text": "Cunoști pe cineva care ar trebui să aibă aplicația? Trimite-i linkul sau instaleaz-o pe telefon.",
     "message": "Programarea pregătirii mesei — Departamentul de Tineret ELIM Arganda. Vezi când îi vine rândul echipei tale:",
     "subject": "Programare Tineret ELIM Arganda",
     "email": "E-mail",
     "copy": "Copiază linkul",
-    "copied": "Copiat!"
+    "copied": "Copiat!",
+    "text": "Cunoști pe cineva care ar trebui să aibă aplicația? Trimite-i linkul sau instaleaz-o pe telefon."
   },
   "dock": {
     "aria": "Acțiuni rapide",

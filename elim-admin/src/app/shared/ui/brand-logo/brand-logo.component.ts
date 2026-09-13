@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
-/** Escalas del wordmark: `sm` (24 px) cabecera de app, `md` (32 px) footer. */
+/** Escalas del wordmark: `sm` (24 px) cabecera de app, `md` (32 px). El footer la sobrescribe con un `clamp` fluido. */
 export type BrandLogoSize = 'sm' | 'md';
 /** Fondo sobre el que se pinta: decide tinta y acento (no hay dos ficheros). */
 export type BrandLogoTone = 'light' | 'dark';

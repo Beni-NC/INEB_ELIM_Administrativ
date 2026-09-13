@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PwaInstallService } from '../core/services/pwa-install.service';
+import { DockOverlapService } from '../core/services/dock-overlap.service';
 import { ShareButtonComponent } from '../shared/ui/share-button/share-button.component';
 import { WhatsappButtonComponent } from '../shared/ui/whatsapp-button/whatsapp-button.component';
 
@@ -11,8 +12,8 @@ import { WhatsappButtonComponent } from '../shared/ui/whatsapp-button/whatsapp-b
  *  - Compartir la aplicación.
  *  - Volver arriba: solo tras bajar más de 1,5 pantallas (antes es ruido).
  *
- * Se oculta cuando el footer entra en el viewport (ahí están las mismas acciones y no hay que
- * taparlo) y se eleva cuando el banner de instalación está visible para no solaparse.
+ * Se esconde mientras el footer o el bloque de contacto de Reguli están en pantalla (repiten sus
+ * acciones y lo taparía) y se eleva sobre el banner de instalación.
  * Sin desplegable: con tres acciones como máximo, un toque extra solo esconde lo que se busca.
  */
 @Component({
@@ -20,8 +21,8 @@ import { WhatsappButtonComponent } from '../shared/ui/whatsapp-button/whatsapp-b
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslatePipe, ShareButtonComponent, WhatsappButtonComponent],
   template: `
-    <div class="ui-dock" [class.ui-dock--hidden]="footerVisible()" [class.ui-dock--raised]="install.bannerVisible()"
-         role="complementary" [attr.aria-label]="'dock.aria' | translate" [attr.aria-hidden]="footerVisible()">
+    <div class="ui-dock" [class.ui-dock--hidden]="overlap.duplicateVisible()" [class.ui-dock--raised]="install.bannerVisible()"
+         role="complementary" [attr.aria-label]="'dock.aria' | translate" [attr.aria-hidden]="overlap.duplicateVisible()">
       @if (scrolledFar()) {
         <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="backToTop()"
                 [attr.aria-label]="'dock.back_to_top' | translate" [title]="'dock.back_to_top' | translate">
@@ -39,12 +40,12 @@ import { WhatsappButtonComponent } from '../shared/ui/whatsapp-button/whatsapp-b
     .ui-dock--raised { bottom: calc(var(--sp-3) + 64px); }
   `],
 })
-export class FloatingDockComponent implements AfterViewInit {
+export class FloatingDockComponent {
   protected readonly install = inject(PwaInstallService);
+  protected readonly overlap = inject(DockOverlapService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly scrolledFar = signal(false);
-  protected readonly footerVisible = signal(false);
 
   constructor() {
     // El scroll dispara cientos de eventos: la señal solo cambia al cruzar el umbral.
@@ -54,17 +55,6 @@ export class FloatingDockComponent implements AfterViewInit {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     this.destroyRef.onDestroy(() => window.removeEventListener('scroll', onScroll));
-  }
-
-  ngAfterViewInit(): void {
-    const footer = document.querySelector('app-footer');
-    if (!footer || typeof IntersectionObserver === 'undefined') return;
-    const obs = new IntersectionObserver(
-      entries => { for (const e of entries) this.footerVisible.set(e.isIntersecting); },
-      { threshold: 0.05 },
-    );
-    obs.observe(footer);
-    this.destroyRef.onDestroy(() => obs.disconnect());
   }
 
   protected backToTop(): void {

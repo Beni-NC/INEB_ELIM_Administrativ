@@ -18,14 +18,16 @@ Deploy automático a GitHub Pages al hacer push a `main`.
 4. **Sin código muerto**: lo que deja de usarse se borra.
 5. No commitear ni hacer push: dejar los cambios en el working tree; el usuario decide.
 6. Al terminar un bloque de trabajo relevante, actualizar el estado en `docs/PLAN-MAESTRO.md`
-   (§4 y §5) y subir `APP_VERSION` en `elim-admin/src/version.ts` si hay cambios visibles.
+   (§4 y §5) y subir `version` en `elim-admin/package.json` si hay cambios visibles
+   (`src/version.ts` se genera solo; no editarlo).
 7. **La app se actualiza sola** (recarga automática al detectar versión nueva): no añadir avisos
    ni confirmaciones de actualización; el usuario quiere ver siempre lo último publicado.
 8. **Modo oscuro solo manual** (botón de la cabecera, guardado en el dispositivo; claro por
    defecto). Nunca automático por `prefers-color-scheme`.
-9. Contacto y textos de WhatsApp: `core/contact.config.ts` + claves `contact.*` de i18n. El dock
-   flotante y el footer siguen el patrón de MEDIA-ELIM (`C:\workspace\iglesia-redes`); ante
-   una duda de diseño, mirar primero cómo lo resuelve esa app hermana.
+9. Contacto y textos de WhatsApp: `core/contact.config.ts` + claves `contact.*` de i18n; una sola
+   entrada visible (dock flotante; bloque `app-contact-card` al final de Reguli). El footer es una
+   franja mínima: no añadirle contenido. El dock sigue el patrón de MEDIA-ELIM
+   (`C:\workspace\iglesia-redes`); ante una duda de diseño, mirar primero esa app hermana.
 
 ## Dónde mirar
 

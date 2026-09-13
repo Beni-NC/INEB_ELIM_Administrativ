@@ -94,6 +94,7 @@ src/
       schedule/  teams/  youths/  parents/  rules/
         <x>.component.ts + .html + .css   (CSS encapsulado, solo disposición)
 scripts/
+  generate-version.mjs       src/version.ts: semver + build (commits) + commit + dirty + fecha
   generate-calendars.mjs     empaqueta con esbuild y ejecuta calendars.entry.ts
   calendars.entry.ts         genera assets/calendars/*.ics (global, por equipo, joven y padre)
   generate-icons.js          iconos PWA desde logo_admin.png
@@ -144,7 +145,10 @@ Regla de dependencias: `features → shared/ui → core`; `layout → core`. `co
 - Fechas: solo `ldate` en templates y `date.utils.ts` en TS. Prohibidos los arrays de meses.
 - Colores de equipo: `getTeamColor(team)` → `[style.--team-color]`. Nunca hex en templates.
 - Nada de código muerto: si una función deja de usarse se borra (git guarda la historia).
-- Versión: `src/version.ts` (`APP_VERSION`), subir en cada despliegue con cambios visibles.
+- Versión: `src/version.ts` es **generado** (`scripts/generate-version.mjs`, en postinstall /
+  prestart / prebuild / pretest y en el deploy; está en .gitignore) a partir de `version` de
+  `package.json` (semver manual: la única cifra que decide una persona) más git: nº de commits
+  (build), hash corto, marca `dirty` y fecha. Para cambiar la versión visible: `package.json`.
 
 ### 4.1 Notas de template (heredadas de Angular 17, siguen siendo buena práctica)
 
@@ -186,12 +190,12 @@ npm install
 npm start                    # genera feeds + http://localhost:4200
 npm run build                # genera feeds + build de producción
 npm test                     # vitest: dominio puro (22 tests, < 2 s)
-npm run calendars            # solo los feeds .ics (src/assets/calendars/, no versionado)
+npm run generate             # version.ts + feeds .ics (ambos generados, no versionados)
 npx tsc -p tsconfig.app.json --noEmit   # comprobación estricta rápida
 ```
 
-Nota: el workflow llama a `npx ng build` directamente, por eso ejecuta antes `npm run calendars`
-como paso propio. La verificación mínima antes de entregar es: `npm test` verde, build de
+Nota: el workflow llama a `npx ng build` directamente, por eso ejecuta antes `npm run generate`
+como paso propio (con `fetch-depth: 0` para que el recuento de commits sea real). La verificación mínima antes de entregar es: `npm test` verde, build de
 producción sin avisos, Programare / Tineri en 375 px y 1280 px, RO↔ES.
 
 Verificación mínima antes de entregar: build de producción sin warnings de budget, revisar

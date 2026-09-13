@@ -74,7 +74,7 @@
   --sp-8: 32px;
 
   /* ---- Tamaños ---- */
-  --h-header: 48px;
+  --h-header: 48px;          /* 64 px desde 600 px (ver abajo) */
   --h-nav: 40px;
   --h-row: 36px;
   --h-control: 28px;
@@ -154,7 +154,7 @@
 }
 
 @media (min-width: 600px) {
-  :root { --page-pad: var(--sp-4); }
+  :root { --page-pad: var(--sp-4); --h-header: 64px; }
 }
 
 /* Sin movimiento si el usuario lo pide: al salir todo de tokens no hace falta !important. */
