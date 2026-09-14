@@ -8,6 +8,7 @@ import { getEntryTimes, hasNotes } from '../../../core/utils/schedule.utils';
 import { daysBetween, isSameDay } from '../../../core/utils/date.utils';
 import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
 import { CalendarButtonComponent } from '../calendar-button/calendar-button.component';
+import { EventShareButtonComponent } from '../event-share-button/event-share-button.component';
 
 /**
  * Tarjeta destacada de una programación (el próximo evento en Programare, el próximo apoyo
@@ -17,7 +18,7 @@ import { CalendarButtonComponent } from '../calendar-button/calendar-button.comp
 @Component({
     selector: 'app-next-event-card',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TranslatePipe, LDatePipe, CalendarButtonComponent],
+    imports: [TranslatePipe, LDatePipe, CalendarButtonComponent, EventShareButtonComponent],
     templateUrl: './next-event-card.component.html',
     styleUrl: './next-event-card.component.css'
 })

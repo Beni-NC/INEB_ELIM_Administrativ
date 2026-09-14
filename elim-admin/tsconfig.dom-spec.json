@@ -1,0 +1,10 @@
+/* Tests de componente (`*.dom.spec.ts`): los compila el builder unit-test de Angular (vitest + jsdom).
+   Separado de tsconfig.spec.json porque los tests de Node (ficheros, rutas) no deben entrar aquí. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/dom-spec",
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*.dom.spec.ts", "src/testing/**/*.ts", "src/**/*.d.ts"]
+}

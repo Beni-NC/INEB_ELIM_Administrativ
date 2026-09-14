@@ -20,8 +20,8 @@ Deploy automático a GitHub Pages al hacer push a `main`. La app se usa sobre to
   visual sale de los tokens y primitivas existentes; nunca de un valor literal.
 - **Autonomía con criterio**: decisiones rutinarias se toman y se explican en una línea;
   se pregunta solo cuando dos lecturas llevan a trabajos materialmente distintos.
-- **Verificación**: `npx tsc -p tsconfig.app.json --noEmit` + `npm test` siempre; `npm run build`
-  cuando se toca build/PWA/scripts. Lo que no se verifica se dice.
+- **Verificación**: `npx tsc -p tsconfig.app.json --noEmit` + `npm test` (Node + componentes)
+  siempre; `npm run build` cuando se toca build/PWA/scripts. Lo que no se verifica se dice.
 
 ## Reglas base (siempre)
 
@@ -30,8 +30,11 @@ Deploy automático a GitHub Pages al hacer push a `main`. La app se usa sobre to
    Si un patrón no existe, se añade a `components.css` **y** a la guía.
 2. **Código = `docs/ARQUITECTURA.md`.** Identificadores en inglés, comentarios en español, textos
    solo por i18n (**ro y es**), fechas con el pipe `ldate`. Lo derivable se deriva en
-   `ScheduleIndex`, no se escribe en los datos. Tocar `core/domain` o `core/utils` = actualizar o
-   añadir su `.spec.ts`.
+   `ScheduleIndex`, no se escribe en los datos; los enumerados de los datos son **códigos**
+   traducidos por la vista. Tocar `core/domain` o `core/utils` = actualizar o añadir su
+   `.spec.ts`; tocar datos = `npm test` (hay un spec de integridad sobre los datos reales).
+   Iconos = sprite SVG propio: tras usar uno nuevo, `npm run icons`. Componentes con lógica de
+   interacción = test `*.dom.spec.ts` (`ng test`).
 3. **No reintroducir** Angular Material, CDK, PrimeNG ni ninguna librería de componentes.
 4. **Sin código muerto**: lo que deja de usarse se borra (CSS, claves i18n, métodos).
 5. **No commitear ni hacer push**: dejar los cambios en el working tree y entregar el texto del
@@ -39,11 +42,18 @@ Deploy automático a GitHub Pages al hacer push a `main`. La app se usa sobre to
    quedó rastreado).
 6. **Al cerrar un bloque relevante**: actualizar `docs/PLAN-MAESTRO.md` (§4 y §5) y subir
    `version` en `elim-admin/package.json` si hay cambios visibles.
-7. **La app se actualiza sola** (recarga automática al detectar versión nueva): no añadir avisos
+7. **Público ≠ administración.** La app que ven los participantes muestra *qué hay programado*;
+   todo lo que sea **planificar** (a quién le toca, propuestas, reparto de padres, avisos de datos,
+   generadores de código) vive **solo** en `/admin`, una ruta oculta: no está en `TAB_PATHS`, ni en
+   las pestañas, ni en el gesto de deslizar, ni enlazada desde ningún sitio. Al añadir algo,
+   preguntarse siempre a cuál de los dos pertenece. El panel tiene un componente por sección; el
+   formato del código que genera vive en `core/utils/data-source.utils.ts` (con test), nunca en la
+   plantilla.
+8. **La app se actualiza sola** (recarga automática al detectar versión nueva): no añadir avisos
    ni confirmaciones de actualización.
-8. **Modo oscuro solo manual** (botón de la cabecera, guardado en el dispositivo; claro por
+9. **Modo oscuro solo manual** (botón de la cabecera, guardado en el dispositivo; claro por
    defecto). Nunca automático por `prefers-color-scheme`.
-9. Contacto y textos de WhatsApp: `core/contact.config.ts` + claves `contact.*`; una sola
+10. Contacto y textos de WhatsApp: `core/contact.config.ts` + claves `contact.*`; una sola
    entrada visible (dock flotante; `app-contact-card` al final de Reguli). El footer es una franja
    mínima: no añadirle contenido. El dock sigue el patrón de MEDIA-ELIM
    (`C:\workspace\iglesia-redes`); ante una duda de diseño, mirar primero esa app hermana.
@@ -73,6 +83,7 @@ Deploy automático a GitHub Pages al hacer push a `main`. La app se usa sobre to
 | Retomar trabajo, saber qué se decidió y por qué, qué queda | `docs/PLAN-MAESTRO.md` §4–§5 |
 | Cambiar datos (jóvenes, equipos, programaciones, padres) | `elim-admin/src/app/core/data/*.data.ts` (reglas: JSON de i18n) |
 | Cambiar textos | `elim-admin/src/assets/i18n/ro.json` **y** `es.json` |
+| Añadir/editar datos sin teclear TypeScript | abrir `/admin` en la app (propuestas, padres, personas, estado de los datos) |
 
 ## Comandos
 
@@ -80,6 +91,7 @@ Deploy automático a GitHub Pages al hacer push a `main`. La app se usa sobre to
 # Requiere Node ≥ 22.22. Si la máquina tiene otro Node: npx -y -p node@22 -p npm@11 -- <comando>
 cd elim-admin && npm start          # genera version.ts + feeds .ics + dev en http://localhost:4200
 cd elim-admin && npm run build      # producción (GitHub Pages)
-cd elim-admin && npm test           # vitest (dominio puro)
+cd elim-admin && npm test           # vitest (dominio, datos, iconos) + ng test (componentes, jsdom)
+cd elim-admin && npm run icons      # regenera assets/icons.svg con los iconos usados
 cd elim-admin && npx tsc -p tsconfig.app.json --noEmit   # comprobación rápida de tipos
 ```

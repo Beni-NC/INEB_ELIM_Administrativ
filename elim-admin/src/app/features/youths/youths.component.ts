@@ -11,20 +11,34 @@ import { daysBetween, isSameDay } from '../../core/utils/date.utils';
 import { getTeamColor, getTeamNumber } from '../../core/utils/team.utils';
 import { EventRowComponent } from '../../shared/ui/event-row/event-row.component';
 import { CalendarButtonComponent } from '../../shared/ui/calendar-button/calendar-button.component';
+import { MyTeamService } from '../../core/services/my-team.service';
+import { UntilPipe } from '../../core/i18n/until.pipe';
 
 /** Tineri: directorio con búsqueda y filtro, perfil expandible en línea y archivo de antiguos miembros. */
 @Component({
     selector: 'app-youths',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgTemplateOutlet, FormsModule, TranslatePipe, LDatePipe, EventRowComponent, CalendarButtonComponent],
+    imports: [NgTemplateOutlet, FormsModule, TranslatePipe, LDatePipe, UntilPipe, EventRowComponent, CalendarButtonComponent],
     templateUrl: './youths.component.html',
     styleUrl: './youths.component.css'
 })
 export class YouthsComponent {
   protected readonly data = inject(DataService);
   protected readonly nav = inject(NavigationService);
+  protected readonly myTeam = inject(MyTeamService);
 
   readonly expanded = this.nav.expandedYouthId;
+  /** Filtro "echipa mea" (solo existe si el usuario marcó su equipo en Echipe). */
+  readonly onlyMine = signal(false);
+  /** Búsqueda + filtro de rol (DataService) + filtro "echipa mea" (aquí: DataService no conoce al usuario). */
+  readonly visibleYouths = computed<Youth[]>(() => {
+    const list = this.data.filteredYouths();
+    const mine = this.myTeam.team();
+    if (!this.onlyMine() || !mine) return list;
+    return list.filter(y => this.data.getActiveTeamsForYouth(y.id).some(t => t.teamName === mine));
+  });
+  /** "Membru din" solo aporta algo cuando no todos entraron el mismo año (hoy, el de arranque del departamento). */
+  readonly showJoinedYear = new Set(this.data.youths.map(y => y.joinedYear)).size > 1;
   readonly showArchived = signal(false);
   /** El archivo se abre solo si el joven expandido (por enlace cruzado) está archivado. */
   readonly archivedOpen = computed(() => {

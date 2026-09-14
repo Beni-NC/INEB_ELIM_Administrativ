@@ -36,7 +36,7 @@ interface RuleSection {
         @for (s of sections(); track s.id; let i = $index) {
           <article class="ui-card" [id]="'rule-' + s.id">
             <header class="ui-card__header">
-              <span class="icon faint" aria-hidden="true">{{ s.icon }}</span>
+              <svg class="icon faint" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (s.icon)"/></svg>
               <h3 class="ui-card__title rules__title"><span class="rules__num">{{ i + 1 }}</span>{{ s.title }}</h3>
             </header>
             <ol class="ui-card__body rules__list">

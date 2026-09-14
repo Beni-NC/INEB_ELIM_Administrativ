@@ -4,22 +4,25 @@ import { DataService } from '../../core/services/data.service';
 import { NavigationService } from '../../core/services/navigation.service';
 import { LDatePipe } from '../../core/i18n/ldate.pipe';
 import { entryKey } from '../../core/utils/schedule.utils';
+import { MyTeamService } from '../../core/services/my-team.service';
+import { UntilPipe } from '../../core/i18n/until.pipe';
 import { getTeamColor, getTeamNumber } from '../../core/utils/team.utils';
 import { EventRowComponent } from '../../shared/ui/event-row/event-row.component';
 import { NextEventCardComponent } from '../../shared/ui/next-event-card/next-event-card.component';
 import { CalendarButtonComponent } from '../../shared/ui/calendar-button/calendar-button.component';
 
-/** Programare: KPIs, próximo evento, lista de próximas por mes, resumen de coordinadores e histórico. */
+/** Programare: KPIs, próximo evento, próximas por mes, resumen de coordinadores e histórico. */
 @Component({
     selector: 'app-schedule',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TranslatePipe, LDatePipe, EventRowComponent, NextEventCardComponent, CalendarButtonComponent],
+    imports: [TranslatePipe, LDatePipe, UntilPipe, EventRowComponent, NextEventCardComponent, CalendarButtonComponent],
     templateUrl: './schedule.component.html',
     styleUrl: './schedule.component.css'
 })
 export class ScheduleComponent {
   protected readonly data = inject(DataService);
   protected readonly nav = inject(NavigationService);
+  protected readonly myTeam = inject(MyTeamService);
 
   readonly showPast = signal(false);
   /** Los 8 coordinadores con más programaciones dirigidas. */
@@ -28,6 +31,8 @@ export class ScheduleComponent {
   protected readonly entryKey = entryKey;
   protected readonly getTeamColor = getTeamColor;
   protected readonly getTeamNumber = getTeamNumber;
+
+  print(): void { window.print(); }
 
   /** Fecha representativa de un grupo mensual, para formatearla con `ldate`. */
   monthDate(group: { year: number; month: number }): Date {

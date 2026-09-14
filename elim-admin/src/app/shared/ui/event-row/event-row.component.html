@@ -26,15 +26,16 @@
 
   <div class="ui-row__trail">
     @if (past()) {
-      <span class="icon icon--sm ev__done" [title]="'event.completed' | translate" aria-hidden="true">check_circle</span>
+      <svg class="icon icon--sm ev__done" [attr.title]="'event.completed' | translate" aria-hidden="true"><use href="assets/icons.svg#check_circle"/></svg>
     } @else if (isToday()) {
       <span class="ui-badge ui-badge--success">{{ 'common.today_excl' | translate }}</span>
     } @else {
       <span class="ui-badge" [class.ui-badge--primary]="isThisWeek()">
-        {{ daysUntil() }} {{ (daysUntil() === 1 ? 'common.day' : 'common.days') | translate }}
+        @if (daysUntil() === 1) { {{ 'common.tomorrow' | translate }} } @else { {{ daysUntil() }} {{ 'common.days' | translate }} }
       </span>
     }
     @if (!past() && showCalendar()) {
+      <app-event-share-button [entry]="entry()" />
       <app-calendar-button [event]="entry()" />
     }
   </div>
@@ -43,7 +44,7 @@
 @if (hasNote()) {
   <div class="ev__extra">
     <div class="ui-note">
-      <span class="icon" aria-hidden="true">sticky_note_2</span>
+      <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sticky_note_2"/></svg>
       <span>{{ entry().observations }}</span>
     </div>
   </div>
@@ -67,10 +68,10 @@
       <span class="ui-team-badge" [class.ui-team-badge--muted]="past()">{{ teamNumber() }}</span>
       <span class="truncate">{{ entry().team }}</span>
     } @else {
-      <span class="truncate">{{ entry().programType }}</span>
+      <span class="truncate">{{ ('program_type.' + entry().programType) | translate }}</span>
     }
     @if (role() === 'coordonator') {
-      <span class="icon icon--sm icon--fill ui-star" [title]="'common.coordinator' | translate" aria-hidden="true">star</span>
+      <svg class="icon icon--sm ui-star" [attr.title]="'common.coordinator' | translate" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>
     }
     @if (historical()) {
       <span class="ui-badge">{{ 'teams.history_short' | translate }}</span>
@@ -80,11 +81,11 @@
     <span class="truncate">{{ coordinatorName() }}</span>
     @if (!past()) {
       <span class="ui-times" [title]="'schedule.tooltip_times_full' | translate: { food: times().parentsFoodArrival }">
-        <span class="icon" aria-hidden="true">schedule</span>
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#schedule"/></svg>
         <span class="num">{{ times().youthsArrival }}</span>
         <span class="ui-times__sep">→</span>
         <span class="num">{{ times().programStart }}</span>
-        <span class="icon ui-times__food-icon" aria-hidden="true">restaurant</span>
+        <svg class="icon ui-times__food-icon" aria-hidden="true"><use href="assets/icons.svg#restaurant"/></svg>
         <span class="ui-times__food num">{{ times().parentsFoodArrival }}</span>
       </span>
       <span class="ev__persons num">{{ entry().estimatedPersons }} {{ 'common.people' | translate }}</span>

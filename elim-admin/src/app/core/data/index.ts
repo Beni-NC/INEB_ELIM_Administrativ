@@ -5,7 +5,7 @@
      • schedule.data.ts     → SCHEDULE_DATA (programarea)
      • youths.data.ts       → YOUTHS (tabela unică „tineri")
      • memberships.data.ts  → YOUTH_TEAM_MEMBERSHIPS (tânăr ↔ echipă, activ/istoric)
-     • parents.data.ts      → PARENTS, PARENT_TEAM_ASSIGNMENTS, PARENT_YOUTH_LINKS
+     • parents.data.ts      → PARENTS, PARENT_YOUTH_LINKS (el apoyo es por programación: `parentSupporters`)
    Echipele (active și istorice), `fullName`/`initials` se derivă în `ScheduleIndex`.
    Interfețele trăiesc în `../models.ts`. Importă `DOMAIN_DATA` din `./index`.
    ============================================================ */

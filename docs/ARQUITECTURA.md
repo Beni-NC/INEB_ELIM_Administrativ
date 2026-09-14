@@ -60,19 +60,35 @@ src/
                              históricas = `teams` / `teamsHistory`, agregados, derivación de
                              fullName/iniciales/tone de avatar). Sin Angular: app, Node y tests
         schedule-index.spec.ts  tests con un fixture propio (no con los datos reales)
+        data-health.ts       checkDomainData(data, today): errores y avisos de los datos (lógica ÚNICA,
+                             compartida por data-integrity.spec.ts y el panel /admin) + .spec.ts
+      data/data-integrity.spec.ts  aplica checkDomainData a los datos reales: los errores rompen el build,
+                             los avisos se imprimen
       i18n/
         ldate.pipe.ts        pipe de fechas dependiente del idioma activo
+        title.strategy.ts    título del documento por pestaña ("Echipe · ELIM Tineret"), traducido
+        translate.loader.ts  rumano EMPAQUETADO (import del JSON; sin petición al arrancar), otros por HTTP
+        until.pipe.ts        cuenta atrás corta para badges: "Azi!" / "Mâine" / "4z" (impuro, sigue al idioma)
         translate-loader.factory.ts
       services/
         data.service.ts      `extends ScheduleIndex` + signals de búsqueda/filtro de jóvenes
         navigation.service.ts estado "expandido" por entidad + navegación cruzada + scroll/flash
+                             (afterNextRender) + fragmento de URL (`#team:Echipa 4`, enlaces profundos)
+        day-rollover.service.ts recarga al volver a primer plano si ha cambiado el día ("hoy" congelado)
+        my-team.service.ts   "Echipa mea": equipo del usuario en localStorage (app.team); null si ya no existe
+        event-share.service.ts mensaje de una programación (fecha, horas, coordinador, padres, enlace) → hoja nativa / wa.me
         language.service.ts  idioma activo (signal) + persistencia
         theme.service.ts     tema claro/oscuro MANUAL (signal + localStorage + data-theme)
         pwa-install.service.ts estado de instalación PWA (prompt nativo, iOS, aplazamiento)
         calendar.service.ts  descarga .ics (vía ics.utils) y URL de suscripción a los feeds
         pwa-update.service.ts
+      tokens.ts            APP_TODAY / APP_DATA: costuras para fijar "hoy" y los datos en tests
       utils/
-        date.utils.ts        aritmética de fechas pura (daysBetween, isSameDay, startOfDay…)
+        date.utils.ts        aritmética de fechas pura (daysBetween, isSameDay, startOfDay, nextWeekday, seasonStartOf)
+        text.utils.ts        normalizeForSearch: sin diacríticos ni mayúsculas (+ .spec.ts)
+        data-source.utils.ts generadores de código para los *.data.ts: programación (nueva o de reemplazo,
+                             con horas y observaciones), joven (alta/edición/archivo), pertenencia,
+                             bloque de composición (activa o cerrada), padre, vínculos — (+ 2 .spec.ts)
         schedule.utils.ts    horas efectivas de una programación, entryKey, hasNotes
         ics.utils.ts         iCalendar RFC 5545 puro (buildIcs, slug) — app y Node (+ .spec.ts)
         calendar-feeds.ts    nombres/URL de los feeds publicados — app y Node
@@ -90,10 +106,22 @@ src/
       event-row/             app-event-row: fila de programación reutilizable
       next-event-card/       app-next-event-card: tarjeta destacada (próximo evento / apoyo)
       calendar-button/       app-calendar-button: menú descargar .ics / suscribirse (ámbitos: all, event, team, youth, parent)
+      event-share-button/    app-event-share-button: "Trimite detaliile" de una programación (EventShareService)
     features/
       schedule/  teams/  youths/  parents/  rules/
         <x>.component.ts + .html + .css   (CSS encapsulado, solo disposición)
+      admin/                 PANEL PRIVADO (/admin), un componente por sección:
+        admin.component.*      carcasa: elige sección y la recuerda (localStorage `admin.section`)
+        admin-data.service.ts  apoyo común: carga de cada padre, miembros de un equipo, viernes libres, fechas de <input>
+        draft-checks.ts        avisos de una programación en preparación (+ .spec.ts)
+        parent-options.ts      orden y reparto de padres, etiqueta "nombre · Nx · última vez"
+        sections/              health · schedule (propuesta + editor) · parents · teams · people
+  testing/
+    domain-fixture.ts        fixture de dominio (TODAY, DATA) compartido por tests de Node y de componente
+    test-providers.ts        providers del TestBed: zoneless, router real, i18n sin cargador, APP_TODAY/APP_DATA
 scripts/
+  build-icons.mjs            sprite assets/icons.svg desde los iconos usados (npm run icons; se versiona)
+  assets-src/logo_admin.png  original del icono PWA (1,3 MB): fuera de assets/ para no publicarlo
   generate-version.mjs       src/version.ts: semver + build (commits) + commit + dirty + fecha
   generate-calendars.mjs     empaqueta con esbuild y ejecuta calendars.entry.ts
   calendars.entry.ts         genera assets/calendars/*.ics (global, por equipo, joven y padre)
@@ -160,6 +188,17 @@ Regla de dependencias: `features → shared/ui → core`; `layout → core`. `co
   template solo lee. Un template no calcula.
 - `*ngTemplateOutlet` exige importar `NgTemplateOutlet` en el componente.
 
+### 4.2 Tests
+
+- **Dominio y utilidades** (`*.spec.ts`, vitest en Node, `vitest.config.mts`): `ScheduleIndex`
+  con el fixture de `src/testing/domain-fixture.ts`, utilidades, `data-integrity.spec.ts` (datos
+  reales) e `icons.spec.ts` (sprite ↔ plantillas). Sin Angular.
+- **Componentes y servicios con DOM** (`*.dom.spec.ts`, `ng test` = builder
+  `@angular/build:unit-test`, vitest + jsdom, `tsconfig.dom-spec.json`): TestBed con
+  `testProviders()`; "hoy" y los datos vienen de `APP_TODAY`/`APP_DATA`, así los tests no
+  dependen del calendario real. Las traducciones no se cargan: se comprueban **claves**, no textos.
+- `npm test` ejecuta ambos; el deploy también.
+
 ## 5. Cómo añadir cosas
 
 **Una nueva pestaña**: (1) ruta en `TAB_PATHS` + `app.routes.ts` + `tabOrder` de
@@ -173,7 +212,28 @@ Regla de dependencias: `features → shared/ui → core`; `layout → core`. `co
 **Un nuevo dato de dominio**: interfaz en `models.ts` → datos en `core/data/<tabla>.data.ts`
 (y en `DomainData` si es una colección nueva) → índice o método en `ScheduleIndex` **con su test**
 en `schedule-index.spec.ts` → uso en la feature. Mostrarlo solo si puede no estar vacío
-(condicional). Si es derivable de otro dato, no se escribe: se deriva en el índice.
+(condicional). Si es derivable de otro dato, no se escribe: se deriva en el índice (por eso no
+existe `completed`: es "fecha < hoy"). Los **enumerados** (`programType`, `relationship`) son
+**códigos** (`youth_evening`, `mother`) y la vista los traduce con `program_type.*` /
+`relationship.*`; nunca texto rumano en los datos. Si el dato lleva referencias (ids, nombres),
+añadir la comprobación a `data-integrity.spec.ts`.
+
+**¿Público o `/admin`?** La app pública responde *qué hay programado* (y a cada persona, cuándo le
+toca). Todo lo que sirva para **decidir y escribir** los datos —propuestas, rotación con días de
+espera, reparto de padres, avisos de integridad, generadores de líneas— va al panel. El panel no
+escribe nada (no hay backend): produce el texto exacto que se pega en `core/data/*.data.ts`, y
+`data-source.utils.ts` es quien conoce ese formato.
+
+**Cómo crece el panel**: una sección = un componente en `features/admin/sections/` con su estado en
+signals; lo común (carga de padres, viernes libres, conversión de fechas) va a `AdminDataService`; el
+formato de salida, **siempre** a `data-source.utils.ts` con su test; los avisos, a funciones puras
+(`draft-checks.ts`) que devuelven claves `admin.check.*`. Ningún generador arma código con plantillas
+dentro del componente.
+
+**Enlaces profundos**: la entidad expandida va en el fragmento (`/echipe#team:Echipa 4`,
+`/tineri#youth:<id>`, `/parinti#parent:<id>`, `/echipe#history:<clave>`). Lo gestiona solo
+`NavigationService` (escribe con `replaceUrl`, lee en `NavigationEnd`); los componentes no tocan
+la URL.
 
 **Calendario**: los feeds se regeneran solos (`prestart`/`prebuild` y paso del workflow). Si se
 añade un tipo de feed: nombre en `calendar-feeds.ts`, generación en `scripts/calendars.entry.ts`
@@ -183,6 +243,14 @@ y ámbito (`CalendarScope`) en `CalendarService`.
 preescritos son claves i18n (`contact.*_message`) para que salgan en el idioma del usuario.
 
 **Tema**: solo `ThemeService.toggle()/set()`. No leer `prefers-color-scheme` en ningún sitio.
+
+**Un icono nuevo**: usarlo en la plantilla (`<use href="assets/icons.svg#nombre"/>`), ejecutar
+`npm run icons` y versionar el sprite. Nombres del vocabulario de la guía §4.
+
+**Rendimiento**: Lighthouse CI corre en el workflow (job `lighthouse`, no bloquea el deploy) con
+`lighthouserc.json`: rendimiento ≥ 0,85 y accesibilidad ≥ 0,95 en móvil emulado. Lo que más
+pesa en el arranque es el propio bundle; el rumano va empaquetado precisamente para no añadir
+una petición antes del primer pintado.
 
 ## 6. Comandos
 

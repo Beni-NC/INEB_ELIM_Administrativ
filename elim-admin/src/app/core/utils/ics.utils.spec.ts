@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { IcsLabels, buildIcs, icsFileNameForEvent, slug } from './ics.utils';
+import { IcsLabels, PARENT_ALARMS, buildIcs, icsFileNameForEvent, slug } from './ics.utils';
 import { ScheduleEntry } from '../models';
 import { feedFileForParent, feedFileForTeam, feedFileForYouth, feedUrl } from './calendar-feeds';
 
@@ -15,11 +15,12 @@ const LABELS: IcsLabels = {
   fieldFood: 'Aducere mâncare (părinți)',
   fieldEstimated: 'Persoane estimate',
   fieldNotes: 'Observații',
+  programTypes: { youth_evening: 'Seară de tineret' },
 };
 
 const ENTRY: ScheduleEntry = {
-  team: 'Echipa 1', coordinator: 'Halas Luigi', programType: 'Seară de tineret', estimatedPersons: 60,
-  date: new Date(2026, 4, 8), observations: 'Aduceți farfurii, pahare; șervețele\nși fețe de masă', completed: false,
+  team: 'Echipa 1', coordinator: 'Halas Luigi', programType: 'youth_evening', estimatedPersons: 60,
+  date: new Date(2026, 4, 8), observations: 'Aduceți farfurii, pahare; șervețele\nși fețe de masă',
 };
 
 describe('buildIcs', () => {
@@ -39,7 +40,15 @@ describe('buildIcs', () => {
     expect(ics).toContain('DTSTART:20260508T193000');
     expect(ics).toContain('DTEND:20260508T230000');
     expect(ics).toContain('UID:echipa-1-20260508@elim-admin');
-    expect(ics).toContain('STATUS:TENTATIVE');
+    expect(ics).toContain('STATUS:CONFIRMED');
+    expect(ics.match(/BEGIN:VALARM/g)).toHaveLength(1);
+    expect(ics).toContain('TRIGGER:-PT12H');
+  });
+
+  it('los feeds de padres llevan un segundo recordatorio dos días antes', () => {
+    const ics = buildIcs([ENTRY], LABELS, new Date(2026, 0, 1), PARENT_ALARMS);
+    expect(ics.match(/BEGIN:VALARM/g)).toHaveLength(2);
+    expect(ics).toContain('TRIGGER:-P2D');
   });
 
   it('escapa comas, punto y coma y saltos de línea en los textos', () => {

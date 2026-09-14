@@ -4,3 +4,6 @@
 .youth__team .ui-team-badge { width: 16px; height: 16px; font-size: 10px; }
 .youth__chip-badge { width: 16px; height: 16px; font-size: 10px; }
 .youth__star { color: var(--c-warning); }
+/* En móvil la cabecera lleva título, contador y alerta: el resumen numérico no cabe. */
+.youths__stats { display: none; }
+@media (min-width: 600px) { .youths__stats { display: inline; } }

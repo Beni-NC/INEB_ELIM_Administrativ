@@ -26,10 +26,13 @@
     <header class="ui-card__header">
       <h2 class="ui-card__title">{{ 'parents.support_parents' | translate }}</h2>
       <span class="ui-count">{{ data.activeParents.length }}</span>
+      @if (data.parentStats.withoutUpcoming > 0) {
+        <span class="ui-badge ui-badge--warning" [title]="'parents.without_upcoming_hint' | translate">{{ 'parents.without_upcoming_count' | translate:{ n: data.parentStats.withoutUpcoming } }}</span>
+      }
     </header>
     <p class="ui-card__desc">{{ 'parents.support_intro' | translate }}</p>
     @if (data.activeParents.length === 0) {
-      <div class="ui-empty"><span class="icon" aria-hidden="true">info</span>{{ 'parents.empty' | translate }}</div>
+      <div class="ui-empty"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>{{ 'parents.empty' | translate }}</div>
     } @else {
       <div class="ui-list">
         @for (p of data.activeParents; track p.id) {
@@ -44,10 +47,10 @@
 @if (data.pastParentEvents.length > 0) {
   <section class="ui-section">
     <button type="button" class="ui-disclosure" (click)="showPastGlobal.set(!showPastGlobal())" [attr.aria-expanded]="showPastGlobal()">
-      <span class="icon" aria-hidden="true">history</span>
+      <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
       {{ 'parents.history_with_parents' | translate }}
       <span class="ui-count">{{ data.pastParentEvents.length }}</span>
-      <span class="icon ui-disclosure__chevron" aria-hidden="true">{{ showPastGlobal() ? 'expand_less' : 'expand_more' }}</span>
+      <svg class="icon ui-disclosure__chevron" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (showPastGlobal() ? 'expand_less' : 'expand_more')"/></svg>
     </button>
     @if (showPastGlobal()) {
       <div class="ui-disclosure__panel">
@@ -65,10 +68,10 @@
 @if (data.inactiveParents.length > 0) {
   <section class="ui-section">
     <button type="button" class="ui-disclosure" (click)="showArchived.set(!archivedOpen())" [attr.aria-expanded]="archivedOpen()">
-      <span class="icon" aria-hidden="true">history</span>
+      <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
       {{ 'parents.former_support' | translate }}
       <span class="ui-count">{{ data.inactiveParents.length }}</span>
-      <span class="icon ui-disclosure__chevron" aria-hidden="true">{{ archivedOpen() ? 'expand_less' : 'expand_more' }}</span>
+      <svg class="icon ui-disclosure__chevron" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (archivedOpen() ? 'expand_less' : 'expand_more')"/></svg>
     </button>
     @if (archivedOpen()) {
       <div class="ui-disclosure__panel">
@@ -106,6 +109,11 @@
             } @else {
               <span class="faint">{{ 'parents.no_children' | translate }}</span>
             }
+            <!-- Cuántas veces ha ayudado ya: para repartir el apoyo con criterio al asignar padres. -->
+            @if (data.getPastEventsForParent(p.id).length; as n) {
+              <span class="faint">·</span>
+              <span class="num" [title]="'parents.support_count_hint' | translate">{{ (n === 1 ? 'parents.support_count_one' : 'parents.support_count') | translate:{ n } }}</span>
+            }
           </span>
         </span>
       </button>
@@ -115,19 +123,24 @@
             <span class="ui-badge ui-badge--success">{{ 'common.today_excl' | translate }}</span>
           } @else {
             <span class="ui-badge" [class.ui-badge--primary]="daysUntil(next.date) <= 7" [title]="'parents.next_short' | translate">
-              {{ next.date | ldate:'dayMonth' }} · {{ daysUntil(next.date) }}{{ 'common.day_letter' | translate }}
+              {{ next.date | ldate:'dayMonth' }} · {{ next.date | until }}
             </span>
           }
           <app-calendar-button [parentId]="p.id" [parentName]="p.name" />
+        } @else if (p.active !== false) {
+          <span class="ui-badge">{{ 'parents.no_support_scheduled' | translate }}</span>
         }
-        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggle(p)" tabindex="-1" aria-hidden="true"><span class="icon" aria-hidden="true">{{ expanded() === p.id ? 'expand_less' : 'expand_more' }}</span></button>
+        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggle(p)" tabindex="-1" aria-hidden="true"><svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (expanded() === p.id ? 'expand_less' : 'expand_more')"/></svg></button>
       </div>
     </div>
 
     @if (expanded() === p.id) {
       <div class="ui-row-detail" [id]="'detail-parent-' + p.id">
+        @if (showJoinedDate || p.active === false || p.phone || p.email) {
         <div class="ui-subsection">
-          <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.member_from' | translate }}</span><span class="ui-kv__v">{{ p.joinedDate | ldate:'monthYear' }}</span></div>
+          @if (showJoinedDate) {
+            <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.member_from' | translate }}</span><span class="ui-kv__v">{{ p.joinedDate | ldate:'monthYear' }}</span></div>
+          }
           @if (p.active === false && p.inactiveSince) {
             <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.inactive_from' | translate }}</span><span class="ui-kv__v">{{ p.inactiveSince | ldate:'short' }}</span></div>
           }
@@ -141,6 +154,7 @@
             <div class="ui-kv"><span class="ui-kv__k">{{ 'parents.email' | translate }}</span><a class="ui-kv__v" [href]="'mailto:' + p.email">{{ p.email }}</a></div>
           }
         </div>
+        }
 
         @if (p.skills.length > 0) {
           <div class="ui-subsection">
@@ -163,19 +177,25 @@
                     <span class="ui-row__text">
                       <span class="ui-row__title">
                         <span class="truncate">{{ link.youth.fullName }}</span>
-                        @if (data.isActiveCoordinator(link.youth.id)) { <span class="icon icon--sm icon--fill ui-star" [title]="'common.coordinator' | translate" aria-hidden="true">star</span> }
+                        @if (data.isActiveCoordinator(link.youth.id)) { <svg class="icon icon--sm ui-star" [attr.title]="'common.coordinator' | translate" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg> }
                       </span>
-                      <span class="ui-row__meta">{{ link.relationship }}</span>
+                      <span class="ui-row__meta">{{ ('relationship.' + link.relationship) | translate }}</span>
                     </span>
                   </button>
-                  <div class="ui-row__trail"><span class="icon faint" aria-hidden="true">chevron_right</span></div>
+                  <div class="ui-row__trail"><svg class="icon faint" aria-hidden="true"><use href="assets/icons.svg#chevron_right"/></svg></div>
                 </div>
               }
             </div>
           </div>
         }
 
-        <!-- Próximas programaciones -->
+        <!-- Próximas programaciones (o decir que no tiene apoyo programado) -->
+        @if (data.getUpcomingEventsForParent(p.id).length === 0 && p.active !== false) {
+          <div class="ui-subsection">
+            <span class="ui-subsection__title">{{ 'parents.upcoming_schedules' | translate }}</span>
+            <div class="ui-empty ui-empty--inline"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg><span>{{ 'parents.no_upcoming_detail' | translate }}</span></div>
+          </div>
+        }
         @if (data.getUpcomingEventsForParent(p.id).length > 0) {
           <div class="ui-subsection">
             <span class="ui-subsection__title">{{ 'parents.upcoming_schedules' | translate }} <span class="ui-count">{{ data.getUpcomingEventsForParent(p.id).length }}</span></span>
@@ -191,9 +211,9 @@
         @if (data.getPastEventsForParent(p.id).length > 0) {
           <div class="ui-subsection">
             <button type="button" class="ui-subsection__title" (click)="togglePast(p.id)" [attr.aria-expanded]="isPastOpen(p.id)">
-              <span class="icon icon--sm" aria-hidden="true">history</span>
+              <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
               {{ 'parents.schedule_history' | translate }} <span class="ui-count">{{ data.getPastEventsForParent(p.id).length }}</span>
-              <span class="icon icon--sm" aria-hidden="true">{{ isPastOpen(p.id) ? 'expand_less' : 'expand_more' }}</span>
+              <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isPastOpen(p.id) ? 'expand_less' : 'expand_more')"/></svg>
             </button>
             @if (isPastOpen(p.id)) {
               <div class="ui-list">
@@ -207,7 +227,7 @@
 
         @if (p.notes) {
           <div class="ui-note">
-            <span class="icon" aria-hidden="true">sticky_note_2</span>
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sticky_note_2"/></svg>
             <span>{{ p.notes }}</span>
           </div>
         }

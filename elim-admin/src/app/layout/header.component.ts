@@ -17,7 +17,7 @@ import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component
       <div class="ui-header__inner ui-container">
       <app-brand-logo tone="light" link="/" />
       <span class="ui-header__divider" aria-hidden="true"></span>
-      <a routerLink="/" class="ui-header__brand" [attr.aria-label]="'common.back_to_main' | translate">
+      <a routerLink="/" class="ui-header__brand" [title]="'common.back_to_main' | translate">
         <div class="ui-header__text">
           <h1 class="ui-header__title">{{ 'header.title' | translate }}</h1>
           <span class="ui-header__subtitle">{{ 'header.subtitle' | translate }}</span>
@@ -38,7 +38,7 @@ import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component
                 [attr.aria-pressed]="theme.current() === 'dark'"
                 [attr.aria-label]="(theme.current() === 'dark' ? 'theme.light' : 'theme.dark') | translate"
                 [title]="(theme.current() === 'dark' ? 'theme.light' : 'theme.dark') | translate">
-          <span class="icon" aria-hidden="true">{{ theme.current() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
+          <svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (theme.current() === 'dark' ? 'light_mode' : 'dark_mode')"/></svg>
         </button>
       </div>
       </div>

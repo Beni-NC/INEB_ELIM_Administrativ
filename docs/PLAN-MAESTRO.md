@@ -225,13 +225,181 @@ servidor; la suscripción al calendario ya avisa), modo presentación (no se pro
 dedicada (el CSS de impresión básico ya existe), detección automática de idioma (rumano por
 defecto es deliberado).
 
-## 5. Siguientes pasos recomendados (no hechos)
+### Entregado (2026-09-14, sexto bloque) — `v.2.5.0` (plan de auditoría; A1 excluido por decisión del propietario)
+- **Datos y calendarios**: `completed` eliminado (derivable) y feeds `.ics` con `STATUS:CONFIRMED`
+  (antes todo lo futuro salía como provisional en Google/Apple Calendar). Enumerados como códigos
+  + i18n (`program_type.youth_evening`, `relationship.mother|father|guardian`) también en la
+  descripción del `.ics`. `data-integrity.spec.ts` valida los datos reales (16 comprobaciones);
+  el deploy ejecuta `tsc` + `npm test` antes de construir.
+- **Rotación de equipos** (`ScheduleIndex.teamRotation`, con tests): bloque "Rândul echipelor" en
+  Programare (última vez, días de espera, próximo turno; los sin turno primero) y KPIs
+  accionables (días hasta la próxima, este mes, futuras, equipos a la espera).
+- **Búsqueda** sin diacríticos y por equipo (`normalizeForSearch`); "N sprijine" en cada padre;
+  "Membru din" / "Din" ocultos mientras todos compartan fecha de alta.
+- **Plataforma**: recarga al cambiar de día con la PWA abierta (`DayRolloverService`); título del
+  documento por pestaña traducido (`I18nTitleStrategy`); enlaces profundos por fragmento
+  (`#team:Echipa 4`…) con scroll por `afterNextRender` (sin temporizador).
+- **Contraste AA**: `--c-text-3` #6b7585 (4,7:1); equipos 3/4/6 en tono 700 (≥ 5:1).
+- **PWA / compartir**: fuente de iconos en subconjunto (`icon_names`, 31 glifos); Open Graph
+  (título, descripción, imagen 512, URL; el mirror recibe la suya en el deploy); manifest con
+  `id`, `shortcuts` (Echipe, Tineri, Părinți), `background_color` de marca y sin bloqueo de
+  orientación.
+- **Estado "fără programare" en toda la app** (patrón de tres niveles, guía §5): badge ámbar en
+  las filas de Echipe sin turno y contador en su cabecera; en Tineri y Părinți badge neutro por
+  fila + contador ámbar en la cabecera ("50 fără programare", "11 fără sprijin programat"),
+  detalle con la causa y enlace "Vezi rândul echipelor" (`NavigationService.goToRotation`,
+  fragmento `#rotation`); sub-filas de equipo del joven con "Fără programare"; contadores
+  `youthStats.withoutUpcoming` y `parentStats` en el dominio (con tests). Singular/plural de
+  "sprijin".
+- **Lint de iconos** (`icons.spec.ts`): tras el subconjunto de iconos, `sticky_note_2` (nota de
+  una programación) quedó fuera y se pintaba como texto; el spec extrae los iconos usados en
+  plantillas/componentes y exige que coincidan exactamente con `icon_names` y en orden alfabético.
+- Verificado: `tsc`, 44 tests, build de producción, capturas de Programare (1240/375), enlace
+  profundo `/echipe#team:Echipa%204` (expande y hace scroll), fragmento al expandir/contraer,
+  búsqueda "birle" → Bîrle Filip/Tania, "echipa 7" → 8 miembros, títulos por pestaña.
 
-1. **Instalar Node 22 LTS** en la máquina de desarrollo para no depender del prefijo
-   `npx -p node@22` (el workflow ya usa Node 22).
-2. **Signal Forms** (Angular 22) para el buscador de Tineri en vez de `ngModel`: hoy funciona;
-   solo tiene sentido si crece el número de formularios.
-3. **Lector de pantalla**: prueba manual con NVDA/TalkBack de las filas expandibles (los nombres
-   salen del contenido; el panel de vista previa no los expone, pero es su limitación).
-4. **Feeds**: si se quieren notificaciones por cambio de programación, el mismo `ScheduleIndex`
-   puede alimentar un aviso (p. ej. Telegram) desde el workflow al detectar cambios en los datos.
+### Entregado (2026-09-14, séptimo bloque) — `v.2.6.0` (auditoría 2 completa salvo U3)
+- **Planificación**: propuesta automática de turnos (`ScheduleIndex.proposedSchedule`: siguiente
+  viernes libre para cada equipo sin turno, en orden de rotación) con "Copiază pentru
+  schedule.data.ts" (`toDataSourceLines`); "fără părinți" en programaciones futuras sin padres
+  (fila, tarjeta, contador en cabecera) y sugerencia de los menos solicitados en Părinți
+  (`suggestParents`); turnos por temporada (sept→ago, `seasonStartOf`) en la rotación; aviso en
+  `npm test` de programaciones que no caen en viernes (hay una: Echipa 1 · 10-03-2025, lunes).
+- **Participantes**: "Echipa mea" (`MyTeamService`, marcador en Echipe, tarjeta en Programare,
+  filtro en Tineri); "Trimite detaliile" (`EventShareService` + `app-event-share-button`, hoja
+  nativa o WhatsApp Web, con enlace profundo al equipo); impresión (`@media print` + botón);
+  "Mâine" (`until` pipe); segundo recordatorio 2 días antes en los feeds de padres
+  (`PARENT_ALARMS`); "Copiază linkul acestei pagini" en el diálogo de compartir.
+- **Plataforma**: sin Google Fonts — Playfair 600 (latino, 23 KB) alojada y **sprite SVG de
+  iconos** (`assets/icons.svg`, 39 glifos, `npm run icons`, `build-icons.mjs`), con `icons.spec.ts`
+  plantillas ↔ sprite; skip link + `aria-live`; tests de componente (`*.dom.spec.ts`, 9 tests:
+  fila de programación, Echipe, NavigationService con router real) vía `ng test`;
+  `APP_TODAY`/`APP_DATA` como costuras; **Lighthouse CI** (job aparte, informa sin bloquear;
+  informe como artefacto); capturas en el manifest; `isCoordinator` y `ParentTeamAssignment`
+  eliminados; original de 1,3 MB del icono fuera de `assets/`.
+- **Lo que enseñó Lighthouse** (móvil emulado, antes → después): LCP **9,2 s → 3,0 s** al
+  empaquetar el rumano (la primera pantalla esperaba a `ro.json`); accesibilidad 0,92 → **1,0**
+  (banner con nombre, enlaces sin `aria-label` contradictorio, contraste de ámbar y oro);
+  rendimiento 0,64 → 0,89. Umbrales: rendimiento ≥ 0,85, accesibilidad ≥ 0,95.
+- Verificado: `tsc`, 54 tests de Node + 9 de componente, build de producción, Lighthouse local,
+  capturas (Programare con "Echipa mea", rotación con propuesta, Echipe con marcador, Tineri con
+  filtro, iconos SVG en claro/oscuro, 1240/375).
+
+### Entregado (2026-09-14, octavo bloque) — `v.2.7.0` (separación público / administración)
+- **La planificación sale de la app pública**: fuera el bloque "Rândul echipelor" con su propuesta,
+  el KPI de equipos a la espera (vuelve "Echipe active"), el aviso "fără părinți" de filas y
+  tarjeta y la barra de sugerencias de Părinți. Los participantes ven *qué hay programado*; quién
+  decide, dónde decide (regla nueva en `CLAUDE.md`). Se mantienen los estados "fără programare"
+  de Echipe/Tineri/Părinți, que sí les afectan.
+- **Nuevo módulo `/admin`** (ruta oculta: fuera de `TAB_PATHS`, sin enlaces, sin dock ni banner de
+  instalación), con cuatro secciones:
+  · **Stare date** — `checkDomainData` (lógica única compartida con el spec de integridad): 23
+    comprobaciones, errores en rojo y avisos en ámbar con el detalle de cada caso.
+  · **Programări** — rotación con días de espera y turnos por temporada, y **generador de turnos**:
+    N programaciones desde una fecha, equipo editable por fila, reparto automático de padres por
+    carga y el código listo para `schedule.data.ts`.
+  · **Părinți** — programaciones futuras sin padres, sugerencia de los menos solicitados,
+    líneas de reemplazo, y la carga real de cada padre.
+  · **Persoane** — alta de joven (línea de `youths` + pertenencia), alta de padre (bloque +
+    vínculo familiar) y **cierre de composición** de un equipo con su fecha.
+- **`data-source.utils.ts`**: generadores puros del formato exacto de los ficheros de datos
+  (comillas simples, `new Date(año, mes0, día)`, escape de apóstrofos) con sus tests.
+- `ScheduleIndex.proposeSchedule(count, from)` (antes solo la propuesta fija) y
+  `parentsByWorkload()` (sustituye a `suggestParents`).
+- Verificado: `tsc`, 56 tests de Node + 14 de componente (5 nuevos del panel), build de
+  producción, y en el navegador: `/admin` genera 6 turnos correctos desde el 25-09, la app pública
+  ya no muestra rotación ni avisos de planificación, y el panel funciona en móvil.
+
+### Entregado (2026-09-14, noveno bloque) — `v.2.8.0` (panel /admin completo)
+- **Todo lo que se editaba a mano ya se genera desde el panel**, con cinco secciones y un
+  componente por sección (`features/admin/sections/`):
+  · **Programări** — la propuesta pasa a ser una lista **editable fila a fila**: fecha (también un
+    día que no sea viernes, p. ej. una conferencia), equipo, coordinador (cualquiera de la
+    composición, para invitados), personas, observaciones, horas propias y dos padres; añadir
+    fila, **quitar fila** y **aplazar desde una** cuando un viernes no hay programa. Cada fila
+    avisa de lo que no cuadra (`draft-checks`, 10 comprobaciones: fecha ocupada o repetida, sin
+    coordinador, padres duplicados, no es viernes, fecha pasada, coordinador de otro equipo…) y la
+    cabecera resume cuántas filas tienen error o aviso. Debajo, **editor de una programación ya
+    publicada** (mismos campos → línea de reemplazo, o línea a borrar si se anula).
+  · **Părinți** — reparto con el criterio a la vista: cada opción dice **"nombre · Nx · última
+    vez"**, con orden configurable (menos solicitados / más tiempo sin ayudar / alfabético),
+    filtro "solo las que no tienen padres", reparto automático y solo se genera lo que cambia.
+  · **Echipe** — componer la plantilla marcando miembros (con buscador) y coordinador, cerrar la
+    composición con su fecha y **mover a alguien de equipo** (líneas a quitar y a añadir).
+  · **Persoane** — alta de joven (con teléfono, correo, notas, equipo, rol y **varios padres**),
+    **edición y archivo** de un joven (cierra también sus pertenencias), alta de padre **con
+    varios hijos de una vez**, edición/archivo de padre y **vincular personas que ya existen**
+    (el caso "el joven ya estaba y ahora aparece su madre"), con los hijos ya vinculados
+    desactivados.
+  · **Stare date** — sin cambios de fondo (23 comprobaciones), ahora en su propio componente.
+- **Icono discreto en el pie** (`tune`, opacidad 0.35) que lleva al panel, a petición del propietario.
+- Primitivas nuevas: `ui-form-grid`, `ui-field`, `ui-control`, `ui-check`, `ui-code` y el
+  componente `app-admin-code` (bloque + copiar). `data-source.utils.ts` ampliado: horas y
+  observaciones en las líneas, edición/archivo de joven y padre, bloques de composición.
+- Verificado: `tsc`, 67 tests de Node (14 nuevos de generadores y avisos) y 26 de componente
+  (17 nuevos: propuesta, aplazar, quitar fila, fecha en otro día, equipo → coordinador, edición de
+  una publicada, altas, archivo, vínculos, composición, mover, reparto), build de producción y el
+  panel probado en el navegador (quitar fila, jueves con aviso, horas, código regenerado) en 1280 y 390 px.
+
+## 5. Pendiente (no hecho, por decisión o por alcance)
+
+- **A1 — Datos personales en el bundle público** (fecha de nacimiento, teléfono y e-mail de los
+  jóvenes, sin uso en la UI): el propietario decidió **no tocarlo** en v2.5.0. Sigue siendo la
+  recomendación nº 1 si en algún momento se revisa la privacidad.
+- **D1** Instalar Node 22 LTS en la máquina de desarrollo (el workflow ya lo usa).
+- **D2** Signal Forms para el buscador (solo si crece el número de formularios).
+- **D4** Prueba manual con lector de pantalla (NVDA/TalkBack).
+- **D5** Aviso por cambio de programación (Telegram) desde el workflow; requiere un bot y un
+  secreto en el repo.
+- **U3 Aniversări** (cumpleaños del mes; usa fechas de nacimiento): excluido por el propietario.
+- **Errata probable en los datos**: Echipa 1 · 10 mar 2025 cae en lunes (todo lo demás, viernes).
+  Aparece como aviso en `/admin` → Stare date.
+- **Protección de `/admin`**: es una ruta con un acceso discreto en el pie (la app es estática y no
+  hay backend, así que no hay contraseña posible). Si algún día molesta que sea accesible, lo
+  razonable es un despliegue aparte.
+- **Aplicar los cambios sin copiar y pegar**: requeriría un backend o una acción de GitHub que
+  reescriba los `*.data.ts`. Hoy el panel deja el texto exacto; el pegado es el único paso manual.
+
+## 6. Auditoría 2 (2026-09-14): qué se podría **añadir** — HECHO en v2.6.0 (todo salvo U3)
+
+Segunda pasada, esta vez buscando funcionalidad nueva que aporte al uso real (coordinador
+general que planifica, coordinadores de equipo, jóvenes y padres en el móvil). Impacto A/M/B ·
+esfuerzo S/M/L. Nada de esto está hecho.
+
+### Planificación (coordinador general)
+
+| # | Idea | Por qué | Imp. | Esf. |
+|---|---|---|---|---|
+| P1 | **Propunere de programare**: bloque en la rotación que lista las próximas vineri sin programación y les asigna equipo en el orden de la rotación; botón "Copiază" que genera las líneas listas para pegar en `schedule.data.ts` (con el coordinador de la composición activa). | Hoy se decide a mano y se escribe a mano (fuente de erratas que ahora caza el spec). | A | M |
+| P2 | **Fără părinți**: en cada programación futura sin `parentSupporters`, badge ámbar "fără părinți" (rotación, lista y tarjeta), y en Părinți una sugerencia ordenada por menos apoyos y más tiempo sin ayudar (ya existe el contador). | Cierra el ciclo "a quién le toca" también para los padres. | M | S |
+| P3 | **Turnuri în sezon**: contador "N turnuri în sezonul 2026–27" en la fila de la rotación (temporada sept–jun). | Equidad visible de un vistazo; septiembre reinicia la cuenta. | M | S |
+| P4 | **Vineri check**: aviso (no error) en el spec de integridad cuando una programación no cae en vineri. Hoy hay una: **Echipa 1 · 10 mar 2025 es luni** — probablemente errata. | Las erratas de fecha son las más difíciles de ver en la app. | M | S |
+
+### Para los participantes (móvil)
+
+| # | Idea | Por qué | Imp. | Esf. |
+|---|---|---|---|---|
+| U1 | **Echipa mea**: el usuario elige su equipo una vez (guardado en el dispositivo, como el tema) y la app le destaca su próximo turno (KPI "Următorul tău turn"), filtra Tineri por su equipo y marca sus programaciones en la lista. | 60 jóvenes abren la app con una sola pregunta: "¿cuándo me toca?". | A | M |
+| U2 | **Trimite detaliile**: en cada programación, acción que compone el mensaje (fecha, horas, coordinador, echipa, părinți, observații) y lo abre en la hoja de compartir / WhatsApp para pegarlo en el grupo del equipo. | Es lo que el coordinador escribe a mano cada semana. | A | S |
+| U3 | **Aniversări**: "Zile de naștere luna aceasta" (día y mes, sin año) en Tineri. Los datos ya están (decisión del propietario mantenerlos). | Los grupos de jóvenes celebran cumpleaños; hoy el dato no se usa para nada. | M | S |
+| U4 | **Imprimă programul**: hoja de estilos de impresión (hoy **no existe**) + acción "Imprimă" en Programare: A4 con las próximas por mes, sin cabecera/dock/footer. | Tablón de anuncios de la iglesia. | M | S |
+| U5 | **"Mâine"**: cuando falta 1 día, mostrar "Mâine" en vez de "1 zi" (tarjeta, badges). | Lenguaje natural; coste nulo. | B | S |
+| U6 | **Alarmă pentru părinți**: segundo recordatorio en los feeds de padres 2 días antes (compras), además del de 12 h. | El de 12 h llega tarde para comprar. | M | S |
+| U7 | **Compartir "această pagină"** en el diálogo de compartir (los enlaces profundos ya existen). | Mandar "mira tu equipo" con un toque. | B | S |
+
+### Plataforma, accesibilidad y calidad
+
+| # | Idea | Por qué | Imp. | Esf. |
+|---|---|---|---|---|
+| Q1 | **Skip link** "Sari la conținut" y anuncio `aria-live` del cambio de pestaña. | Teclado y lector de pantalla; hoy no hay. | B | S |
+| Q2 | **Fuentes propias**: Playfair (1 peso, subconjunto latino) e iconos como sprite SVG. Adiós a Google Fonts: 100 % offline, sin terceros, sin destello. | Privacidad y arranque sin red. | M | L |
+| Q3 | **Tests de componente** (vitest + TestBed) para filas expandibles, navegación cruzada y fragmentos. | Lo único no cubierto por tests. | M | L |
+| Q4 | **Lighthouse CI** en el workflow con presupuesto (rendimiento ≥ 95, accesibilidad 100). | Evita regresiones silenciosas. | B | M |
+| Q5 | **Capturas en el manifest** (`screenshots`) para la ficha de instalación enriquecida en Android. | Instalación más clara para padres. | B | S |
+| Q6 | **`isCoordinator` en `youths.data.ts`** no lo lee nadie (el coordinador sale de las composiciones): quitarlo cuando se toque ese fichero. | Dato muerto que invita a confusión. | B | S |
+
+### Recomendación
+
+Bloque v2.6: **P1 + P2 + P4 + U1 + U2 + U4 + U5 + U6 + Q1** (todo S/M, valor directo para quien
+planifica y para quien consulta). U3 solo si el propietario lo aprueba (usa fechas de
+nacimiento). Q2/Q3/Q4 como bloque técnico aparte.

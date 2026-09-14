@@ -1,0 +1,134 @@
+<!-- ══════════ Composición de un equipo ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header">
+      <h3 class="ui-card__title">{{ 'admin.composition_title' | translate }}</h3>
+      <span class="ui-count">{{ members().length }}</span>
+    </header>
+    <p class="ui-card__desc">{{ 'admin.composition_desc' | translate }}</p>
+
+    <div class="ui-card__toolbar ui-form-grid">
+      <label class="ui-field">
+        <span>{{ 'admin.field_team' | translate }}</span>
+        <select class="ui-select" [ngModel]="team()" (ngModelChange)="selectTeam($event)">
+          @for (t of teams(); track t) { <option [value]="t">{{ t }}</option> }
+        </select>
+      </label>
+      <label class="ui-field">
+        <span>{{ 'youths.search_placeholder' | translate }}</span>
+        <input type="search" class="ui-control" [ngModel]="search()" (ngModelChange)="search.set($event)">
+      </label>
+      <label class="ui-field ui-field--wide">
+        <span>{{ 'common.coordinator' | translate }}</span>
+        <select class="ui-select" [ngModel]="coordinatorId()" (ngModelChange)="coordinatorId.set($event)">
+          <option value="">{{ 'admin.select_coordinator' | translate }}</option>
+          @for (y of chosen(); track y.id) { <option [value]="y.id">{{ y.fullName }}</option> }
+        </select>
+      </label>
+    </div>
+
+    <div class="ui-list">
+      @for (y of youths(); track y.id) {
+        <label class="ui-row row-edit" [class.ui-row--expanded]="isMember(y.id)">
+          <div class="ui-row__lead">
+            <input type="checkbox" [checked]="isMember(y.id)" (change)="toggleMember(y.id)"
+                   [attr.aria-label]="y.fullName">
+          </div>
+          <div class="row-edit__main">
+            <span class="ui-row__title">
+              <span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span>
+              <span class="truncate">{{ y.fullName }}</span>
+              @if (y.id === coordinatorId()) {
+                <svg class="icon icon--sm ui-star" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>
+              }
+            </span>
+            <span class="ui-row__meta">
+              @for (t of data.getActiveTeamsForYouth(y.id); track t.teamName) {
+                <span class="faint">{{ t.teamName }}</span>
+              }
+              @if (!data.getActiveTeamsForYouth(y.id).length) {
+                <span class="faint">{{ 'youths.no_active_team' | translate }}</span>
+              }
+            </span>
+          </div>
+        </label>
+      }
+    </div>
+
+    @if (compositionIssue(); as issue) {
+      <div class="ui-card__body checks">
+        <span class="checks__item checks__item--warning">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+          {{ ('admin.check.' + issue) | translate }}
+        </span>
+      </div>
+    }
+    <app-admin-code [code]="compositionCode()" label="admin.copy_replace" hint="admin.composition_hint" />
+  </div>
+</section>
+
+<!-- ══════════ Cerrar la composición ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header"><h3 class="ui-card__title">{{ 'admin.close_team_title' | translate }}</h3></header>
+    <p class="ui-card__desc">{{ 'admin.close_team_desc' | translate }}</p>
+    <div class="ui-card__body ui-form-grid">
+      <label class="ui-field">
+        <span>{{ 'admin.field_team' | translate }}</span>
+        <select class="ui-select" [ngModel]="closeTeam()" (ngModelChange)="closeTeam.set($event)">
+          @for (t of teams(); track t) { <option [value]="t">{{ t }}</option> }
+        </select>
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_end' | translate }}</span>
+        <input type="date" class="ui-control" [ngModel]="closeDate()" (ngModelChange)="closeDate.set($event)">
+      </label>
+    </div>
+    <app-admin-code [code]="closeCode()" label="admin.copy_replace" hint="admin.close_team_hint" />
+  </div>
+</section>
+
+<!-- ══════════ Mover a alguien de equipo ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header"><h3 class="ui-card__title">{{ 'admin.move_title' | translate }}</h3></header>
+    <p class="ui-card__desc">{{ 'admin.move_desc' | translate }}</p>
+    <div class="ui-card__body ui-form-grid">
+      <label class="ui-field ui-field--wide">
+        <span>{{ 'tabs.youths' | translate }}</span>
+        <select class="ui-select" [ngModel]="moveYouthId()" (ngModelChange)="moveYouthId.set($event)">
+          <option value="">{{ 'admin.select_youth' | translate }}</option>
+          @for (y of youths(); track y.id) { <option [value]="y.id">{{ y.fullName }}</option> }
+        </select>
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_move_to' | translate }}</span>
+        <select class="ui-select" [ngModel]="moveTo()" (ngModelChange)="moveTo.set($event)">
+          @for (t of teams(); track t) { <option [value]="t">{{ t }}</option> }
+        </select>
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_role' | translate }}</span>
+        <select class="ui-select" [ngModel]="moveRole()" (ngModelChange)="moveRole.set($event)">
+          @for (r of roles; track r) { <option [value]="r">{{ ('admin.role_' + r) | translate }}</option> }
+        </select>
+      </label>
+      @if (moveFrom().length > 0) {
+        <div class="ui-field ui-field--wide">
+          <span>{{ 'admin.field_move_from' | translate }}</span>
+          <span class="ui-row__meta">{{ moveFrom().join(' · ') }}</span>
+        </div>
+      }
+    </div>
+
+    @if (moveIssue(); as issue) {
+      <div class="ui-card__body checks">
+        <span class="checks__item checks__item--warning">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+          {{ ('admin.check.' + issue) | translate }}
+        </span>
+      </div>
+    }
+    <app-admin-code [code]="moveCode()" hint="admin.move_hint" />
+  </div>
+</section>

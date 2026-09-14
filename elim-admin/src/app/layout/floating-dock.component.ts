@@ -26,7 +26,7 @@ import { WhatsappButtonComponent } from '../shared/ui/whatsapp-button/whatsapp-b
       @if (scrolledFar()) {
         <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="backToTop()"
                 [attr.aria-label]="'dock.back_to_top' | translate" [title]="'dock.back_to_top' | translate">
-          <span class="icon" aria-hidden="true">arrow_upward</span>
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow_upward"/></svg>
         </button>
         <span class="ui-dock__sep" aria-hidden="true"></span>
       }

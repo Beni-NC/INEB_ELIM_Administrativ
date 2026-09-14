@@ -28,6 +28,9 @@ export class ShareButtonComponent {
 
   protected readonly isOpen = signal(false);
   protected readonly copied = signal(false);
+  protected readonly copiedPage = signal(false);
+  /** URL de lo que se está viendo (pestaña + entidad expandida); se lee al abrir el diálogo. */
+  protected readonly pageUrl = signal('');
 
   /** URL pública de la app (raíz del despliegue, no la pestaña actual: se comparte la app). */
   protected readonly url = computed(() => new URL(document.baseURI).href);
@@ -47,6 +50,7 @@ export class ShareButtonComponent {
         if ((err as DOMException)?.name === 'AbortError') return;
       }
     }
+    this.pageUrl.set(location.href);
     this.isOpen.set(true);
     const dialog = this.dialogEl()?.nativeElement;
     if (dialog && !dialog.open) dialog.showModal();
@@ -60,6 +64,15 @@ export class ShareButtonComponent {
   protected onClosed(): void {
     this.isOpen.set(false);
     this.copied.set(false);
+    this.copiedPage.set(false);
+  }
+
+  protected async copyPage(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.pageUrl());
+      this.copiedPage.set(true);
+      setTimeout(() => this.copiedPage.set(false), 2000);
+    } catch { /* sin portapapeles: nada más que hacer */ }
   }
 
   /** En un `<dialog>` el velo es el propio elemento: clic fuera del panel → `target === dialog`. */

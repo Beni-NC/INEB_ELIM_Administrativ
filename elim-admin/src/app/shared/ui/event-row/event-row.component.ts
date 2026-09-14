@@ -9,6 +9,7 @@ import { getEntryTimes, hasNotes } from '../../../core/utils/schedule.utils';
 import { daysBetween, isSameDay } from '../../../core/utils/date.utils';
 import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
 import { CalendarButtonComponent } from '../calendar-button/calendar-button.component';
+import { EventShareButtonComponent } from '../event-share-button/event-share-button.component';
 
 /**
  * Fila de programación, la misma en todos los contextos (Programare, detalle de equipo,
@@ -23,7 +24,7 @@ import { CalendarButtonComponent } from '../calendar-button/calendar-button.comp
 @Component({
     selector: 'app-event-row',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgTemplateOutlet, TranslatePipe, LDatePipe, CalendarButtonComponent],
+    imports: [NgTemplateOutlet, TranslatePipe, LDatePipe, CalendarButtonComponent, EventShareButtonComponent],
     templateUrl: './event-row.component.html',
     styleUrl: './event-row.component.css'
 })

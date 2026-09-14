@@ -26,7 +26,7 @@ export type BrandLogoTone = 'light' | 'dark';
     host: { '[class]': 'hostClass()' },
     template: `
     @if (link(); as href) {
-      <a class="brand" [routerLink]="href" [attr.aria-label]="'brand.name' | translate">
+      <a class="brand" [routerLink]="href" [title]="'brand.name' | translate">
         <span class="brand__name">{{ 'brand.short' | translate }}</span>
         <span class="brand__city">{{ 'brand.location' | translate }}</span>
       </a>

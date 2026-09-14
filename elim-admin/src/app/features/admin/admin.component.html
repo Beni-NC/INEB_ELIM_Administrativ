@@ -1,0 +1,26 @@
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header">
+      <h2 class="ui-card__title">{{ 'admin.title' | translate }}</h2>
+      <span class="ui-badge ui-badge--primary">{{ 'admin.private' | translate }}</span>
+    </header>
+    <p class="ui-card__desc">{{ 'admin.intro' | translate }}</p>
+    <div class="ui-card__toolbar">
+      <div class="ui-segmented" role="group" [attr.aria-label]="'admin.sections' | translate">
+        @for (s of sections; track s) {
+          <button type="button" class="ui-segmented__btn" [attr.aria-pressed]="section() === s" (click)="select(s)">
+            {{ ('admin.section_' + s) | translate }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+@switch (section()) {
+  @case ('health')   { <app-admin-health-section /> }
+  @case ('schedule') { <app-admin-schedule-section /> }
+  @case ('parents')  { <app-admin-parents-section /> }
+  @case ('teams')    { <app-admin-teams-section /> }
+  @case ('people')   { <app-admin-people-section /> }
+}

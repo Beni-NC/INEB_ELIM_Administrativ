@@ -174,10 +174,16 @@
 .ui-footer__line--strong { color: var(--c-on-brand); font-weight: 500; }
 /* Acciones compactas (WhatsApp, compartir) y crédito, agrupados a la derecha. */
 .ui-footer__actions { display: flex; align-items: center; gap: var(--sp-1); margin-left: auto; }
+/* Acceso al panel: presente pero sin llamar la atención (el pie es de los participantes). */
+.ui-footer__admin { opacity: 0.35; border-color: transparent; }
+@media (hover: hover) { .ui-footer__admin:hover { opacity: 1; } }
+.ui-footer__admin:focus-visible { opacity: 1; }
+
 .ui-footer__sep { width: 1px; height: 24px; margin: 0 var(--sp-2); background: rgba(255, 255, 255, 0.18); }
 .ui-footer__partner { display: inline-flex; align-items: center; opacity: 0.9; border-radius: var(--r-sm); transition: opacity var(--dur) var(--ease); }
 @media (hover: hover) { .ui-footer__partner:hover { opacity: 1; } }
-.ui-footer__partner img { height: clamp(24px, 3.2vw, 44px); width: auto; }
+/* aspect-ratio reserva el hueco antes de que cargue la imagen (evita el salto de layout que medía Lighthouse). */
+.ui-footer__partner img { height: clamp(24px, 3.2vw, 44px); width: auto; aspect-ratio: 128 / 40; }
 
 /* Chip de versión: el detalle técnico aparece en un tooltip al pasar el ratón o enfocar. */
 .ui-footer__version {
@@ -223,4 +229,14 @@
   /* En móvil el texto pasa a segunda fila; el tooltip se ancla a la derecha para no salirse. */
   .ui-footer__text { flex-basis: 100%; order: 3; }
   .ui-footer__build { left: auto; right: 0; }
+}
+
+/* ---- Impresión: solo el contenido (cabecera con marca y título, sin controles ni navegación) ----
+   Pensado para el tablón de anuncios: Programare imprime la próxima programación y la lista por mes. */
+@media print {
+  .ui-header { border-bottom: 1px solid #000; }
+  .ui-header__right,
+  .ui-tabs,
+  .ui-footer { display: none; }
+  .ui-main { max-width: none; padding: var(--sp-3) 0; gap: var(--sp-3); }
 }

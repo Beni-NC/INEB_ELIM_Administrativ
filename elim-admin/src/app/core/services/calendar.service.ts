@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ScheduleEntry } from '../models';
 import { DataService } from './data.service';
-import { IcsLabels, buildIcs, icsFileNameForEvent, slug } from '../utils/ics.utils';
+import { IcsLabels, PARENT_ALARMS, buildIcs, icsFileNameForEvent, slug } from '../utils/ics.utils';
 import {
   feedFileForAll, feedFileForParent, feedFileForTeam, feedFileForYouth, feedUrl,
 } from '../utils/calendar-feeds';
@@ -39,7 +39,8 @@ export class CalendarService {
   /** Descarga un .ics con las programaciones futuras del ámbito. */
   download(scope: CalendarScope): void {
     const events = this.upcomingEvents(scope);
-    const ics = buildIcs(events, this.labels(this.calendarName(scope)));
+    // Los padres reciben además un recordatorio 2 días antes (compras).
+    const ics = buildIcs(events, this.labels(this.calendarName(scope)), new Date(), scope.kind === 'parent' ? PARENT_ALARMS : undefined);
     this.triggerDownload(ics, this.fileName(scope));
   }
 
@@ -104,6 +105,7 @@ export class CalendarService {
       fieldFood: this.t('calendar.field_food'),
       fieldEstimated: this.t('calendar.field_estimated'),
       fieldNotes: this.t('calendar.field_notes'),
+      programTypes: this.translate.instant('program_type') as Record<string, string>,
     };
   }
 

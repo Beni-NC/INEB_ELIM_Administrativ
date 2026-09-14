@@ -5,8 +5,9 @@ import { NavigationService } from '../../core/services/navigation.service';
 import { TeamComposition, Youth } from '../../core/models';
 import { LDatePipe } from '../../core/i18n/ldate.pipe';
 import { entryKey } from '../../core/utils/schedule.utils';
-import { daysBetween } from '../../core/utils/date.utils';
 import { getTeamColor, getTeamNumber } from '../../core/utils/team.utils';
+import { MyTeamService } from '../../core/services/my-team.service';
+import { UntilPipe } from '../../core/i18n/until.pipe';
 import { EventRowComponent } from '../../shared/ui/event-row/event-row.component';
 import { CalendarButtonComponent } from '../../shared/ui/calendar-button/calendar-button.component';
 
@@ -14,13 +15,14 @@ import { CalendarButtonComponent } from '../../shared/ui/calendar-button/calenda
 @Component({
     selector: 'app-teams',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TranslatePipe, LDatePipe, EventRowComponent, CalendarButtonComponent],
+    imports: [TranslatePipe, LDatePipe, UntilPipe, EventRowComponent, CalendarButtonComponent],
     templateUrl: './teams.component.html',
     styleUrl: './teams.component.css'
 })
 export class TeamsComponent {
   protected readonly data = inject(DataService);
   protected readonly nav = inject(NavigationService);
+  protected readonly myTeam = inject(MyTeamService);
 
   /** Equipo expandido: vive en NavigationService para que funcionen los enlaces cruzados. */
   readonly expanded = this.nav.expandedTeam;
@@ -54,5 +56,4 @@ export class TeamsComponent {
 
   historyEvents(hist: TeamComposition) { return this.data.getEventsForHistoryKey(hist.historyKey!); }
 
-  daysUntil(date: Date): number { return daysBetween(date, this.data.today); }
 }

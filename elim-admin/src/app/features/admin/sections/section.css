@@ -1,0 +1,17 @@
+:host { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+/* Fila editable del panel: los controles mandan, así que la fila crece con ellos. */
+.row-edit { align-items: flex-start; padding-top: var(--sp-2); padding-bottom: var(--sp-2); }
+.row-edit__main { display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; flex: 1; }
+.row-edit__line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1); min-width: 0; }
+.row-edit__grow { flex: 1 1 180px; min-width: 0; }
+.row-edit--error { box-shadow: inset 3px 0 0 var(--c-danger); }
+
+/* Avisos por fila: texto corto, sin robar espacio a los controles. */
+.checks { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+.checks__item { display: inline-flex; align-items: center; gap: 3px; font-size: var(--fs-xs); }
+.checks__item--error { color: var(--c-danger); }
+.checks__item--warning { color: var(--c-warning); }
+
+.section__actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); justify-content: flex-end; }
+.section__spacer { flex: 1; }

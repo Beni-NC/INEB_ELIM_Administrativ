@@ -12,6 +12,10 @@
 
 ## 0. Resumen esencial (lo mínimo para tocar UI sin leer el resto)
 
+- **Dos superficies**: la app pública (participantes) y el panel `/admin` (quien mantiene los
+  datos). Lo que sirve para *planificar* no se enseña en la pública. El panel usa las mismas
+  primitivas, más `ui-select` y el bloque de código `admin__code`.
+
 - **Lienzo cálido + tarjetas elevadas**: fondo `--c-bg` (#f3f2ef), tarjetas blancas `ui-card`
   con radio 8 y `--shadow-card`. Nada más lleva sombra salvo `ui-kpis`, `ui-disclosure` y los
   overlays (`--shadow-overlay`).
@@ -58,7 +62,7 @@
 | `--c-border-strong` | `#cfcbc3` | Bordes de controles (input, botón) |
 | `--c-text` | `#1b2433` | Texto primario |
 | `--c-text-2` | `#4b5565` | Texto secundario |
-| `--c-text-3` | `#7d8797` | Metadatos, iconos inactivos, placeholders |
+| `--c-text-3` | `#6b7585` | Metadatos, iconos inactivos, placeholders (4,7:1 sobre blanco: AA en 11 px) |
 | `--c-primary` | `#0b57d0` | Acción, enlace, tab activo, foco |
 | `--c-primary-hover` | `#0947ab` | Hover de acción |
 | `--c-primary-soft` | `#e7effc` | Fondo de badge/selección primaria |
@@ -91,8 +95,8 @@ derivado de su `id` en `ScheduleIndex` (`toneOf`), estable entre sesiones e idio
 con `[attr.data-tone]="y.tone"` en `ui-avatar`; el avatar sin `data-tone` sigue siendo neutro.
 Nunca se usa el tono para nada que no sea el avatar de esa persona.
 
-**Colores de equipo** (`--team-1` … `--team-7`): `#2563eb`, `#7c3aed`, `#059669`, `#ea580c`,
-`#dc2626`, `#0891b2`, `#db2777`. Se usan **solo** en: badge numerado (`ui-team-badge`), barra
+**Colores de equipo** (`--team-1` … `--team-7`): `#2563eb`, `#7c3aed`, `#047857`, `#c2410c`,
+`#dc2626`, `#0e7490`, `#db2777` (todos ≥ 4,6:1 con número blanco). Se usan **solo** en: badge numerado (`ui-team-badge`), barra
 lateral de 3 px de una fila, punto de leyenda. Nunca como fondo de un área mayor que un badge.
 Fondo suave derivado: `color-mix(in srgb, var(--team-color) 12%, white)`.
 
@@ -200,9 +204,14 @@ Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-eyebrow`, 
 
 ## 4. Iconografía
 
-Material Symbols Rounded, **outlined** (`FILL 0, wght 400, GRAD 0, opsz 20`), clase `.icon`
-(18 px) con variantes `.icon--sm` (16) `.icon--lg` (20). Color heredado del texto
-(`currentColor`); en metadatos `--c-text-3`. Vocabulario fijo (no añadir sinónimos):
+Material Symbols Rounded, **outlined**, 20 px, como **sprite SVG propio** (`assets/icons.svg`,
+sin Google Fonts): `<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#nombre"/></svg>`.
+Tamaño con `.icon` (18 px), `.icon--sm` (16), `.icon--lg` (20) — es `font-size`, por eso los
+contextos lo ajustan igual que antes; color por `currentColor`. La variante rellena es otro
+símbolo: `#star-fill`, `#bookmark-fill`. Icono dinámico:
+`<use [attr.href]="'assets/icons.svg#' + (cond ? 'a' : 'b')"/>`. **Al usar un icono nuevo,
+ejecutar `npm run icons`** (descarga el glifo y regenera el sprite); `icons.spec.ts` falla si
+plantillas y sprite no coinciden. Vocabulario fijo (no añadir sinónimos):
 
 | Concepto | Icono |
 |---|---|
@@ -212,7 +221,10 @@ Material Symbols Rounded, **outlined** (`FILL 0, wght 400, GRAD 0, opsz 20`), cl
 | Padres | `family_restroom` |
 | Reglas (pestaña) | `menu_book` |
 | Reglas — secciones | `star`, `checklist`, `schedule`, `cleaning_services`, `family_restroom` (en ese orden) |
-| Coordinador | `star` relleno (`.icon--fill.ui-star`, ámbar). Es la **única** marca de coordinador en filas y chips; el badge de texto "Coordonator" no se usa. |
+| Coordinador | `star-fill` (`.ui-star`, ámbar). Es la **única** marca de coordinador en filas y chips; el badge de texto "Coordonator" no se usa. |
+| Echipa mea | `bookmark` / `bookmark-fill` (primario cuando está marcado) |
+| Enviar detalles de una programación | `send` (distinto de `share`, que es compartir la app) |
+| Propuesta / copiar | `content_copy` → `check` al copiar; sugerencia `lightbulb`; imprimir `print` |
 | Hora | `schedule` |
 | Comida (padres) | `restaurant` |
 | Personas estimadas | `group` |
@@ -246,6 +258,15 @@ Material Symbols Rounded, **outlined** (`FILL 0, wght 400, GRAD 0, opsz 20`), cl
   archivado**: `opacity: .7` en la fila + badge neutro "Inactiv".
 - **Vacío** (`ui-empty`): icono 20 px gris dentro de un círculo de 36 px `--c-surface-2` + una
   frase 13 px `--c-text-2`. Siempre que una lista pueda quedar vacía, tiene su `ui-empty`.
+  Dentro de un detalle expandido, la variante `ui-empty--inline` (una línea, sin círculo).
+- **Sin programación** (patrón en tres niveles, para no convertir la lista en un muro ámbar):
+  (1) en la **entidad a la que le toca actuar** (equipo en Echipe y en la rotación) el badge es
+  `ui-badge--warning` "Fără programare"; (2) en las **personas** (joven, padre) la fila lleva un
+  `ui-badge` neutro — es un estado, no una alarma — y la alerta agregada va **una sola vez** en la
+  cabecera de la tarjeta como badge ámbar con contador ("50 fără programare"); (3) el **detalle
+  expandido** explica la causa con `ui-empty--inline` y, si procede, enlaza con `ui-link` a la
+  rotación ("Vezi rândul echipelor"). Texto único: `common.no_schedule`; padres:
+  `parents.no_support_scheduled`.
 - **Deshabilitado**: `opacity: .5; pointer-events: none`.
 
 ## 6. Catálogo de primitivas (`src/styles/components.css`)
@@ -272,13 +293,19 @@ de feature solo componen estas clases y añaden CSS encapsulado para su disposic
 | `ui-segmented` | Grupo de botones pegados (idioma, filtros): 28 px, borde 1 px, activo con `--c-primary-soft` y texto primario, `aria-pressed`. | Sustituye a chips de filtro y a menús de 2–3 opciones. |
 | `ui-input` | Campo 28 px, borde `--c-border-strong`, radio 4, icono `search` a la izquierda. | Foco = borde primario. |
 | `ui-toolbar` | Barra de sección: búsqueda + segmentado + contador, `gap 8`, `flex-wrap`. | Encima de una lista. |
-| `ui-kpis` | Tarjeta de KPIs (radio 8, `--shadow-card`): cada `ui-kpi` = `ui-kpi__icon` (círculo 32 px `--c-primary-soft` con icono 18 primario) + `ui-kpi__meta` (cifra 18/600 tabular sobre label 11 gris); separados por borde; 2×2 en móvil, 4 en fila desde 600 px. | Un icono por KPI, siempre en primario; ninguna otra variación de color. |
+| `ui-kpis` | Tarjeta de KPIs (radio 8, `--shadow-card`): cada `ui-kpi` = `ui-kpi__icon` (círculo 32 px `--c-primary-soft` con icono 18 primario) + `ui-kpi__meta` (cifra 18/600 tabular sobre label 11 gris); separados por borde; 2×2 en móvil, 4 en fila desde 600 px. | Un icono por KPI, siempre en primario. Solo cifras **accionables** (cuándo, cuántas, a quién le toca); nada de totales históricos. Label ≤ 16 caracteres (en 375 px se trunca). |
 | `ui-section` | Bloque de página: apila tarjetas/disclosures con `gap 8`. Sin cabecera propia: el título va en `ui-card__header`. | |
 | `ui-spacer` | `flex: 1` entre el título y las acciones de una cabecera. | |
 | `ui-disclosure` | Botón de fila completa "Istoric echipe (3) ▾" que abre una sección colapsada; superficie blanca con borde, radio 8 y `--shadow-card`; `aria-expanded`. | Para históricos y archivos a nivel de página. Dentro de un detalle, el desplegable es `button.ui-subsection__title`. |
 | `ui-times` | Trío inline de horas: `🕒 19:30 → 20:30 🍴 20:00`; la de comida con `ui-times__food-icon` + `ui-times__food` (ámbar). | Los dos únicos iconos permitidos dentro de la meta de una fila. |
 | `ui-note` | Nota en línea bajo una fila: icono `sticky_note_2` + texto 12 gris, fondo `--c-warning-soft` suave. | Solo si `observations` no está vacío. |
-| `ui-empty` | Estado vacío. | Ver §5. |
+| `ui-empty` | Estado vacío; `--inline` para una línea compacta dentro de un detalle. | Ver §5. |
+| `ui-select` | Desplegable nativo con el aspecto de `ui-input` (28 px, borde `--c-border-strong`, foco primario). | Panel `/admin`; en la app pública se prefiere `ui-segmented`. |
+| `ui-form-grid` + `ui-field` | Rejilla fluida de campos etiquetados (`minmax(150px, 1fr)`) con su etiqueta 11 px en mayúsculas; `--wide` ocupa la fila entera, `--inline` pone etiqueta y control en línea. | Formularios del panel. La app pública no tiene formularios. |
+| `ui-control` | Campo de formulario suelto (input de texto, fecha, hora o número): 28 px, borde, radio 4. `--xs` para números cortos. | No confundir con `ui-input__field`, que es el buscador (ocupa todo su contenedor). |
+| `ui-check` | Casilla + etiqueta en línea. | |
+| `ui-code` | Bloque de código generado: monoespaciado, fondo `--c-surface-2`, scroll horizontal propio. | Solo en `/admin`; se usa con `app-admin-code` (añade el botón de copiar). |
+| `ui-chip[aria-pressed]` | Chip conmutable (filtro "Echipa mea"): activo = primario suave + borde primario. | Un solo chip conmutable por barra; para 2–3 opciones excluyentes, `ui-segmented`. |
 | `ui-banner` | Barra flotante inferior (fija, máx. 520 px, sombra overlay): `ui-banner__img`/`__icon` + `ui-banner__text` (título 13/600 + `ui-banner__hint` 12 gris) + acciones `ui-btn`. | Solo para el aviso de instalación de la PWA. No hay barra de "nueva versión": la app se actualiza sola. |
 | `ui-dock` | Pastilla fija abajo-derecha con `ui-btn--icon` redondos de 36 px y `ui-dock__sep`; `--hidden` la oculta. | Ver §3. |
 | `ui-dialog` | `<dialog>` abierto con `showModal()`: `ui-dialog__panel` (máx. 520 px, sombra overlay) con `__header` (título 15/600 + cerrar), `__text`. Velo en `::backdrop`. Se cierra con Escape y clic en el velo. | Único patrón de modal. Contenido corto (compartir); un flujo largo es una pantalla. |
@@ -308,6 +335,21 @@ evento/apoyo), `app-calendar-button` (descarga `.ics`). Ver [ARQUITECTURA.md](AR
    `base.css`) para no quedar bajo las tabs.
 9. Ningún `:hover` fuera de `@media (hover: hover) { … }` (una línea por regla, junto a la
    primitiva). Lo que deba abrirse también con el dedo (tooltip de versión) usa `:focus`.
+
+### 7.1 Impresión
+
+`@media print` al final de `base.css`, `layout.css` y `components.css`: fondo blanco, sin
+cabecera derecha, tabs, footer, dock, banner, botones (`ui-btn`), toolbars, KPIs ni disclosures;
+tarjetas sin sombra y con `break-inside: avoid`. Pensado para el tablón: Programare imprime la
+próxima programación, la lista por mes y la rotación. El botón `print` de "Toate programările"
+llama a `window.print()`.
+
+### 7.2 Accesibilidad de teclado y lector de pantalla
+
+Skip link "Sari la conținut" (primer elemento del DOM, visible solo con foco), `<main id="main"
+tabindex="-1">`, región `aria-live="polite"` con el nombre de la pestaña activa; flechas ←/→
+cambian de pestaña. Los enlaces con texto visible **no** llevan `aria-label` que lo contradiga
+(Lighthouse `label-content-name-mismatch`): usar `title`.
 
 ## 8. Textos e i18n
 

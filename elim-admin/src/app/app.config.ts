@@ -1,13 +1,14 @@
 import { ApplicationConfig, inject, isDevMode, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
-import { PreloadAllModules, provideRouter, withInMemoryScrolling, withPreloading } from '@angular/router';
+import { PreloadAllModules, TitleStrategy, provideRouter, withInMemoryScrolling, withPreloading } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideHttpClient } from '@angular/common/http';
-import { provideTranslateService } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { BundledTranslateLoader } from './core/i18n/translate.loader';
 import { routes } from './app.routes';
 import { LanguageService } from './core/services/language.service';
 import { ThemeService } from './core/services/theme.service';
 import { PwaInstallService } from './core/services/pwa-install.service';
+import { I18nTitleStrategy } from './core/i18n/title.strategy';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,7 +17,8 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideTranslateService({
       fallbackLang: 'ro',
-      loader: provideTranslateHttpLoader({ prefix: 'assets/i18n/', suffix: '.json' }),
+      // Rumano empaquetado (sin petición de red al arrancar); otros idiomas desde assets/i18n/.
+      loader: { provide: TranslateLoader, useClass: BundledTranslateLoader },
     }),
     provideAppInitializer(() => inject(LanguageService).init()),
     provideAppInitializer(() => inject(ThemeService).init()),
@@ -26,6 +28,8 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' }),
       withPreloading(PreloadAllModules),
     ),
+    // Título del documento por pestaña, traducido (las rutas declaran `title: 'tabs.<clave>'`).
+    { provide: TitleStrategy, useClass: I18nTitleStrategy },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Comprueba actualizaciones en cuanto la app se estabiliza (≈30 s).

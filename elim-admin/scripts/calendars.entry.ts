@@ -9,7 +9,7 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ScheduleIndex } from '../src/app/core/domain/schedule-index';
-import { IcsLabels, buildIcs } from '../src/app/core/utils/ics.utils';
+import { IcsLabels, PARENT_ALARMS, buildIcs } from '../src/app/core/utils/ics.utils';
 import {
   CALENDAR_FEEDS_DIR, feedFileForAll, feedFileForParent, feedFileForTeam, feedFileForYouth,
 } from '../src/app/core/utils/calendar-feeds';
@@ -20,6 +20,7 @@ const OUT = join(ROOT, 'src', CALENDAR_FEEDS_DIR);
 /* Los feeds publicados van en rumano (idioma por defecto de la app). */
 const ro = JSON.parse(readFileSync(join(ROOT, 'src/assets/i18n/ro.json'), 'utf8')) as {
   calendar: Record<string, string>;
+  program_type: Record<string, string>;
 };
 const c = ro.calendar;
 const interpolate = (s: string, params: Record<string, string>): string =>
@@ -38,6 +39,7 @@ function labels(calendarName: string): IcsLabels {
     fieldFood: c['field_food'],
     fieldEstimated: c['field_estimated'],
     fieldNotes: c['field_notes'],
+    programTypes: ro.program_type,
   };
 }
 
@@ -47,8 +49,8 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
 let count = 0;
-const write = (file: string, name: string, events: Parameters<typeof buildIcs>[0]): void => {
-  writeFileSync(join(OUT, file), buildIcs(events, labels(name), now), 'utf8');
+const write = (file: string, name: string, events: Parameters<typeof buildIcs>[0], alarms?: readonly string[]): void => {
+  writeFileSync(join(OUT, file), buildIcs(events, labels(name), now, alarms), 'utf8');
   count++;
 };
 
@@ -62,7 +64,7 @@ for (const y of index.youths) {
 }
 for (const p of index.parents) {
   const events = index.getAllEventsForParent(p.id);
-  if (events.length > 0) write(feedFileForParent(p.id), interpolate(c['parent_calendar_name'], { name: p.name }), events);
+  if (events.length > 0) write(feedFileForParent(p.id), interpolate(c['parent_calendar_name'], { name: p.name }), events, PARENT_ALARMS);
 }
 
 console.log(`calendars: ${count} feeds → ${OUT}`);

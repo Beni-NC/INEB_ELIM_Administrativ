@@ -34,7 +34,7 @@ import { ShareButtonComponent } from '../share-button/share-button.component';
             <app-share-button />
             @if (install.canInstall()) {
               <button type="button" class="ui-btn" (click)="install.install()">
-                <span class="icon" aria-hidden="true">install_mobile</span>
+                <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#install_mobile"/></svg>
                 {{ 'pwa_install.cta_long' | translate }}
               </button>
             }

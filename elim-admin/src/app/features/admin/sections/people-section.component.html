@@ -1,0 +1,325 @@
+<!-- ══════════ Joven nuevo ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header">
+      <h3 class="ui-card__title">{{ 'admin.new_youth_title' | translate }}</h3>
+      @if (newYouthId() !== 'y--') { <span class="ui-badge num">{{ newYouthId() }}</span> }
+    </header>
+    <p class="ui-card__desc">{{ 'admin.new_youth_desc' | translate }}</p>
+
+    <div class="ui-card__body ui-form-grid">
+      <label class="ui-field">
+        <span>{{ 'admin.field_first_name' | translate }}</span>
+        <input type="text" class="ui-control" [ngModel]="ny.firstName()" (ngModelChange)="ny.firstName.set($event)">
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_last_name' | translate }}</span>
+        <input type="text" class="ui-control" [ngModel]="ny.lastName()" (ngModelChange)="ny.lastName.set($event)">
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_gender' | translate }}</span>
+        <select class="ui-select" [ngModel]="ny.gender()" (ngModelChange)="ny.gender.set($event)">
+          <option value="M">{{ 'admin.gender_m' | translate }}</option>
+          <option value="F">{{ 'admin.gender_f' | translate }}</option>
+        </select>
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_birth' | translate }}</span>
+        <input type="date" class="ui-control" [ngModel]="ny.birthDate()" (ngModelChange)="ny.birthDate.set($event)">
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_joined_year' | translate }}</span>
+        <input type="number" class="ui-control" min="2000" max="2100"
+               [ngModel]="ny.joinedYear()" (ngModelChange)="ny.joinedYear.set(+$event)">
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_phone' | translate }}</span>
+        <input type="tel" class="ui-control" [ngModel]="ny.phone()" (ngModelChange)="ny.phone.set($event)">
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_email' | translate }}</span>
+        <input type="email" class="ui-control" [ngModel]="ny.email()" (ngModelChange)="ny.email.set($event)">
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_team' | translate }}</span>
+        <select class="ui-select" [ngModel]="ny.team()" (ngModelChange)="ny.team.set($event)">
+          @for (t of admin.teams(); track t) { <option [value]="t">{{ t }}</option> }
+        </select>
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_role' | translate }}</span>
+        <select class="ui-select" [ngModel]="ny.role()" (ngModelChange)="ny.role.set($event)">
+          @for (r of roles; track r) { <option [value]="r">{{ ('admin.role_' + r) | translate }}</option> }
+        </select>
+      </label>
+      <label class="ui-field ui-field--wide">
+        <span>{{ 'admin.field_notes' | translate }}</span>
+        <input type="text" class="ui-control" [ngModel]="ny.notes()" (ngModelChange)="ny.notes.set($event)">
+      </label>
+    </div>
+
+    <!-- Padres ya dados de alta a los que vincularlo -->
+    <div class="ui-card__body">
+      <span class="ui-eyebrow">{{ 'admin.link_parents' | translate }}</span>
+      @for (row of nyParents(); track row.id) {
+        <div class="row-edit__line">
+          <select class="ui-select row-edit__grow" [ngModel]="row.parentId" (ngModelChange)="patchYouthParent(row.id, { parentId: $event })">
+            <option value="">{{ 'admin.select_parent' | translate }}</option>
+            @for (p of parents(); track p.id) { <option [value]="p.id">{{ p.name }}</option> }
+          </select>
+          <select class="ui-select" [ngModel]="row.relationship" (ngModelChange)="patchYouthParent(row.id, { relationship: $event })">
+            @for (r of relationships; track r) { <option [value]="r">{{ ('relationship.' + r) | translate }}</option> }
+          </select>
+          <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="removeYouthParent(row.id)"
+                  [attr.aria-label]="'admin.remove_row' | translate">
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#delete"/></svg>
+          </button>
+        </div>
+      }
+      <div class="section__actions">
+        <button type="button" class="ui-btn" (click)="addYouthParent()">
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#add"/></svg>
+          {{ 'admin.add_parent' | translate }}
+        </button>
+      </div>
+    </div>
+
+    @if (newYouthIssue(); as issue) {
+      <div class="ui-card__body checks">
+        <span class="checks__item checks__item--warning">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+          {{ ('admin.check.' + issue) | translate }}
+        </span>
+      </div>
+    }
+    <app-admin-code [code]="newYouthCode()" hint="admin.new_youth_hint" />
+  </div>
+</section>
+
+<!-- ══════════ Editar o archivar un joven ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header"><h3 class="ui-card__title">{{ 'admin.edit_youth_title' | translate }}</h3></header>
+    <p class="ui-card__desc">{{ 'admin.edit_youth_desc' | translate }}</p>
+
+    <div class="ui-card__toolbar ui-form-grid">
+      <label class="ui-field ui-field--wide">
+        <span>{{ 'tabs.youths' | translate }}</span>
+        <select class="ui-select" [ngModel]="editYouthId()" (ngModelChange)="selectYouth($event)">
+          <option value="">{{ 'admin.select_youth' | translate }}</option>
+          @for (y of allYouths(); track y.id) {
+            <option [value]="y.id">{{ y.fullName }}{{ y.active === false ? ' · ' + ('youths.inactive' | translate) : '' }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    @if (editYouth(); as y) {
+      <div class="ui-card__body ui-form-grid">
+        <label class="ui-field">
+          <span>{{ 'admin.field_phone' | translate }}</span>
+          <input type="tel" class="ui-control" [ngModel]="ey.phone()" (ngModelChange)="ey.phone.set($event)">
+        </label>
+        <label class="ui-field">
+          <span>{{ 'admin.field_email' | translate }}</span>
+          <input type="email" class="ui-control" [ngModel]="ey.email()" (ngModelChange)="ey.email.set($event)">
+        </label>
+        <label class="ui-field ui-field--wide">
+          <span>{{ 'admin.field_notes' | translate }}</span>
+          <input type="text" class="ui-control" [ngModel]="ey.notes()" (ngModelChange)="ey.notes.set($event)">
+        </label>
+        <label class="ui-check">
+          <input type="checkbox" [ngModel]="ey.archive()" (ngModelChange)="ey.archive.set($event)">
+          <span>{{ 'admin.archive_youth' | translate }}</span>
+        </label>
+        @if (ey.archive()) {
+          <label class="ui-field">
+            <span>{{ 'youths.inactive_from' | translate }}</span>
+            <input type="date" class="ui-control" [ngModel]="ey.since()" (ngModelChange)="ey.since.set($event)">
+          </label>
+          <label class="ui-field ui-field--wide">
+            <span>{{ 'youths.inactive_reason' | translate }}</span>
+            <input type="text" class="ui-control" [ngModel]="ey.reason()" (ngModelChange)="ey.reason.set($event)">
+          </label>
+        }
+      </div>
+      <app-admin-code [code]="editYouthCode()" label="admin.copy_replace" hint="admin.edit_youth_hint" />
+    }
+  </div>
+</section>
+
+<!-- ══════════ Padre nuevo (con varios hijos) ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header">
+      <h3 class="ui-card__title">{{ 'admin.new_parent_title' | translate }}</h3>
+      <span class="ui-badge num">{{ newParentId() }}</span>
+    </header>
+    <p class="ui-card__desc">{{ 'admin.new_parent_desc' | translate }}</p>
+
+    <div class="ui-card__body ui-form-grid">
+      <label class="ui-field">
+        <span>{{ 'admin.field_name' | translate }}</span>
+        <input type="text" class="ui-control" [ngModel]="np.name()" (ngModelChange)="np.name.set($event)">
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_phone' | translate }}</span>
+        <input type="tel" class="ui-control" [ngModel]="np.phone()" (ngModelChange)="np.phone.set($event)">
+      </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_email' | translate }}</span>
+        <input type="email" class="ui-control" [ngModel]="np.email()" (ngModelChange)="np.email.set($event)">
+      </label>
+    </div>
+
+    <div class="ui-card__body">
+      <span class="ui-eyebrow">{{ 'parents.children' | translate }}</span>
+      @for (row of npChildren(); track row.id) {
+        <div class="row-edit__line">
+          <select class="ui-select row-edit__grow" [ngModel]="row.youthId" (ngModelChange)="patchChild(row.id, { youthId: $event })">
+            <option value="">{{ 'admin.select_youth' | translate }}</option>
+            @for (y of youths(); track y.id) { <option [value]="y.id">{{ y.fullName }}</option> }
+          </select>
+          <select class="ui-select" [ngModel]="row.relationship" (ngModelChange)="patchChild(row.id, { relationship: $event })">
+            @for (r of relationships; track r) { <option [value]="r">{{ ('relationship.' + r) | translate }}</option> }
+          </select>
+          <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="removeChild(row.id)"
+                  [attr.aria-label]="'admin.remove_row' | translate">
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#delete"/></svg>
+          </button>
+        </div>
+      }
+      <div class="section__actions">
+        <button type="button" class="ui-btn" (click)="addChild()">
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#add"/></svg>
+          {{ 'admin.add_child' | translate }}
+        </button>
+      </div>
+    </div>
+
+    @if (newParentIssue(); as issue) {
+      <div class="ui-card__body checks">
+        <span class="checks__item checks__item--warning">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+          {{ ('admin.check.' + issue) | translate }}
+        </span>
+      </div>
+    }
+    <app-admin-code [code]="newParentCode()" hint="admin.new_parent_hint" />
+  </div>
+</section>
+
+<!-- ══════════ Editar o archivar un padre ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header"><h3 class="ui-card__title">{{ 'admin.edit_parent_title' | translate }}</h3></header>
+    <p class="ui-card__desc">{{ 'admin.edit_parent_desc' | translate }}</p>
+
+    <div class="ui-card__toolbar ui-form-grid">
+      <label class="ui-field ui-field--wide">
+        <span>{{ 'tabs.parents' | translate }}</span>
+        <select class="ui-select" [ngModel]="editParentId()" (ngModelChange)="selectParent($event)">
+          <option value="">{{ 'admin.select_parent' | translate }}</option>
+          @for (p of parents(); track p.id) {
+            <option [value]="p.id">{{ p.name }}{{ p.active === false ? ' · ' + ('parents.inactive' | translate) : '' }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    @if (editParent()) {
+      <div class="ui-card__body ui-form-grid">
+        <label class="ui-field">
+          <span>{{ 'admin.field_name' | translate }}</span>
+          <input type="text" class="ui-control" [ngModel]="ep.name()" (ngModelChange)="ep.name.set($event)">
+        </label>
+        <label class="ui-field">
+          <span>{{ 'admin.field_phone' | translate }}</span>
+          <input type="tel" class="ui-control" [ngModel]="ep.phone()" (ngModelChange)="ep.phone.set($event)">
+        </label>
+        <label class="ui-field">
+          <span>{{ 'admin.field_email' | translate }}</span>
+          <input type="email" class="ui-control" [ngModel]="ep.email()" (ngModelChange)="ep.email.set($event)">
+        </label>
+        <label class="ui-check">
+          <input type="checkbox" [ngModel]="ep.available()" (ngModelChange)="ep.available.set($event)">
+          <span>{{ 'admin.available' | translate }}</span>
+        </label>
+        <label class="ui-check">
+          <input type="checkbox" [ngModel]="ep.archive()" (ngModelChange)="ep.archive.set($event)">
+          <span>{{ 'admin.archive_parent' | translate }}</span>
+        </label>
+        @if (ep.archive()) {
+          <label class="ui-field">
+            <span>{{ 'parents.inactive_from' | translate }}</span>
+            <input type="date" class="ui-control" [ngModel]="ep.since()" (ngModelChange)="ep.since.set($event)">
+          </label>
+          <label class="ui-field ui-field--wide">
+            <span>{{ 'parents.inactive_reason' | translate }}</span>
+            <input type="text" class="ui-control" [ngModel]="ep.reason()" (ngModelChange)="ep.reason.set($event)">
+          </label>
+        }
+      </div>
+      <app-admin-code [code]="editParentCode()" label="admin.copy_replace" hint="admin.edit_parent_hint" />
+    }
+  </div>
+</section>
+
+<!-- ══════════ Vincular personas que ya existen ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header"><h3 class="ui-card__title">{{ 'admin.link_title' | translate }}</h3></header>
+    <p class="ui-card__desc">{{ 'admin.link_desc' | translate }}</p>
+
+    <div class="ui-card__toolbar ui-form-grid">
+      <label class="ui-field ui-field--wide">
+        <span>{{ 'tabs.parents' | translate }}</span>
+        <select class="ui-select" [ngModel]="linkParentId()" (ngModelChange)="linkParentId.set($event)">
+          <option value="">{{ 'admin.select_parent' | translate }}</option>
+          @for (p of parents(); track p.id) { <option [value]="p.id">{{ p.name }}</option> }
+        </select>
+      </label>
+    </div>
+
+    @if (linkParentId(); as parentId) {
+      <div class="ui-card__body">
+        @if (existingChildren(parentId).length > 0) {
+          <p class="ui-card__desc">{{ 'admin.link_existing' | translate:{ n: existingChildren(parentId).length } }}</p>
+        }
+        @for (row of linkChildren(); track row.id) {
+          <div class="row-edit__line">
+            <select class="ui-select row-edit__grow" [ngModel]="row.youthId" (ngModelChange)="patchLinkChild(row.id, { youthId: $event })">
+              <option value="">{{ 'admin.select_youth' | translate }}</option>
+              @for (y of youths(); track y.id) {
+                <option [value]="y.id" [disabled]="existingChildren(parentId).includes(y.id)">{{ y.fullName }}</option>
+              }
+            </select>
+            <select class="ui-select" [ngModel]="row.relationship" (ngModelChange)="patchLinkChild(row.id, { relationship: $event })">
+              @for (r of relationships; track r) { <option [value]="r">{{ ('relationship.' + r) | translate }}</option> }
+            </select>
+            <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="removeLinkChild(row.id)"
+                    [attr.aria-label]="'admin.remove_row' | translate">
+              <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#delete"/></svg>
+            </button>
+          </div>
+        }
+        <div class="section__actions">
+          <button type="button" class="ui-btn" (click)="addLinkChild()">
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#add"/></svg>
+            {{ 'admin.add_child' | translate }}
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (linkIssue(); as issue) {
+      <div class="ui-card__body checks">
+        <span class="checks__item checks__item--warning">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+          {{ ('admin.check.' + issue) | translate }}
+        </span>
+      </div>
+    }
+    <app-admin-code [code]="linkCode()" hint="admin.link_hint" />
+  </div>
+</section>

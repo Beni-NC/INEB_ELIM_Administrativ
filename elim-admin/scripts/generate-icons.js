@@ -1,6 +1,6 @@
 /* eslint-disable */
 /**
- * Genera los iconos PWA desde src/assets/logo_admin.png.
+ * Genera los iconos PWA desde scripts/assets-src/logo_admin.png (el original de 1,3 MB no se publica).
  *
  * Estrategia "diseñador":
  *  - Lienzo cuadrado con el color de marca #1e3a5f (= background_color y
@@ -17,7 +17,7 @@ const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
 
-const SRC = path.resolve(__dirname, '..', 'src', 'assets', 'logo_admin.png');
+const SRC = path.resolve(__dirname, 'assets-src', 'logo_admin.png');
 const OUT_DIR = path.resolve(__dirname, '..', 'src', 'assets');
 const BG = { r: 0x1e, g: 0x3a, b: 0x5f, alpha: 1 };
 

@@ -3,6 +3,9 @@
     <header class="ui-card__header">
       <h2 class="ui-card__title">{{ 'teams.active_teams' | translate }}</h2>
       <span class="ui-count">{{ data.teams.length }}</span>
+      @if (data.scheduleStats.teamsWithoutUpcoming > 0) {
+        <span class="ui-badge ui-badge--warning">{{ 'teams.without_upcoming_count' | translate:{ n: data.scheduleStats.teamsWithoutUpcoming } }}</span>
+      }
     </header>
     <div class="ui-list">
       @for (team of data.teams; track team.teamName) {
@@ -20,7 +23,7 @@
                 <span class="ui-row__title"><span class="truncate">{{ team.teamName }}</span></span>
                 <span class="ui-row__meta">
                   <span class="team__coord truncate">
-                    <span class="icon icon--sm icon--fill ui-star" aria-hidden="true">star</span>{{ team.coordinatorName }}
+                    <svg class="icon icon--sm ui-star" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>{{ team.coordinatorName }}
                   </span>
                   <span class="faint">·</span>
                   <span class="num">{{ team.members.length }} {{ 'teams.members_short' | translate }}</span>
@@ -30,11 +33,21 @@
             <div class="ui-row__trail">
               @if (data.getNextEventForTeam(team.teamName); as next) {
                 <span class="ui-badge ui-badge--primary team__next" [title]="'teams.next_date' | translate">
-                  {{ next.date | ldate:'dayMonth' }} · {{ daysUntil(next.date) }}{{ 'common.day_letter' | translate }}
+                  {{ next.date | ldate:'dayMonth' }} · {{ next.date | until }}
                 </span>
                 <app-calendar-button [team]="team.teamName" />
+              } @else {
+                <!-- El equipo es la entidad a la que "le toca": aquí el estado sí es una alerta. -->
+                <span class="ui-badge ui-badge--warning">{{ 'common.no_schedule' | translate }}</span>
               }
-              <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggle(team)" tabindex="-1" aria-hidden="true"><span class="icon" aria-hidden="true">{{ expanded() === team.teamName ? 'expand_less' : 'expand_more' }}</span></button>
+              <!-- "Echipa mea": se guarda en el dispositivo y la portada responde "¿cuándo me toca?" -->
+              <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon team__mine" [class.is-active]="myTeam.isMine(team.teamName)"
+                      (click)="myTeam.toggle(team.teamName)" [attr.aria-pressed]="myTeam.isMine(team.teamName)"
+                      [attr.aria-label]="(myTeam.isMine(team.teamName) ? 'my_team.unset' : 'my_team.set') | translate"
+                      [title]="(myTeam.isMine(team.teamName) ? 'my_team.unset' : 'my_team.set') | translate">
+                <svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (myTeam.isMine(team.teamName) ? 'bookmark-fill' : 'bookmark')"/></svg>
+              </button>
+              <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggle(team)" tabindex="-1" aria-hidden="true"><svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (expanded() === team.teamName ? 'expand_less' : 'expand_more')"/></svg></button>
             </div>
           </div>
 
@@ -52,12 +65,12 @@
                           <span class="ui-row__title">
                             <span class="truncate">{{ y.fullName }}</span>
                             @if (data.isActiveCoordinator(y.id)) {
-                              <span class="icon icon--sm icon--fill ui-star" [title]="'common.coordinator' | translate" aria-hidden="true">star</span>
+                              <svg class="icon icon--sm ui-star" [attr.title]="'common.coordinator' | translate" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>
                             }
                           </span>
                         </span>
                       </button>
-                      <div class="ui-row__trail"><span class="icon faint" aria-hidden="true">chevron_right</span></div>
+                      <div class="ui-row__trail"><svg class="icon faint" aria-hidden="true"><use href="assets/icons.svg#chevron_right"/></svg></div>
                     </div>
                   }
                 </div>
@@ -67,7 +80,7 @@
               <div class="ui-subsection">
                 <span class="ui-subsection__title">{{ 'teams.upcoming_schedules' | translate }} <span class="ui-count">{{ data.getUpcomingEventsForTeam(team.teamName).length }}</span></span>
                 @if (data.getUpcomingEventsForTeam(team.teamName).length === 0) {
-                  <div class="ui-empty"><span class="icon" aria-hidden="true">info</span>{{ 'teams.no_upcoming' | translate }}</div>
+                  <div class="ui-empty"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>{{ 'teams.no_upcoming' | translate }}</div>
                 } @else {
                   <div class="ui-list">
                     @for (e of data.getUpcomingEventsForTeam(team.teamName); track entryKey(e)) {
@@ -81,9 +94,9 @@
               @if (data.getPastEventsForTeam(team.teamName).length > 0) {
                 <div class="ui-subsection">
                   <button type="button" class="ui-subsection__title" (click)="togglePast(team.teamName)" [attr.aria-expanded]="isPastOpen(team.teamName)">
-                    <span class="icon icon--sm" aria-hidden="true">history</span>
+                    <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
                     {{ 'teams.schedule_history' | translate }} <span class="ui-count">{{ data.getPastEventsForTeam(team.teamName).length }}</span>
-                    <span class="icon icon--sm" aria-hidden="true">{{ isPastOpen(team.teamName) ? 'expand_less' : 'expand_more' }}</span>
+                    <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isPastOpen(team.teamName) ? 'expand_less' : 'expand_more')"/></svg>
                   </button>
                   @if (isPastOpen(team.teamName)) {
                     <div class="ui-list">
@@ -106,10 +119,10 @@
 @if (data.teamsHistory.length > 0) {
   <section class="ui-section">
     <button type="button" class="ui-disclosure" (click)="showHistory.set(!historyOpen())" [attr.aria-expanded]="historyOpen()">
-      <span class="icon" aria-hidden="true">history</span>
+      <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
       {{ 'teams.teams_history' | translate }}
       <span class="ui-count">{{ data.teamsHistory.length }}</span>
-      <span class="icon ui-disclosure__chevron" aria-hidden="true">{{ historyOpen() ? 'expand_less' : 'expand_more' }}</span>
+      <svg class="icon ui-disclosure__chevron" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (historyOpen() ? 'expand_less' : 'expand_more')"/></svg>
     </button>
 
     @if (historyOpen()) {
@@ -133,7 +146,7 @@
                     </span>
                     <span class="ui-row__meta">
                       <span class="team__coord truncate">
-                        <span class="icon icon--sm icon--fill ui-star" aria-hidden="true">star</span>{{ hist.coordinatorName }}
+                        <svg class="icon icon--sm ui-star" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>{{ hist.coordinatorName }}
                       </span>
                       <span class="faint">·</span>
                       <span class="num">{{ hist.members.length }} {{ 'teams.members_short' | translate }}</span>
@@ -141,7 +154,7 @@
                   </span>
                 </button>
                 <div class="ui-row__trail">
-                  <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggleHistory(hist)" tabindex="-1" aria-hidden="true"><span class="icon" aria-hidden="true">{{ expandedHistory() === hist.historyKey ? 'expand_less' : 'expand_more' }}</span></button>
+                  <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggleHistory(hist)" tabindex="-1" aria-hidden="true"><svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (expandedHistory() === hist.historyKey ? 'expand_less' : 'expand_more')"/></svg></button>
                 </div>
               </div>
 
@@ -157,11 +170,11 @@
                             <span class="ui-row__text">
                               <span class="ui-row__title">
                                 <span class="truncate">{{ y.fullName }}</span>
-                                @if (hist.coordinator?.id === y.id) { <span class="icon icon--sm icon--fill ui-star" [title]="'common.coordinator' | translate" aria-hidden="true">star</span> }
+                                @if (hist.coordinator?.id === y.id) { <svg class="icon icon--sm ui-star" [attr.title]="'common.coordinator' | translate" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg> }
                               </span>
                             </span>
                           </button>
-                          <div class="ui-row__trail"><span class="icon faint" aria-hidden="true">chevron_right</span></div>
+                          <div class="ui-row__trail"><svg class="icon faint" aria-hidden="true"><use href="assets/icons.svg#chevron_right"/></svg></div>
                         </div>
                       }
                     </div>

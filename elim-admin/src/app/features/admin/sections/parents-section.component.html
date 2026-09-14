@@ -1,0 +1,118 @@
+<!-- ══════════ Reparto de padres ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header">
+      <h3 class="ui-card__title">{{ 'admin.parents_title' | translate }}</h3>
+      <span class="ui-count">{{ events().length }}</span>
+      @if (changed().length > 0) {
+        <span class="ui-badge ui-badge--primary">{{ 'admin.changed_rows' | translate:{ n: changed().length } }}</span>
+      }
+      <span class="ui-spacer"></span>
+      <button type="button" class="ui-btn" (click)="autoAssign()">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#auto_awesome"/></svg>
+        {{ 'admin.auto_assign' | translate }}
+      </button>
+      <button type="button" class="ui-btn ui-btn--ghost" (click)="clearAssignments()">{{ 'admin.reset' | translate }}</button>
+    </header>
+    <p class="ui-card__desc">{{ 'admin.parents_desc' | translate }}</p>
+
+    <div class="ui-card__toolbar ui-form-grid">
+      <label class="ui-field">
+        <span>{{ 'admin.field_parent_sort' | translate }}</span>
+        <select class="ui-select" [ngModel]="sort()" (ngModelChange)="sort.set($event)">
+          @for (s of sorts; track s) { <option [value]="s">{{ ('admin.sort_' + s) | translate }}</option> }
+        </select>
+      </label>
+      <label class="ui-check">
+        <input type="checkbox" [ngModel]="onlyWithout()" (ngModelChange)="onlyWithout.set($event)">
+        <span>{{ 'admin.only_without_parents' | translate }}</span>
+      </label>
+    </div>
+
+    @if (events().length === 0) {
+      <div class="ui-empty">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#check_circle"/></svg>
+        <span>{{ 'admin.parents_all_done' | translate }}</span>
+      </div>
+    } @else {
+      <div class="ui-list">
+        @for (e of events(); track entryKey(e)) {
+          <div class="ui-row row-edit" [style.--team-color]="getTeamColor(e.team)">
+            <div class="ui-row__lead">
+              <div class="ui-date">
+                <span class="ui-date__dow">{{ e.date | ldate:'dow' }}</span>
+                <span class="ui-date__day">{{ e.date.getDate() }}</span>
+                <span class="ui-date__mon">{{ e.date | ldate:'mon' }}</span>
+              </div>
+            </div>
+            <div class="row-edit__main">
+              <span class="ui-row__title">
+                <span class="ui-team-badge">{{ getTeamNumber(e.team) }}</span>
+                <span class="truncate">{{ e.team }}</span>
+                <span class="faint truncate">{{ e.coordinator }}</span>
+              </span>
+              <div class="row-edit__line">
+                @for (slot of slots; track slot) {
+                  <select class="ui-select row-edit__grow" [ngModel]="parentsFor(e)[slot] || ''"
+                          (ngModelChange)="setParent(e, slot, $event)"
+                          [attr.aria-label]="'schedule.support_parents' | translate">
+                    <option value="">{{ 'admin.no_parent' | translate }}</option>
+                    @for (p of parents(); track p.parent.id) {
+                      <option [value]="p.parent.id">{{ admin.parentLabel(p, 'parents.never_helped' | translate) }}</option>
+                    }
+                  </select>
+                }
+              </div>
+              @if (issueFor(e); as issue) {
+                <div class="checks">
+                  <span class="checks__item" [class.checks__item--error]="issue === 'duplicate_parents'"
+                        [class.checks__item--warning]="issue === 'no_parents'">
+                    <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (issue === 'duplicate_parents' ? 'error' : 'warning')"/></svg>
+                    {{ ('admin.check.' + issue) | translate }}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <app-admin-code [code]="code()" label="admin.copy_replace" hint="admin.parents_hint" />
+  </div>
+</section>
+
+<!-- ══════════ Carga de cada padre ══════════ -->
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header">
+      <h3 class="ui-card__title">{{ 'admin.parents_load_title' | translate }}</h3>
+      <span class="ui-count">{{ parents().length }}</span>
+    </header>
+    <p class="ui-card__desc">{{ 'admin.parents_load_desc' | translate }}</p>
+    <div class="ui-list">
+      @for (p of parents(); track p.parent.id) {
+        <div class="ui-row">
+          <div class="ui-row__lead"><span class="ui-avatar" [attr.data-tone]="p.parent.tone">{{ p.parent.initials }}</span></div>
+          <div class="ui-row__main">
+            <span class="ui-row__title"><span class="truncate">{{ p.parent.name }}</span></span>
+            <span class="ui-row__meta">
+              @if (p.last) {
+                <span>{{ 'admin.rotation_last' | translate }} {{ p.last | ldate:'short' }}</span>
+              } @else {
+                <span class="faint">{{ 'parents.never_helped' | translate }}</span>
+              }
+              @if (p.upcoming > 0) {
+                <span class="faint">·</span>
+                <span class="num">{{ 'admin.upcoming_count' | translate:{ n: p.upcoming } }}</span>
+              }
+            </span>
+          </div>
+          <div class="ui-row__trail">
+            <span class="ui-badge num" [class.ui-badge--warning]="p.total === 0">{{ 'admin.support_total' | translate:{ n: p.total } }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

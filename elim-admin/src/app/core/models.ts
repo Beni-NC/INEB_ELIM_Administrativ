@@ -5,14 +5,16 @@
 
 /* ─────────────────────────── Programación ─────────────────────────── */
 
+/** Tipo de programa. Código, no texto: la vista lo traduce con la clave `program_type.<código>`. */
+export type ProgramType = 'youth_evening';
+
 export interface ScheduleEntry {
   team: string;
   coordinator: string;
-  programType: string;
+  programType: ProgramType;
   estimatedPersons: number;
   date: Date;
   observations: string;
-  completed: boolean;
   /** IDs de padres que apoyan puntualmente ESTA programación (asignación manual). */
   parentSupporters?: string[];
   /** Hora de inicio del programa (HH:mm). Por defecto `DEFAULT_PROGRAM_START_TIME`. */
@@ -52,7 +54,6 @@ export interface Youth {
   address?: string;
   notes?: string;
   interests?: string[];
-  isCoordinator?: boolean;
   /** `false` = archivado (ya no participa). Por defecto activo. */
   active?: boolean;
   inactiveSince?: Date;
@@ -96,19 +97,14 @@ export interface Parent {
 /** Padre tal y como se escribe en los datos: `initials` lo calcula el índice. */
 export type ParentRecord = Omit<Parent, 'initials' | 'tone'>;
 
-/** Asignación fija padre ↔ equipo (actualmente sin uso: el apoyo es por programación). */
-export interface ParentTeamAssignment {
-  parentId: string;
-  teamName: string;
-  assignedSince: Date;
-  reason?: string;
-}
+/** Parentesco. Código, no texto: la vista lo traduce con la clave `relationship.<código>`. */
+export type Relationship = 'mother' | 'father' | 'guardian';
 
 /** Vínculo familiar padre ↔ joven. */
 export interface ParentYouthLink {
   parentId: string;
   youthId: string;
-  relationship: 'tată' | 'mamă' | 'tutore';
+  relationship: Relationship;
 }
 
 /** Conjunto de datos crudos que consume `ScheduleIndex` (permite inyectar fixtures en tests). */
@@ -125,16 +121,48 @@ export interface DomainData {
 export type YouthFilter = 'toti' | 'coordonatori' | 'membri';
 export type NavTarget = 'team' | 'youth' | 'parent';
 
+/** KPIs de portada: solo cifras que cambian algo en el día a día. */
 export interface ScheduleStats {
   upcoming: number;
   thisMonth: number;
-  completed: number;
-  teams: number;
+  /** Días hasta la próxima programación (0 = hoy); null si no hay ninguna. */
+  daysToNext: number | null;
+  /** Equipos activos sin programación futura: a los que "les toca". */
+  teamsWithoutUpcoming: number;
+}
+
+/**
+ * Situación de un equipo en la rotación: cuándo le tocó por última vez y si ya tiene turno
+ * programado. Es lo que el coordinador general miraba a mano para decidir el siguiente.
+ */
+export interface TeamRotation {
+  teamName: string;
+  last?: ScheduleEntry;
+  next?: ScheduleEntry;
+  /** Días desde la última programación; null si nunca le ha tocado. */
+  daysSinceLast: number | null;
+  /** Programaciones (pasadas y futuras) del equipo en la temporada actual (septiembre → agosto). */
+  turnsThisSeason: number;
+}
+
+/** Turno propuesto por la app: el siguiente viernes libre para el siguiente equipo de la rotación. */
+export interface ProposedEntry {
+  date: Date;
+  teamName: string;
+  coordinatorName: string;
 }
 
 export interface YouthStats {
   total: number;
   coordinators: number;
+  /** Jóvenes activos sin ninguna programación futura (su equipo aún no tiene turno). */
+  withoutUpcoming: number;
+}
+
+export interface ParentStats {
+  total: number;
+  /** Padres activos sin apoyo programado. */
+  withoutUpcoming: number;
 }
 
 /** Grupo de entradas de un mismo mes; la etiqueta se formatea en la vista (según idioma). */

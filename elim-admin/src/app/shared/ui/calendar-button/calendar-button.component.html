@@ -9,21 +9,21 @@
             [attr.aria-expanded]="open()"
             aria-haspopup="menu"
             (click)="toggle($event)">
-      <span class="icon" aria-hidden="true">event_available</span>
+      <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#event_available"/></svg>
       @if (withLabel()) { <span>{{ 'calendar.add_to_calendar_short' | translate }}</span> }
     </button>
 
     @if (open()) {
       <div class="ui-menu__panel" role="menu">
         <button type="button" class="ui-menu__item" role="menuitem" (click)="download($event)">
-          <span class="icon" aria-hidden="true">download</span>
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#download"/></svg>
           <span class="ui-menu__text">
             <span class="ui-menu__title">{{ 'calendar.option_download_title' | translate }}</span>
             <span class="ui-menu__desc">{{ 'calendar.option_download_desc' | translate: { n: count() } }}</span>
           </span>
         </button>
         <button type="button" class="ui-menu__item" role="menuitem" (click)="subscribe($event)">
-          <span class="icon" aria-hidden="true">sync</span>
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sync"/></svg>
           <span class="ui-menu__text">
             <span class="ui-menu__title">{{ 'calendar.option_subscribe_title' | translate }}</span>
             <span class="ui-menu__desc">{{ 'calendar.option_subscribe_desc' | translate }}</span>

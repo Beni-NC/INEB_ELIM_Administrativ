@@ -13,7 +13,7 @@
   --c-border-strong: #cfcbc3;
   --c-text: #1b2433;
   --c-text-2: #4b5565;
-  --c-text-3: #7d8797;
+  --c-text-3: #6b7585;   /* 4,7:1 sobre blanco: los metadatos de 11 px cumplen AA */
 
   /* ---- Color: acento único ---- */
   --c-primary: #0b57d0;
@@ -26,7 +26,7 @@
   --c-brand-ink: #1a365d;          /* wordmark sobre superficie clara */
   --c-brand-ink-hover: #122844;
   --c-brand-gold: #d4af37;         /* acento sobre fondo oscuro */
-  --c-brand-gold-deep: #9c7a1e;    /* acento sobre fondo claro (AA) */
+  --c-brand-gold-deep: #8a6a17;    /* acento sobre fondo claro (5,0:1, AA) */
   --c-brand-surface: #1a365d;      /* banda del footer */
   --c-on-brand: #faf9f6;
   --c-on-brand-muted: #b9cbe6;
@@ -36,7 +36,7 @@
   /* ---- Color: semánticos ---- */
   --c-success: #1a7f37;
   --c-success-soft: #e3f5e8;
-  --c-warning: #9a6700;
+  --c-warning: #7a5200;            /* 6,3:1 sobre --c-warning-soft: los badges ámbar cumplen AA */
   --c-warning-soft: #fff4d6;
   --c-danger: #b42318;
   --c-danger-soft: #fde8e6;
@@ -44,10 +44,10 @@
   /* ---- Color: equipos (solo badges, barras de 3 px y puntos) ---- */
   --team-1: #2563eb;
   --team-2: #7c3aed;
-  --team-3: #059669;
-  --team-4: #ea580c;
+  --team-3: #047857;
+  --team-4: #c2410c;
   --team-5: #dc2626;
-  --team-6: #0891b2;
+  --team-6: #0e7490;
   --team-7: #db2777;
   --team-default: #64748b;
   --team-badge-ink: #ffffff;

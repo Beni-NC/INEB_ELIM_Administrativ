@@ -95,6 +95,17 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.dom-spec.json",
+            "buildTarget": "elim-admin::development",
+            "runner": "vitest",
+            "include": [
+              "src/**/*.dom.spec.ts"
+            ]
+          }
         }
       }
     }

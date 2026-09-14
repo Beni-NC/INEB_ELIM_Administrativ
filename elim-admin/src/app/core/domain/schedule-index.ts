@@ -1,8 +1,11 @@
 import { DOMAIN_DATA } from '../data';
 import {
-  CoordinatorRotation, DomainData, MonthGroup, Parent, ParentEvent, ParentRecord, ScheduleEntry,
-  ScheduleStats, TeamComposition, Youth, YouthRecord, YouthRole, YouthStats, YouthTeamMembership,
+  CoordinatorRotation, DomainData, MonthGroup, Parent, ParentEvent, ParentRecord, ParentStats, ParentYouthLink, ProposedEntry,
+  Relationship, ScheduleEntry, ScheduleStats, TeamComposition, TeamRotation, Youth, YouthRecord, YouthRole, YouthStats,
+  YouthTeamMembership,
 } from '../models';
+import { daysBetween, seasonStartOf } from '../utils/date.utils';
+import { FRIDAY, nextWeekday } from '../utils/date.utils';
 
 /** Participación pasada de un joven en una programación. */
 export interface YouthPastEvent {
@@ -34,14 +37,16 @@ export class ScheduleIndex {
 
   /* ─────── Hoy (congelado para la sesión) ─────── */
   readonly today: Date;
+  /** 1 de septiembre de la temporada en curso (la actividad sigue el año escolar). */
+  readonly seasonStart: Date;
 
   /* ─────── Índices (construidos una vez) ─────── */
   private readonly youthById = new Map<string, Youth>();
   private readonly youthByName = new Map<string, Youth>();
   private readonly parentById = new Map<string, Parent>();
   private readonly parentsByEvent = new Map<ScheduleEntry, Parent[]>();
-  private readonly youthsForParentMap = new Map<string, Array<{ youth: Youth; relationship: string }>>();
-  private readonly parentsForYouthMap = new Map<string, Array<{ parent: Parent; relationship: string }>>();
+  private readonly youthsForParentMap = new Map<string, Array<{ youth: Youth; relationship: Relationship }>>();
+  private readonly parentsForYouthMap = new Map<string, Array<{ parent: Parent; relationship: Relationship }>>();
   private readonly youthsByTeam = new Map<string, Youth[]>();
   private readonly coordinatorByTeam = new Map<string, Youth | undefined>();
   private readonly activeTeamsByYouth = new Map<string, Array<{ teamName: string; role: YouthRole }>>();
@@ -77,9 +82,18 @@ export class ScheduleIndex {
   readonly pastByMonth: MonthGroup<ScheduleEntry>[];
 
   /* ─────── Agregados ─────── */
+  /**
+   * Rotación de los equipos activos: primero los que no tienen turno programado (el que más
+   * tiempo lleva sin salir, antes; los que nunca han salido, al principio), después los que ya
+   * lo tienen, por fecha del próximo turno.
+   */
+  readonly teamRotation: TeamRotation[];
+  /** Programaciones futuras que aún no tienen padres de apoyo asignados. */
+  readonly upcomingWithoutParents: ScheduleEntry[];
   readonly coordinatorRotations: CoordinatorRotation[];
   readonly scheduleStats: ScheduleStats;
   readonly youthStats: YouthStats;
+  readonly parentStats: ParentStats;
   readonly nextParentEvent: ParentEvent | null;
   /** Próximas con padres, excluida la primera (que es `nextParentEvent`). */
   readonly upcomingParentEvents: ParentEvent[];
@@ -95,6 +109,7 @@ export class ScheduleIndex {
 
   constructor(today: Date, data: DomainData = DOMAIN_DATA) {
     this.today = today;
+    this.seasonStart = seasonStartOf(today);
     this.schedule = data.schedule;
     this.memberships = data.memberships;
     this.youths = data.youths.map(toYouth);
@@ -116,9 +131,15 @@ export class ScheduleIndex {
     this.teamsHistory = this.deriveTeamsHistory();
     this.upcomingByMonth = groupByMonth(this.upcomingSchedule);
     this.pastByMonth = groupByMonth([...this.pastSchedule].reverse());
+    this.teamRotation = this.computeTeamRotation();
+    this.upcomingWithoutParents = this.upcomingSchedule.filter(e => !this.parentsByEvent.has(e));
     this.coordinatorRotations = this.computeCoordinatorRotations();
     this.scheduleStats = this.computeScheduleStats();
     this.youthStats = this.computeYouthStats();
+    this.parentStats = {
+      total: this.activeParents.length,
+      withoutUpcoming: this.activeParents.filter(p => !this.nextEventByParent.has(p.id)).length,
+    };
 
     const parentEvents = (list: ScheduleEntry[]): ParentEvent[] => {
       const out: ParentEvent[] = [];
@@ -162,12 +183,42 @@ export class ScheduleIndex {
   getActiveTeamsForYouth(id: string) { return this.activeTeamsByYouth.get(id) ?? []; }
   getHistoricalTeamsForYouth(id: string) { return this.historicalTeamsByYouth.get(id) ?? []; }
 
-  /**
-   * True solo si el joven coordina ahora mismo al menos un equipo ACTIVO. Un joven marcado
-   * `isCoordinator` en los datos que solo coordinó composiciones cerradas cuenta como miembro.
-   */
+  /** True solo si el joven coordina ahora mismo al menos un equipo ACTIVO (haber coordinado una cerrada no cuenta). */
   isActiveCoordinator(id: string): boolean {
     return (this.activeTeamsByYouth.get(id) ?? []).some(t => t.role === 'coordonator');
+  }
+
+  /**
+   * Padres activos ordenados por carga, los menos solicitados primero: menos apoyos en total
+   * (pasados y futuros), después el que lleva más tiempo sin ayudar (nunca → primero) y, a
+   * igualdad, por nombre. Es el reparto que propone el panel de planificación.
+   */
+  parentsByWorkload(): Parent[] {
+    const total = (id: string): number =>
+      (this.pastEventsByParent.get(id)?.length ?? 0) + (this.upcomingEventsByParent.get(id)?.length ?? 0);
+    const lastOf = (id: string): number => this.pastEventsByParent.get(id)?.[0]?.date.getTime() ?? 0;
+    return [...this.activeParents].sort((a, b) =>
+      total(a.id) - total(b.id) || lastOf(a.id) - lastOf(b.id) || a.name.localeCompare(b.name, 'ro'));
+  }
+
+  /**
+   * Propone `count` turnos a partir de `from`: a cada viernes libre le asigna el siguiente equipo
+   * de la rotación (los que no tienen turno primero y después cíclicamente). No modifica nada; es
+   * la sugerencia que el panel `/admin` convierte en líneas para `schedule.data.ts`.
+   */
+  proposeSchedule(count = this.teamRotation.filter(r => !r.next).length, from = this.today): ProposedEntry[] {
+    const order = this.teamRotation.map(r => r.teamName);
+    if (order.length === 0 || count <= 0) return [];
+    const taken = new Set(this.upcomingSchedule.map(e => e.date.getTime()));
+    const out: ProposedEntry[] = [];
+    let friday = nextWeekday(from, FRIDAY);
+    for (let i = 0; i < count; i++) {
+      while (taken.has(friday.getTime())) friday = nextWeekday(friday, FRIDAY, 1);
+      taken.add(friday.getTime());
+      const teamName = order[i % order.length];
+      out.push({ date: friday, teamName, coordinatorName: this.coordinatorByTeam.get(teamName)?.fullName ?? '—' });
+    }
+    return out;
   }
 
   /* ─────── Línea temporal de composiciones ─────── */
@@ -200,7 +251,7 @@ export class ScheduleIndex {
   }
 
   /* ─────── Internos ─────── */
-  private buildLookupMaps(parentYouthLinks: readonly { parentId: string; youthId: string; relationship: string }[]): void {
+  private buildLookupMaps(parentYouthLinks: readonly ParentYouthLink[]): void {
     for (const y of this.youths) {
       this.youthById.set(y.id, y);
       this.youthByName.set(y.fullName, y);
@@ -391,6 +442,25 @@ export class ScheduleIndex {
     return out.sort((a, b) => (b.end?.getTime() ?? 0) - (a.end?.getTime() ?? 0) || teamNumber(a.teamName) - teamNumber(b.teamName));
   }
 
+  private computeTeamRotation(): TeamRotation[] {
+    const season = this.seasonStart.getTime();
+    const rows: TeamRotation[] = this.teams.map(t => {
+      const last = this.pastEventsByTeam.get(t.teamName)?.[0];
+      return {
+        teamName: t.teamName,
+        last,
+        next: this.nextEventByTeam.get(t.teamName),
+        daysSinceLast: last ? daysBetween(this.today, last.date) : null,
+        turnsThisSeason: this.sortedSchedule.filter(e => e.team === t.teamName && e.date.getTime() >= season).length,
+      };
+    });
+    return rows.sort((a, b) => {
+      if (!a.next !== !b.next) return a.next ? 1 : -1;
+      if (a.next && b.next) return a.next.date.getTime() - b.next.date.getTime();
+      return (a.last?.date.getTime() ?? 0) - (b.last?.date.getTime() ?? 0);
+    });
+  }
+
   private computeCoordinatorRotations(): CoordinatorRotation[] {
     const map = new Map<string, CoordinatorRotation>();
     for (const e of this.pastSchedule) {
@@ -409,13 +479,19 @@ export class ScheduleIndex {
     const month = this.today.getMonth();
     const year = this.today.getFullYear();
     const thisMonth = this.upcomingSchedule.filter(e => e.date.getMonth() === month && e.date.getFullYear() === year).length;
-    return { upcoming: this.upcomingSchedule.length, thisMonth, completed: this.pastSchedule.length, teams: this.teams.length };
+    return {
+      upcoming: this.upcomingSchedule.length,
+      thisMonth,
+      daysToNext: this.nextEvent ? daysBetween(this.nextEvent.date, this.today) : null,
+      teamsWithoutUpcoming: this.teamRotation.filter(t => !t.next).length,
+    };
   }
 
   private computeYouthStats(): YouthStats {
     return {
       total: this.activeYouths.length,
       coordinators: this.activeYouths.filter(y => this.isActiveCoordinator(y.id)).length,
+      withoutUpcoming: this.activeYouths.filter(y => !this.nextEventByYouth.has(y.id)).length,
     };
   }
 }

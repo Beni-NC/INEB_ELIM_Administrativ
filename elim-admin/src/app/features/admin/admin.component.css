@@ -1,0 +1,4 @@
+:host { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+/* El selector de sección tiene cinco opciones: en móvil se desliza en horizontal antes de apilarse. */
+.ui-card__toolbar { overflow-x: auto; }

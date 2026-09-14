@@ -45,3 +45,6 @@ Thumbs.db
 /src/assets/calendars/
 # Generado por scripts/generate-version.mjs
 /src/version.ts
+/dist-lhci
+/lhci-report
+/.lighthouseci

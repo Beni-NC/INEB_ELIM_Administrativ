@@ -1,5 +1,14 @@
+/* Marcador "echipa mea" activo: primario, como cualquier estado seleccionado. */
+.team__mine.is-active { color: var(--c-primary); }
+
 :host { display: flex; flex-direction: column; gap: var(--sp-4); }
 
 .team__coord { display: inline-flex; align-items: center; gap: 3px; min-width: 0; }
 .team__star { color: var(--c-warning); }
 .team__next { max-width: 100%; }
+
+/* En móvil la cola de la fila lleva badge + marcador "echipa mea": sin el chevron (decorativo, la
+   fila entera es el botón) el nombre del coordinador y el número de miembros caben en una línea. */
+@media (max-width: 599px) {
+  .team > .ui-row > .ui-row__trail > .ui-btn--icon:last-child { display: none; }
+}

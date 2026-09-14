@@ -1,4 +1,4 @@
-import type { ParentRecord, ParentTeamAssignment, ParentYouthLink } from '../models';
+import type { ParentRecord, ParentYouthLink } from '../models';
 
 /* ===================== PĂRINȚI (foștii „sprijin") ===================== */
 
@@ -194,36 +194,28 @@ export const PARENTS: ParentRecord[] = [
   */
 ];
 
-/** Părinți alocați ca ajutor unor echipe (asignări active). */
-export const PARENT_TEAM_ASSIGNMENTS: ParentTeamAssignment[] = [
-  /* 
-  { parentId: 'p-001', teamName: 'Echipa 4', assignedSince: new Date(2026, 3, 20), reason: 'Ajutor la bucătărie pentru programul din 8 mai.' },
-  { parentId: 'p-002', teamName: 'Echipa 4', assignedSince: new Date(2026, 3, 20), reason: 'Ajutor la logistică și aranjarea meselor.' },
-  */
-];
-
-/** Legături familiale părinte ↔ tânăr (pentru a conecta toate datele). relationship: mamă - tată */
+/** Legături familiale părinte ↔ tânăr (pentru a conecta toate datele). relationship: mother | father | guardian */
 export const PARENT_YOUTH_LINKS: ParentYouthLink[] = [
-  { parentId: 'p-001', youthId: 'y-birle-tania',  relationship: 'mamă' },
-  { parentId: 'p-001', youthId: 'y-birle-filip',  relationship: 'mamă' },
-  { parentId: 'p-002', youthId: 'y-dobre-irene',  relationship: 'mamă' },
-  { parentId: 'p-002', youthId: 'y-dobre-david',  relationship: 'mamă' },
-  { parentId: 'p-003', youthId: 'y-mitoseriu-miriam',  relationship: 'mamă' },
-  { parentId: 'p-003', youthId: 'y-mitoseriu-kevin',  relationship: 'mamă' },
-  { parentId: 'p-004', youthId: 'y-negrusier-rut',  relationship: 'mamă' },
-  { parentId: 'p-005', youthId: 'y-dulca-daniel',  relationship: 'mamă' },
-  { parentId: 'p-005', youthId: 'y-dulca-david',  relationship: 'mamă' },
-  { parentId: 'p-006', youthId: 'y-apalaghiei-samuel',  relationship: 'mamă' },
-  { parentId: 'p-006', youthId: 'y-apalaghiei-sara',  relationship: 'mamă' },
-  { parentId: 'p-007', youthId: 'y-pintilei-david',  relationship: 'mamă' },
-  { parentId: 'p-008', youthId: 'y-rus-miriam',  relationship: 'mamă' },
-  { parentId: 'p-009', youthId: 'y-toader-noemi',  relationship: 'mamă' },
-  { parentId: 'p-009', youthId: 'y-toader-carla',  relationship: 'mamă' },
-  { parentId: 'p-009', youthId: 'y-toader-ainhoa',  relationship: 'mamă' },
-  { parentId: 'p-009', youthId: 'y-toader-irene',  relationship: 'mamă' },
-  { parentId: 'p-010', youthId: 'y-filimon-natanael',  relationship: 'mamă' },
-  { parentId: 'p-010', youthId: 'y-filimon-sara',  relationship: 'mamă' },
-  { parentId: 'p-011', youthId: 'y-les-fineas',  relationship: 'mamă' },
-  { parentId: 'p-012', youthId: 'y-mic-karina',  relationship: 'mamă' },
-  { parentId: 'p-013', youthId: 'y-baleanu-samuel',  relationship: 'mamă' },
+  { parentId: 'p-001', youthId: 'y-birle-tania',  relationship: 'mother' },
+  { parentId: 'p-001', youthId: 'y-birle-filip',  relationship: 'mother' },
+  { parentId: 'p-002', youthId: 'y-dobre-irene',  relationship: 'mother' },
+  { parentId: 'p-002', youthId: 'y-dobre-david',  relationship: 'mother' },
+  { parentId: 'p-003', youthId: 'y-mitoseriu-miriam',  relationship: 'mother' },
+  { parentId: 'p-003', youthId: 'y-mitoseriu-kevin',  relationship: 'mother' },
+  { parentId: 'p-004', youthId: 'y-negrusier-rut',  relationship: 'mother' },
+  { parentId: 'p-005', youthId: 'y-dulca-daniel',  relationship: 'mother' },
+  { parentId: 'p-005', youthId: 'y-dulca-david',  relationship: 'mother' },
+  { parentId: 'p-006', youthId: 'y-apalaghiei-samuel',  relationship: 'mother' },
+  { parentId: 'p-006', youthId: 'y-apalaghiei-sara',  relationship: 'mother' },
+  { parentId: 'p-007', youthId: 'y-pintilei-david',  relationship: 'mother' },
+  { parentId: 'p-008', youthId: 'y-rus-miriam',  relationship: 'mother' },
+  { parentId: 'p-009', youthId: 'y-toader-noemi',  relationship: 'mother' },
+  { parentId: 'p-009', youthId: 'y-toader-carla',  relationship: 'mother' },
+  { parentId: 'p-009', youthId: 'y-toader-ainhoa',  relationship: 'mother' },
+  { parentId: 'p-009', youthId: 'y-toader-irene',  relationship: 'mother' },
+  { parentId: 'p-010', youthId: 'y-filimon-natanael',  relationship: 'mother' },
+  { parentId: 'p-010', youthId: 'y-filimon-sara',  relationship: 'mother' },
+  { parentId: 'p-011', youthId: 'y-les-fineas',  relationship: 'mother' },
+  { parentId: 'p-012', youthId: 'y-mic-karina',  relationship: 'mother' },
+  { parentId: 'p-013', youthId: 'y-baleanu-samuel',  relationship: 'mother' },
 ];

@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DataService } from '../core/services/data.service';
 import { DockOverlapService } from '../core/services/dock-overlap.service';
@@ -22,7 +23,7 @@ import { ShareButtonComponent } from '../shared/ui/share-button/share-button.com
 @Component({
   selector: 'app-footer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, BrandLogoComponent, WhatsappButtonComponent, ShareButtonComponent],
+  imports: [RouterLink, TranslatePipe, BrandLogoComponent, WhatsappButtonComponent, ShareButtonComponent],
   template: `
     <footer class="ui-footer">
       <div class="ui-footer__inner ui-container">
@@ -46,10 +47,15 @@ import { ShareButtonComponent } from '../shared/ui/share-button/share-button.com
         <div class="ui-footer__actions">
           <button type="button" class="ui-btn ui-btn--on-dark ui-btn--icon" (click)="backToTop()"
                   [attr.aria-label]="'dock.back_to_top' | translate" [title]="'dock.back_to_top' | translate">
-            <span class="icon" aria-hidden="true">arrow_upward</span>
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow_upward"/></svg>
           </button>
           <app-whatsapp-button [iconOnly]="true" [onDark]="true" [label]="'contact.label' | translate" [message]="'contact.message' | translate" />
           <app-share-button [iconOnly]="true" [onDark]="true" />
+          <!-- Acceso al panel de planificación: deliberadamente tenue, para quien mantiene los datos. -->
+          <a class="ui-btn ui-btn--on-dark ui-btn--icon ui-footer__admin" routerLink="/admin"
+             [attr.aria-label]="'admin.title' | translate" [title]="'admin.title' | translate">
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#tune"/></svg>
+          </a>
           <span class="ui-footer__sep" aria-hidden="true"></span>
           <a class="ui-footer__partner" [href]="contact.partnerUrl" target="_blank" rel="noopener noreferrer"
              [attr.aria-label]="'footer.partner' | translate" [title]="'footer.partner' | translate">

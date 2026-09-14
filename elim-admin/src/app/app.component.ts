@@ -1,12 +1,15 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { HeaderComponent } from './layout/header.component';
 import { FooterComponent } from './layout/footer.component';
 import { TabsNavComponent } from './layout/tabs-nav.component';
 import { PwaInstallPromptComponent } from './layout/pwa-install-prompt.component';
 import { FloatingDockComponent } from './layout/floating-dock.component';
 import { PwaUpdateService } from './core/services/pwa-update.service';
-import { TAB_ORDER } from './core/constants';
+import { DayRolloverService } from './core/services/day-rollover.service';
+import { TAB_ORDER, TAB_PATHS } from './core/constants';
 
 /** Umbrales del gesto de deslizar entre pestañas (px). */
 const SWIPE_MIN_X = 80;
@@ -15,16 +18,22 @@ const SWIPE_MAX_Y = 60;
 @Component({
     selector: 'app-root',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterOutlet, HeaderComponent, FooterComponent, TabsNavComponent, PwaInstallPromptComponent, FloatingDockComponent],
+    imports: [RouterOutlet, TranslatePipe, HeaderComponent, FooterComponent, TabsNavComponent, PwaInstallPromptComponent, FloatingDockComponent],
     template: `
+    <button type="button" class="skip-link" (click)="focusMain()">{{ 'a11y.skip_to_content' | translate }}</button>
     <app-header />
     <app-tabs-nav />
-    <main class="ui-main ui-container" #mainContent>
+    <main class="ui-main ui-container" #mainContent id="main" tabindex="-1">
       <router-outlet />
     </main>
+    <!-- Lo que anuncia el lector de pantalla al cambiar de pestaña (el título del documento no basta en todos). -->
+    <div class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement() }}</div>
     <app-footer />
-    <app-pwa-install-prompt />
-    <app-floating-dock />
+    <!-- Elementos para participantes: no tienen sentido en el panel de planificación. -->
+    @if (!isAdmin()) {
+      <app-pwa-install-prompt />
+      <app-floating-dock />
+    }
   `,
     // Flechas ←/→ para cambiar de pestaña con teclado (equivalente al gesto de deslizar en móvil).
     host: { '(document:keydown)': 'onKeydown($event)' },
@@ -32,6 +41,11 @@ const SWIPE_MAX_Y = 60;
 export class AppComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mainContent') mainContent!: ElementRef<HTMLElement>;
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
+  /** Nombre de la pestaña activa, para la región `aria-live`. */
+  protected readonly announcement = signal('');
+  /** El panel `/admin` no es una pestaña: ni se anuncia ni lleva los añadidos de la app pública. */
+  protected readonly isAdmin = signal(false);
 
   private touchStartX = 0;
   private touchStartY = 0;
@@ -39,6 +53,18 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   constructor() {
     inject(PwaUpdateService).init();
+    inject(DayRolloverService).init();
+    this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe(e => {
+      const path = e.urlAfterRedirects.split(/[?#]/)[0].replace(/^\//, '');
+      const tab = (Object.entries(TAB_PATHS) as [string, string][]).find(([, p]) => p === path)?.[0];
+      this.announcement.set(tab ? this.translate.instant(`tabs.${tab}`) as string : '');
+      this.isAdmin.set(path === 'admin');
+    });
+  }
+
+  /** Skip link: lleva el foco (y el scroll) al contenido, saltando cabecera y pestañas. */
+  protected focusMain(): void {
+    this.mainContent.nativeElement.focus({ preventScroll: false });
   }
 
   ngAfterViewInit(): void {

@@ -26,7 +26,7 @@ interface NavTab {
              routerLinkActive="is-active"
              [routerLinkActiveOptions]="{ exact: t.exact }"
              ariaCurrentWhenActive="page">
-            <span class="icon" aria-hidden="true">{{ t.icon }}</span>
+            <svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (t.icon)"/></svg>
             <span>{{ t.labelKey | translate }}</span>
           </a>
         }

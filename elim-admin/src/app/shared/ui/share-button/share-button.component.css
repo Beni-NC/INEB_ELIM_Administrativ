@@ -34,6 +34,8 @@
 .share__badge--tg { color: #229ed9; }
 
 /* Enlace visible para copiarlo a mano si el portapapeles no está disponible. */
+.share__page { display: inline-flex; align-items: center; gap: var(--sp-1); margin-top: var(--sp-3); font-size: var(--fs-sm); }
+
 .share__url {
   display: block;
   padding-top: var(--sp-2);

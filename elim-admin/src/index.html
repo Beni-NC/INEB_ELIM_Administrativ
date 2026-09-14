@@ -11,6 +11,18 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Programarea pregătirii mesei - Departament Tineret, Biserica ELIM Arganda del Rey">
+  <!-- Vista previa al compartir el enlace (WhatsApp, Telegram, e-mail). La imagen debe ser absoluta;
+       el deploy sustituye esta URL por la del mirror en su build. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ELIM Tineret">
+  <meta property="og:title" content="ELIM Arganda - Programare Tineret">
+  <meta property="og:description" content="Programarea pregătirii mesei - Departament Tineret, Biserica ELIM Arganda del Rey">
+  <meta property="og:url" content="https://beni-nc.github.io/INEB_ELIM_Administrativ/">
+  <meta property="og:image" content="https://beni-nc.github.io/INEB_ELIM_Administrativ/assets/logo_admin-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:locale" content="ro_RO">
+  <meta name="twitter:card" content="summary">
   <meta name="theme-color" content="#ffffff">
   <!-- Tema guardado por el usuario (ThemeService): se aplica antes del primer pintado para evitar el destello claro. -->
   <script>try{if(localStorage.getItem('app.theme')==='dark'){document.documentElement.dataset.theme='dark';document.querySelector('meta[name="theme-color"]').content='#181d26';}}catch(e){}</script>
@@ -21,11 +33,21 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="ELIM Tineret">
-  <!-- Fuentes externas: iconos (contorno, 20 px) y Playfair Display 600 solo para el wordmark ELIM
-       (misma marca que MEDIA-ELIM). La fuente de texto es la del sistema. -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,400,0..1,0&display=block" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <!-- Sin fuentes externas: el wordmark (Playfair 600, latino) y los iconos (sprite SVG) viajan con la
+       app → arranque sin red, sin terceros y sin parpadeo de iconos. Iconos: `npm run icons`. -->
+  <link rel="preload" href="assets/fonts/playfair-display-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- @font-face aquí y no en el CSS empaquetado: la URL se resuelve contra <base href>, que cambia por
+       despliegue (repo principal / mirror), y el fichero queda en assets/ (lo cachea el service worker). -->
+  <style>
+    @font-face {
+      font-family: 'Playfair Display';
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+      src: url('assets/fonts/playfair-display-600-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+  </style>
 </head>
 <body>
   <app-root></app-root>

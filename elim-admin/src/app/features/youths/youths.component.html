@@ -2,14 +2,17 @@
   <div class="ui-card">
     <header class="ui-card__header">
       <h2 class="ui-card__title">{{ 'tabs.youths' | translate }}</h2>
-      <span class="ui-count">{{ data.filteredYouths().length }}</span>
+      <span class="ui-count">{{ visibleYouths().length }}</span>
+      @if (data.youthStats.withoutUpcoming > 0) {
+        <span class="ui-badge ui-badge--warning" [title]="'youths.without_upcoming_hint' | translate">{{ 'youths.without_upcoming_count' | translate:{ n: data.youthStats.withoutUpcoming } }}</span>
+      }
       <span class="ui-spacer"></span>
-      <span class="faint num">{{ data.youthStats.total }} {{ 'common.youths' | translate }} · {{ data.youthStats.coordinators }} {{ 'common.coordinators' | translate }}</span>
+      <span class="faint num youths__stats">{{ data.youthStats.total }} {{ 'common.youths' | translate }} · {{ data.youthStats.coordinators }} {{ 'common.coordinators' | translate }}</span>
     </header>
 
   <div class="ui-card__toolbar">
     <label class="ui-input">
-      <span class="icon" aria-hidden="true">search</span>
+      <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#search"/></svg>
       <input type="search" class="ui-input__field"
              [ngModel]="data.youthSearch()"
              (ngModelChange)="data.setYouthSearch($event)"
@@ -17,7 +20,7 @@
              [attr.aria-label]="'youths.search_aria' | translate">
       @if (data.youthSearch()) {
         <button type="button" class="ui-input__clear" (click)="data.clearYouthSearch()" [attr.aria-label]="'youths.clear_search' | translate">
-          <span class="icon icon--sm" aria-hidden="true">close</span>
+          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#close"/></svg>
         </button>
       }
     </label>
@@ -28,16 +31,22 @@
         </button>
       }
     </div>
+    @if (myTeam.team(); as mine) {
+      <button type="button" class="ui-chip" [attr.aria-pressed]="onlyMine()" (click)="onlyMine.set(!onlyMine())" [style.--team-color]="getTeamColor(mine)">
+        <span class="ui-team-badge youth__chip-badge">{{ getTeamNumber(mine) }}</span>
+        {{ 'my_team.title' | translate }}
+      </button>
+    }
   </div>
 
-    @if (data.filteredYouths().length === 0) {
+    @if (visibleYouths().length === 0) {
       <div class="ui-empty">
-        <span class="icon" aria-hidden="true">info</span>
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>
         <span>{{ 'youths.no_results' | translate }}</span>
       </div>
     } @else {
       <div class="ui-list">
-        @for (y of data.filteredYouths(); track y.id) {
+        @for (y of visibleYouths(); track y.id) {
           <ng-container *ngTemplateOutlet="youthRow; context: { $implicit: y }" />
         }
       </div>
@@ -49,10 +58,10 @@
 @if (data.inactiveYouths.length > 0) {
   <section class="ui-section">
     <button type="button" class="ui-disclosure" (click)="showArchived.set(!archivedOpen())" [attr.aria-expanded]="archivedOpen()">
-      <span class="icon" aria-hidden="true">history</span>
+      <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
       {{ 'youths.former_members' | translate }}
       <span class="ui-count">{{ data.inactiveYouths.length }}</span>
-      <span class="icon ui-disclosure__chevron" aria-hidden="true">{{ archivedOpen() ? 'expand_less' : 'expand_more' }}</span>
+      <svg class="icon ui-disclosure__chevron" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (archivedOpen() ? 'expand_less' : 'expand_more')"/></svg>
     </button>
     @if (archivedOpen()) {
       <div class="ui-disclosure__panel">
@@ -80,7 +89,7 @@
           @if (y.active === false) {
             <span class="ui-badge">{{ 'youths.inactive' | translate }}</span>
           } @else if (data.isActiveCoordinator(y.id)) {
-            <span class="icon icon--sm icon--fill ui-star" [title]="'common.coordinator' | translate" aria-hidden="true">star</span>
+            <svg class="icon icon--sm ui-star" [attr.title]="'common.coordinator' | translate" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>
           }
         </span>
         <span class="ui-row__meta">
@@ -103,19 +112,25 @@
             <span class="ui-badge ui-badge--success">{{ 'common.today_excl' | translate }}</span>
           } @else {
             <span class="ui-badge" [class.ui-badge--primary]="daysUntil(next.date) <= 7" [title]="'youths.next_short' | translate">
-              {{ next.date | ldate:'dayMonth' }} · {{ daysUntil(next.date) }}{{ 'common.day_letter' | translate }}
+              {{ next.date | ldate:'dayMonth' }} · {{ next.date | until }}
             </span>
           }
           <app-calendar-button [youthId]="y.id" [youthName]="y.fullName" />
+        } @else if (y.active !== false && data.getActiveTeamsForYouth(y.id).length > 0) {
+          <!-- Estado, no alarma: la alerta agregada va en la cabecera; la acción, en el equipo. -->
+          <span class="ui-badge">{{ 'common.no_schedule' | translate }}</span>
         }
-        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggle(y)" tabindex="-1" aria-hidden="true"><span class="icon" aria-hidden="true">{{ expanded() === y.id ? 'expand_less' : 'expand_more' }}</span></button>
+        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="toggle(y)" tabindex="-1" aria-hidden="true"><svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (expanded() === y.id ? 'expand_less' : 'expand_more')"/></svg></button>
       </div>
     </div>
 
     @if (expanded() === y.id) {
       <div class="ui-row-detail" [id]="'detail-youth-' + y.id">
+        @if (showJoinedYear || y.active === false) {
         <div class="ui-subsection">
-          <div class="ui-kv"><span class="ui-kv__k">{{ 'youths.member_since' | translate }}</span><span class="ui-kv__v num">{{ y.joinedYear }}</span></div>
+          @if (showJoinedYear) {
+            <div class="ui-kv"><span class="ui-kv__k">{{ 'youths.member_since' | translate }}</span><span class="ui-kv__v num">{{ y.joinedYear }}</span></div>
+          }
           @if (y.active === false && y.inactiveSince) {
             <div class="ui-kv"><span class="ui-kv__k">{{ 'youths.inactive_from' | translate }}</span><span class="ui-kv__v">{{ y.inactiveSince | ldate:'short' }}</span></div>
           }
@@ -123,6 +138,7 @@
             <div class="ui-kv"><span class="ui-kv__k">{{ 'youths.inactive_reason' | translate }}</span><span class="ui-kv__v">{{ y.inactiveReason }}</span></div>
           }
         </div>
+        }
 
         <!-- Equipos activos -->
         @if (y.active !== false && data.getActiveTeamsForYouth(y.id).length > 0) {
@@ -136,14 +152,18 @@
                     <span class="ui-row__text">
                       <span class="ui-row__title">
                         <span class="truncate">{{ t.teamName }}</span>
-                        @if (t.role === 'coordonator') { <span class="icon icon--sm icon--fill ui-star" [title]="'common.coordinator' | translate" aria-hidden="true">star</span> }
+                        @if (t.role === 'coordonator') { <svg class="icon icon--sm ui-star" [attr.title]="'common.coordinator' | translate" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg> }
                       </span>
-                      @if (t.next) {
-                        <span class="ui-row__meta"><span>{{ 'teams.next_date' | translate }} {{ t.next.date | ldate:'full' }}</span></span>
-                      }
+                      <span class="ui-row__meta">
+                        @if (t.next) {
+                          <span>{{ 'teams.next_date' | translate }} {{ t.next.date | ldate:'full' }}</span>
+                        } @else {
+                          <span class="faint">{{ 'common.no_schedule' | translate }}</span>
+                        }
+                      </span>
                     </span>
                   </button>
-                  <div class="ui-row__trail"><span class="icon faint" aria-hidden="true">chevron_right</span></div>
+                  <div class="ui-row__trail"><svg class="icon faint" aria-hidden="true"><use href="assets/icons.svg#chevron_right"/></svg></div>
                 </div>
               }
             </div>
@@ -160,7 +180,7 @@
                         (click)="nav.goTo('team', h.teamName, $event)" [title]="'schedule.view_team' | translate">
                   <span class="ui-team-badge ui-team-badge--muted youth__chip-badge">{{ getTeamNumber(h.teamName) }}</span>
                   {{ h.teamName }}
-                  @if (h.role === 'coordonator') { <span class="icon icon--fill ui-star" [title]="'youths.prev_coord_tooltip' | translate" aria-hidden="true">star</span> }
+                  @if (h.role === 'coordonator') { <svg class="icon ui-star" [attr.title]="'youths.prev_coord_tooltip' | translate" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg> }
                   @if (h.endDate) { <span class="faint">· {{ 'youths.until' | translate }} {{ h.endDate | ldate:'short' }}</span> }
                 </button>
               }
@@ -168,7 +188,7 @@
           </div>
         }
 
-        <!-- Próximas programaciones -->
+        <!-- Próximas programaciones (o, si su equipo aún no tiene turno, decirlo y llevar a la rotación) -->
         @if (data.getUpcomingEventsForYouth(y.id).length > 0) {
           <div class="ui-subsection">
             <span class="ui-subsection__title">{{ 'youths.upcoming_schedules' | translate }} <span class="ui-count">{{ data.getUpcomingEventsForYouth(y.id).length }}</span></span>
@@ -178,15 +198,25 @@
               }
             </div>
           </div>
+        } @else if (y.active !== false && data.getActiveTeamsForYouth(y.id).length > 0) {
+          <div class="ui-subsection">
+            <span class="ui-subsection__title">{{ 'youths.upcoming_schedules' | translate }}</span>
+            <div class="ui-empty ui-empty--inline">
+              <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>
+              <span>{{ 'youths.team_no_upcoming' | translate:{ team: data.getActiveTeamsForYouth(y.id)[0].teamName } }}
+                <button type="button" class="ui-link" (click)="nav.goToRotation($event)">{{ 'youths.see_rotation' | translate }}</button>
+              </span>
+            </div>
+          </div>
         }
 
         <!-- Histórico de participación -->
         @if (data.getPastEventsForYouth(y.id).length > 0) {
           <div class="ui-subsection">
             <button type="button" class="ui-subsection__title" (click)="togglePast(y.id)" [attr.aria-expanded]="isPastOpen(y.id)">
-              <span class="icon icon--sm" aria-hidden="true">history</span>
+              <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
               {{ 'youths.schedule_history' | translate }} <span class="ui-count">{{ data.getPastEventsForYouth(y.id).length }}</span>
-              <span class="icon icon--sm" aria-hidden="true">{{ isPastOpen(y.id) ? 'expand_less' : 'expand_more' }}</span>
+              <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isPastOpen(y.id) ? 'expand_less' : 'expand_more')"/></svg>
             </button>
             @if (isPastOpen(y.id)) {
               <div class="ui-list">
@@ -219,10 +249,10 @@
                     <span class="ui-avatar" [attr.data-tone]="link.parent.tone">{{ link.parent.initials }}</span>
                     <span class="ui-row__text">
                       <span class="ui-row__title"><span class="truncate">{{ link.parent.name }}</span></span>
-                      <span class="ui-row__meta">{{ link.relationship }}@if (link.parent.role) { · {{ link.parent.role }}}</span>
+                      <span class="ui-row__meta">{{ ('relationship.' + link.relationship) | translate }}@if (link.parent.role) { · {{ link.parent.role }}}</span>
                     </span>
                   </button>
-                  <div class="ui-row__trail"><span class="icon faint" aria-hidden="true">chevron_right</span></div>
+                  <div class="ui-row__trail"><svg class="icon faint" aria-hidden="true"><use href="assets/icons.svg#chevron_right"/></svg></div>
                 </div>
               }
             </div>
@@ -231,7 +261,7 @@
 
         @if (y.notes) {
           <div class="ui-note">
-            <span class="icon" aria-hidden="true">sticky_note_2</span>
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sticky_note_2"/></svg>
             <span>{{ y.notes }}</span>
           </div>
         }

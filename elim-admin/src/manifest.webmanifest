@@ -1,14 +1,14 @@
 {
+  "id": "./",
   "name": "ELIM Arganda - Tineret",
   "short_name": "ELIM Tineret",
   "theme_color": "#ffffff",
-  "background_color": "#1e3a5f",
+  "background_color": "#1a365d",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
   "lang": "ro",
   "dir": "ltr",
-  "orientation": "portrait-primary",
   "description": "Programarea pregătirii mesei - Departament Tineret, Biserica ELIM Arganda del Rey",
   "icons": [
     {
@@ -24,12 +24,6 @@
       "purpose": "any"
     },
     {
-      "src": "assets/logo_admin.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
       "src": "assets/logo_admin-192-maskable.png",
       "sizes": "192x192",
       "type": "image/png",
@@ -40,6 +34,67 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Echipe",
+      "url": "./echipe",
+      "description": "Echipele active și componența lor",
+      "icons": [
+        {
+          "src": "assets/logo_admin-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Tineri",
+      "url": "./tineri",
+      "description": "Lista tinerilor din departament",
+      "icons": [
+        {
+          "src": "assets/logo_admin-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Părinți",
+      "url": "./parinti",
+      "description": "Părinții de sprijin și următorul sprijin",
+      "icons": [
+        {
+          "src": "assets/logo_admin-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/programare-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Programare: următorul eveniment și rândul echipelor"
+    },
+    {
+      "src": "assets/screenshots/echipe-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Echipe: componență și următorul turn"
+    },
+    {
+      "src": "assets/screenshots/programare-wide.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Programare pe ecran mare"
     }
   ]
 }

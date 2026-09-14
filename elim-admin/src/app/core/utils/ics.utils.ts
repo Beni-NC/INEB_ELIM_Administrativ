@@ -20,14 +20,19 @@ export interface IcsLabels {
   fieldFood: string;
   fieldEstimated: string;
   fieldNotes: string;
+  /** Texto de cada tipo de programa por código (`program_type.*` de i18n). */
+  programTypes: Readonly<Record<string, string>>;
 }
 
 const PRODID = '-//ELIM Administrativ//Calendar Sync//EN';
+/** Recordatorio por defecto: 12 h antes. Los feeds de padres añaden otro 2 días antes (compras). */
+export const DEFAULT_ALARMS: readonly string[] = ['-PT12H'];
+export const PARENT_ALARMS: readonly string[] = ['-P2D', '-PT12H'];
 /** El evento cubre desde la llegada de los jóvenes hasta el fin estimado (inicio + 2 h 30). */
 const DURATION_AFTER_START_MIN = 150;
 
 /** Calendario completo con un VEVENT por programación. */
-export function buildIcs(events: readonly ScheduleEntry[], labels: IcsLabels, now = new Date()): string {
+export function buildIcs(events: readonly ScheduleEntry[], labels: IcsLabels, now = new Date(), alarms: readonly string[] = DEFAULT_ALARMS): string {
   const dtstamp = formatUtc(now);
   const lines: string[] = [
     'BEGIN:VCALENDAR',
@@ -41,7 +46,7 @@ export function buildIcs(events: readonly ScheduleEntry[], labels: IcsLabels, no
     'X-PUBLISHED-TTL:PT1H',
     'REFRESH-INTERVAL;VALUE=DURATION:PT1H',
   ];
-  for (const ev of events) lines.push(...buildEvent(ev, dtstamp, labels));
+  for (const ev of events) lines.push(...buildEvent(ev, dtstamp, labels, alarms));
   lines.push('END:VCALENDAR');
   return foldLines(lines).join('\r\n') + '\r\n';
 }
@@ -62,7 +67,7 @@ export function slug(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-function buildEvent(entry: ScheduleEntry, dtstamp: string, labels: IcsLabels): string[] {
+function buildEvent(entry: ScheduleEntry, dtstamp: string, labels: IcsLabels, alarms: readonly string[]): string[] {
   const times = getEntryTimes(entry);
   const start = combine(entry.date, times.youthsArrival);
   const end = new Date(combine(entry.date, times.programStart).getTime() + DURATION_AFTER_START_MIN * 60_000);
@@ -77,21 +82,24 @@ function buildEvent(entry: ScheduleEntry, dtstamp: string, labels: IcsLabels): s
     `LOCATION:${escapeText(labels.location)}`,
     `DESCRIPTION:${escapeText(buildDescription(entry, times, labels))}`,
     `CATEGORIES:${escapeText(entry.team)}`,
-    `STATUS:${entry.completed ? 'CONFIRMED' : 'TENTATIVE'}`,
+    // Están programadas de verdad: si fueran TENTATIVE, Google/Apple Calendar las pintarían como provisionales.
+    'STATUS:CONFIRMED',
     'TRANSP:OPAQUE',
-    // Recordatorio 12 h antes: útil para no olvidar el servicio.
-    'BEGIN:VALARM',
-    'ACTION:DISPLAY',
-    `DESCRIPTION:${escapeText(summary)}`,
-    'TRIGGER:-PT12H',
-    'END:VALARM',
+    // Recordatorios (uno por VALARM): útiles para no olvidar el servicio ni las compras.
+    ...alarms.flatMap(trigger => [
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      `DESCRIPTION:${escapeText(summary)}`,
+      `TRIGGER:${trigger}`,
+      'END:VALARM',
+    ]),
     'END:VEVENT',
   ];
 }
 
 function buildDescription(entry: ScheduleEntry, times: EntryTimes, l: IcsLabels): string {
   const parts = [
-    `${l.fieldProgramType}: ${entry.programType}`,
+    `${l.fieldProgramType}: ${l.programTypes[entry.programType] ?? entry.programType}`,
     `${l.fieldCoordinator}: ${entry.coordinator}`,
     `${l.fieldArrival}: ${times.youthsArrival}`,
     `${l.fieldProgramStart}: ${times.programStart}`,

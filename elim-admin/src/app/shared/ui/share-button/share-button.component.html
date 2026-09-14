@@ -1,6 +1,6 @@
 <button type="button" class="ui-btn" [class.ui-btn--icon]="iconOnly()" [class.ui-btn--on-dark]="onDark()"
         (click)="open()" [attr.aria-label]="'share.button' | translate" [title]="'share.button' | translate">
-  <span class="icon" aria-hidden="true">share</span>
+  <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#share"/></svg>
   @if (!iconOnly()) { <span>{{ 'share.button' | translate }}</span> }
 </button>
 
@@ -11,7 +11,7 @@
       <header class="ui-dialog__header">
         <h2 class="ui-dialog__title">{{ 'share.title' | translate }}</h2>
         <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="close()" [attr.aria-label]="'common.close' | translate">
-          <span class="icon" aria-hidden="true">close</span>
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#close"/></svg>
         </button>
       </header>
       <p class="ui-dialog__text">{{ 'share.intro' | translate }}</p>
@@ -30,14 +30,21 @@
           <span>Telegram</span>
         </a>
         <a class="share__option" [href]="emailUrl">
-          <span class="share__badge"><span class="icon" aria-hidden="true">mail</span></span>
+          <span class="share__badge"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#mail"/></svg></span>
           <span>{{ 'share.email' | translate }}</span>
         </a>
         <button type="button" class="share__option" (click)="copy()">
-          <span class="share__badge"><span class="icon" aria-hidden="true">{{ copied() ? 'check' : 'link' }}</span></span>
+          <span class="share__badge"><svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (copied() ? 'check' : 'link')"/></svg></span>
           <span>{{ (copied() ? 'share.copied' : 'share.copy') | translate }}</span>
         </button>
       </div>
+      <!-- Enlace profundo a lo que se está viendo (pestaña + entidad expandida), para "mira tu equipo". -->
+      @if (pageUrl() !== url()) {
+        <button type="button" class="share__page ui-link" (click)="copyPage()">
+          <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (copiedPage() ? 'check' : 'link')"/></svg>
+          {{ (copiedPage() ? 'share.copied_page' : 'share.copy_page') | translate }}
+        </button>
+      }
 
       <code class="share__url">{{ url() }}</code>
     </div>

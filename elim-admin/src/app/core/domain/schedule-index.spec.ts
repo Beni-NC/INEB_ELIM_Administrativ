@@ -1,52 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ScheduleIndex } from './schedule-index';
-import { DomainData, ScheduleEntry } from '../models';
-
-/**
- * Fixture mínimo pero con todos los casos que importan del dominio:
- *  - Echipa 1: composición cerrada el 2026-02-27 (coordinadora Ana) y composición activa
- *    (coordinador Ion, con un miembro nuevo, Dan, que no estaba en la antigua).
- *  - Echipa 2: solo composición activa (coordinadora Eva).
- *  - Programaciones antes y después del cierre y de "hoy" (2026-05-06).
- *  - Un padre vinculado a un joven y asignado a una programación futura.
- */
-const TODAY = new Date(2026, 4, 6);
-const END_E1 = new Date(2026, 1, 27);
-
-const entry = (team: string, coordinator: string, date: Date, extra: Partial<ScheduleEntry> = {}): ScheduleEntry => ({
-  team, coordinator, date, programType: 'Seară de tineret', estimatedPersons: 40, observations: '', completed: date < TODAY, ...extra,
-});
-
-const DATA: DomainData = {
-  schedule: [
-    entry('Echipa 1', 'Pop Ana', new Date(2026, 0, 16)),               // antes del cierre → composición histórica
-    entry('Echipa 2', 'Rus Eva', new Date(2026, 0, 23)),
-    entry('Echipa 1', 'Ionescu Ion', new Date(2026, 3, 10)),           // tras el cierre, ya pasada → composición activa
-    entry('Echipa 1', 'Ionescu Ion', new Date(2026, 4, 8), { parentSupporters: ['p-1'], observations: 'Aduceți farfurii, virgulă; punct' }),
-    entry('Echipa 2', 'Rus Eva', new Date(2026, 4, 15)),
-    entry('Echipa 1', 'Ionescu Ion', new Date(2026, 5, 5)),
-  ],
-  youths: [
-    { id: 'y-ana', firstName: 'Ana', lastName: 'Pop', gender: 'F', birthDate: new Date(2000, 0, 1), joinedYear: 2024, isCoordinator: true, active: false, inactiveSince: END_E1 },
-    { id: 'y-ion', firstName: 'Ion', lastName: 'Ionescu', gender: 'M', birthDate: new Date(2001, 0, 1), joinedYear: 2024 },
-    { id: 'y-dan', firstName: 'Dan', lastName: 'Dinu', gender: 'M', birthDate: new Date(2005, 0, 1), joinedYear: 2026 },
-    { id: 'y-eva', firstName: 'Eva', lastName: 'Rus', gender: 'F', birthDate: new Date(2002, 0, 1), joinedYear: 2024 },
-  ],
-  memberships: [
-    // Echipa 1 — composición cerrada
-    { youthId: 'y-ana', teamName: 'Echipa 1', role: 'coordonator', active: false, endDate: END_E1 },
-    { youthId: 'y-ion', teamName: 'Echipa 1', role: 'membru', active: false, endDate: END_E1 },
-    // Echipa 1 — composición activa (Dan es nuevo)
-    { youthId: 'y-ion', teamName: 'Echipa 1', role: 'coordonator', active: true },
-    { youthId: 'y-dan', teamName: 'Echipa 1', role: 'membru', active: true },
-    // Echipa 2 — solo activa
-    { youthId: 'y-eva', teamName: 'Echipa 2', role: 'coordonator', active: true },
-  ],
-  parents: [
-    { id: 'p-1', name: 'Maria Dinu Popa', phone: '', email: '', role: '', skills: [], joinedDate: new Date(2026, 0, 1), notes: '', available: true },
-  ],
-  parentYouthLinks: [{ parentId: 'p-1', youthId: 'y-dan', relationship: 'mamă' }],
-};
+import { DATA, END_E1, TODAY } from '../../../testing/domain-fixture';
 
 const index = () => new ScheduleIndex(TODAY, DATA);
 
@@ -68,7 +22,7 @@ describe('ScheduleIndex — partición temporal', () => {
   });
 
   it('calcula los KPI de la portada', () => {
-    expect(index().scheduleStats).toEqual({ upcoming: 3, thisMonth: 2, completed: 3, teams: 2 });
+    expect(index().scheduleStats).toEqual({ upcoming: 3, thisMonth: 2, daysToNext: 2, teamsWithoutUpcoming: 0 });
   });
 });
 
@@ -129,7 +83,7 @@ describe('ScheduleIndex — equipos y composiciones', () => {
     const idx = index();
     expect(idx.isActiveCoordinator('y-ion')).toBe(true);
     expect(idx.isActiveCoordinator('y-ana')).toBe(false); // solo coordinó la cerrada
-    expect(idx.youthStats).toEqual({ total: 3, coordinators: 2 });
+    expect(idx.youthStats).toEqual({ total: 3, coordinators: 2, withoutUpcoming: 0 });
   });
 });
 
@@ -161,8 +115,74 @@ describe('ScheduleIndex — padres', () => {
     expect(idx.nextParentEvent?.people[0].initials).toBe('MDP');
     expect(idx.upcomingParentEvents).toEqual([]); // la única futura con padres es la próxima
     expect(idx.getYouthsForParent('p-1').map(l => l.youth.id)).toEqual(['y-dan']);
-    expect(idx.getParentsForYouth('y-dan')[0].relationship).toBe('mamă');
+    expect(idx.getParentsForYouth('y-dan')[0].relationship).toBe('mother');
     expect(idx.getAllEventsForParent('p-1')).toHaveLength(1);
+    expect(idx.parentStats).toEqual({ total: 1, withoutUpcoming: 0 });
+    expect(idx.upcomingWithoutParents.map(e => e.date)).toEqual([new Date(2026, 4, 15), new Date(2026, 5, 5)]);
+  });
+
+  it('ordena los padres por carga: menos apoyos, después el que lleva más sin ayudar', () => {
+    const idx = new ScheduleIndex(TODAY, {
+      ...DATA,
+      parents: [
+        ...DATA.parents,
+        { id: 'p-2', name: 'Ana Zet', phone: '', email: '', role: '', skills: [], joinedDate: TODAY, notes: '', available: true },
+        { id: 'p-3', name: 'Bob Alfa', phone: '', email: '', role: '', skills: [], joinedDate: TODAY, notes: '', available: true },
+      ],
+      // p-3 ayudó una vez en el pasado; p-2 nunca; p-1 tiene apoyo futuro (no se sugiere).
+      schedule: DATA.schedule.map(e => e.date.getTime() === new Date(2026, 0, 16).getTime() ? { ...e, parentSupporters: ['p-3'] } : e),
+    });
+    // p-2 nunca ha ayudado, p-3 una vez en el pasado, p-1 tiene un apoyo futuro.
+    expect(idx.parentsByWorkload().map(p => p.id)).toEqual(['p-2', 'p-1', 'p-3']);
+  });
+});
+
+describe('ScheduleIndex — rotación de equipos', () => {
+  it('ordena primero los equipos sin turno (el que más tiempo lleva, antes) y después por próximo turno', () => {
+    const idx = new ScheduleIndex(TODAY, {
+      ...DATA,
+      // Echipa 2 pierde sus turnos futuros y Echipa 3 (nueva, nunca ha salido) entra en la rotación.
+      schedule: DATA.schedule.filter(e => !(e.team === 'Echipa 2' && e.date >= TODAY)),
+      memberships: [...DATA.memberships, { youthId: 'y-eva', teamName: 'Echipa 3', role: 'coordonator', active: true }],
+    });
+    expect(idx.teamRotation.map(r => [r.teamName, !!r.next, r.daysSinceLast])).toEqual([
+      ['Echipa 3', false, null],                 // nunca ha salido → la más "debida"
+      ['Echipa 2', false, 103],                  // última el 23-01, sin turno futuro
+      ['Echipa 1', true, 26],                    // ya programada (08-05)
+    ]);
+    expect(idx.scheduleStats.teamsWithoutUpcoming).toBe(2);
+    // Eva coordina Echipa 2 (sin turno) y Echipa 3 (nunca programada): queda sin programación.
+    expect(idx.youthStats.withoutUpcoming).toBe(1);
+  });
+
+  it('cuenta los turnos de la temporada (septiembre → agosto) por equipo', () => {
+    // Hoy 2026-05-06 → temporada desde 2025-09-01: Echipa 1 tiene 4 (16-01, 10-04, 08-05, 05-06), Echipa 2 tiene 2.
+    expect(index().seasonStart).toEqual(new Date(2025, 8, 1));
+    expect(index().teamRotation.map(r => [r.teamName, r.turnsThisSeason])).toEqual([['Echipa 1', 4], ['Echipa 2', 2]]);
+  });
+
+  it('propone el siguiente viernes libre a cada equipo sin turno, en el orden de la rotación', () => {
+    const idx = new ScheduleIndex(TODAY, {
+      ...DATA,
+      schedule: DATA.schedule.filter(e => !(e.team === 'Echipa 2' && e.date >= TODAY)),
+      memberships: [...DATA.memberships, { youthId: 'y-eva', teamName: 'Echipa 3', role: 'coordonator', active: true }],
+    });
+    // Hoy es miércoles 06-05; el viernes 08-05 ya está ocupado (Echipa 1) → 15-05 y 22-05.
+    expect(idx.proposeSchedule()).toEqual([
+      { date: new Date(2026, 4, 15), teamName: 'Echipa 3', coordinatorName: 'Rus Eva' },
+      { date: new Date(2026, 4, 22), teamName: 'Echipa 2', coordinatorName: 'Rus Eva' },
+    ]);
+    expect(index().proposeSchedule()).toEqual([]); // todos programados: nada que proponer
+    // Con un número explícito sigue la rotación en ciclo desde la fecha pedida, saltando los
+    // viernes ya ocupados (el 5 de junio ya es de Echipa 1).
+    expect(idx.proposeSchedule(4, new Date(2026, 5, 1)).map(p => [p.teamName, p.date.getMonth(), p.date.getDate()])).toEqual([
+      ['Echipa 3', 5, 12], ['Echipa 2', 5, 19], ['Echipa 1', 5, 26], ['Echipa 3', 6, 3],
+    ]);
+  });
+
+  it('con todos los equipos programados ordena por fecha del próximo turno', () => {
+    expect(index().teamRotation.map(r => r.teamName)).toEqual(['Echipa 1', 'Echipa 2']);
+    expect(index().teamRotation[0].next?.date).toEqual(new Date(2026, 4, 8));
   });
 });
 

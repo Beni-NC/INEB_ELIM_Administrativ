@@ -43,6 +43,16 @@ jobs:
         run: npm run generate
         working-directory: elim-admin
 
+      # Puerta de calidad: tipos y tests (incluida la integridad de los datos reales). Un dato
+      # roto no llega a publicarse.
+      - name: Typecheck
+        run: npx tsc -p tsconfig.app.json --noEmit
+        working-directory: elim-admin
+
+      - name: Test
+        run: npm test
+        working-directory: elim-admin
+
       # Build for THIS repo (Beni-NC/INEB_ELIM_Administrativ)
       - name: Build (primary)
         run: npx ng build --base-href /INEB_ELIM_Administrativ/ --output-path dist-primary
@@ -62,6 +72,12 @@ jobs:
         run: npx ng build --base-href /ADM-TINERET/ --output-path dist-mirror
         working-directory: elim-admin
 
+      # Las etiquetas Open Graph llevan la URL pública absoluta del repo principal: en el mirror se
+      # sustituye por la suya para que la vista previa al compartir apunte al sitio correcto.
+      - name: Point Open Graph URLs to the mirror
+        if: ${{ env.MIRROR_PAT != '' }}
+        run: sed -i 's|https://beni-nc.github.io/INEB_ELIM_Administrativ|https://beni-cioarba.github.io/ADM-TINERET|g' elim-admin/dist-mirror/browser/index.html
+
       - name: Copy index.html to 404.html (mirror)
         if: ${{ env.MIRROR_PAT != '' }}
         run: cp elim-admin/dist-mirror/browser/index.html elim-admin/dist-mirror/browser/404.html
@@ -78,6 +94,36 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'deploy: ${{ github.sha }}'
           force_orphan: true
+
+  # Presupuesto de calidad (rendimiento ≥ 90, accesibilidad ≥ 95) sobre un build local. Informa,
+  # no bloquea: el deploy no depende de este job. El informe queda como artefacto del workflow.
+  lighthouse:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: elim-admin/package-lock.json
+      - run: npm ci
+        working-directory: elim-admin
+      - run: npm run generate
+        working-directory: elim-admin
+      - name: Build (base-href raíz, para servirlo en local)
+        run: npx ng build --output-path dist-lhci
+        working-directory: elim-admin
+      - name: Lighthouse CI
+        run: npx --yes @lhci/cli@0.15.x autorun --config=lighthouserc.json
+        working-directory: elim-admin
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: elim-admin/lhci-report
 
   deploy:
     environment:

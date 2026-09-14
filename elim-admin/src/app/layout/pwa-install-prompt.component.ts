@@ -9,8 +9,8 @@ import { PwaInstallService } from '../core/services/pwa-install.service';
   imports: [TranslatePipe],
   template: `
     @if (install.bannerVisible()) {
-      <div class="ui-banner" role="dialog" aria-live="polite">
-        <img src="assets/logo_admin-trans-192.png" alt="" class="ui-banner__img" width="36" height="36">
+      <div class="ui-banner" role="region" aria-live="polite" [attr.aria-label]="'pwa_install.title' | translate">
+        <img src="assets/logo_admin-72.png" alt="" class="ui-banner__img" width="36" height="36">
         <div class="ui-banner__text">
           <strong>{{ 'pwa_install.title' | translate }}</strong>
           @if (install.isIos()) {
@@ -33,7 +33,7 @@ import { PwaInstallService } from '../core/services/pwa-install.service';
         }
         <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon" (click)="install.dismissBanner()"
                 [attr.aria-label]="'pwa_install.close' | translate">
-          <span class="icon" aria-hidden="true">close</span>
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#close"/></svg>
         </button>
       </div>
     }

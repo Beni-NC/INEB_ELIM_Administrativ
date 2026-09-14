@@ -1,31 +1,71 @@
-<!-- Resumen numérico -->
+<!-- Echipa mea: la pregunta de casi todos ("¿cuándo me toca?") respondida arriba del todo -->
+@if (myTeam.team(); as mine) {
+  <section class="ui-section">
+    <div class="ui-card">
+      <div class="ui-row ui-row--expandable" [style.--team-color]="getTeamColor(mine)">
+        <div class="ui-row__lead"><span class="ui-team-badge ui-team-badge--lg">{{ getTeamNumber(mine) }}</span></div>
+        <button type="button" class="ui-row__btn" (click)="nav.goTo('team', mine, $event)" [title]="'schedule.view_team' | translate">
+          <span class="ui-row__text">
+            <span class="ui-row__title">
+              <svg class="icon icon--sm my-team__icon" aria-hidden="true"><use href="assets/icons.svg#bookmark-fill"/></svg>
+              <span class="truncate">{{ 'my_team.title' | translate }} · {{ mine }}</span>
+            </span>
+            <span class="ui-row__meta">
+              @if (data.getNextEventForTeam(mine); as next) {
+                <span>{{ 'my_team.next_turn' | translate }} {{ next.date | ldate:'full' }}</span>
+              } @else {
+                <span>{{ 'my_team.no_turn' | translate }}</span>
+              }
+            </span>
+          </span>
+        </button>
+        <div class="ui-row__trail">
+          @if (data.getNextEventForTeam(mine); as next) {
+            <span class="ui-badge ui-badge--primary num">{{ next.date | ldate:'dayMonth' }} · {{ next.date | until }}</span>
+          } @else {
+            <span class="ui-badge ui-badge--warning">{{ 'common.no_schedule' | translate }}</span>
+          }
+          <svg class="icon faint" aria-hidden="true"><use href="assets/icons.svg#chevron_right"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- Resumen numérico: solo cifras accionables (cuándo es el próximo, qué hay este mes, a quién le toca) -->
 <div class="ui-kpis">
   <div class="ui-kpi">
-    <span class="ui-kpi__icon"><span class="icon" aria-hidden="true">event_upcoming</span></span>
+    <span class="ui-kpi__icon"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#event_upcoming"/></svg></span>
     <span class="ui-kpi__meta">
-      <span class="ui-kpi__value">{{ data.scheduleStats.upcoming }}</span>
-      <span class="ui-kpi__label">{{ 'schedule.stat_upcoming' | translate }}</span>
+      @if (data.scheduleStats.daysToNext === null) {
+        <span class="ui-kpi__value">—</span>
+      } @else if (data.scheduleStats.daysToNext === 0) {
+        <span class="ui-kpi__value">{{ 'common.today' | translate }}</span>
+      } @else {
+        <span class="ui-kpi__value">{{ data.scheduleStats.daysToNext }}</span>
+      }
+      <span class="ui-kpi__label">{{ 'schedule.stat_days_to_next' | translate }}</span>
     </span>
   </div>
   <div class="ui-kpi">
-    <span class="ui-kpi__icon"><span class="icon" aria-hidden="true">today</span></span>
+    <span class="ui-kpi__icon"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#today"/></svg></span>
     <span class="ui-kpi__meta">
       <span class="ui-kpi__value">{{ data.scheduleStats.thisMonth }}</span>
       <span class="ui-kpi__label">{{ 'schedule.stat_this_month' | translate }}</span>
     </span>
   </div>
   <div class="ui-kpi">
-    <span class="ui-kpi__icon"><span class="icon" aria-hidden="true">groups</span></span>
+    <span class="ui-kpi__icon"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#calendar_month"/></svg></span>
     <span class="ui-kpi__meta">
-      <span class="ui-kpi__value">{{ data.scheduleStats.teams }}</span>
-      <span class="ui-kpi__label">{{ 'schedule.stat_active_teams' | translate }}</span>
+      <span class="ui-kpi__value">{{ data.scheduleStats.upcoming }}</span>
+      <span class="ui-kpi__label">{{ 'schedule.stat_upcoming' | translate }}</span>
     </span>
   </div>
   <div class="ui-kpi">
-    <span class="ui-kpi__icon"><span class="icon" aria-hidden="true">check_circle</span></span>
+    <span class="ui-kpi__icon"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#groups"/></svg></span>
     <span class="ui-kpi__meta">
-      <span class="ui-kpi__value">{{ data.scheduleStats.completed }}</span>
-      <span class="ui-kpi__label">{{ 'schedule.stat_completed' | translate }}</span>
+      <span class="ui-kpi__value">{{ data.teams.length }}</span>
+      <span class="ui-kpi__label">{{ 'schedule.stat_active_teams' | translate }}</span>
     </span>
   </div>
 </div>
@@ -42,11 +82,15 @@
       <h2 class="ui-card__title">{{ 'schedule.all_schedules' | translate }}</h2>
       <span class="ui-count">{{ data.upcomingSchedule.length }}</span>
       <span class="ui-spacer"></span>
+      <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon schedule__print" (click)="print()"
+              [attr.aria-label]="'schedule.print' | translate" [title]="'schedule.print' | translate">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#print"/></svg>
+      </button>
       <app-calendar-button [all]="true" [withLabel]="true" />
     </header>
     @if (data.upcomingSchedule.length === 0) {
       <div class="ui-empty">
-        <span class="icon" aria-hidden="true">info</span>
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>
         <span>{{ 'schedule.empty_upcoming' | translate }}</span>
       </div>
     } @else {
@@ -97,10 +141,10 @@
 @if (data.pastSchedule.length > 0) {
   <section class="ui-section">
     <button type="button" class="ui-disclosure" (click)="showPast.set(!showPast())" [attr.aria-expanded]="showPast()">
-      <span class="icon" aria-hidden="true">history</span>
+      <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
       {{ 'teams.schedule_history' | translate }}
       <span class="ui-count">{{ data.pastSchedule.length }}</span>
-      <span class="icon ui-disclosure__chevron" aria-hidden="true">{{ showPast() ? 'expand_less' : 'expand_more' }}</span>
+      <svg class="icon ui-disclosure__chevron" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (showPast() ? 'expand_less' : 'expand_more')"/></svg>
     </button>
     @if (showPast()) {
       <div class="ui-disclosure__panel">

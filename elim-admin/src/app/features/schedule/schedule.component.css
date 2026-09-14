@@ -1,3 +1,5 @@
+/* Icono "echipa mea": primario, pegado al título. */
+.my-team__icon { color: var(--c-primary); }
 :host { display: flex; flex-direction: column; gap: var(--sp-4); }
 
 /* El resumen de coordinadores es corto: en escritorio va a dos columnas. */

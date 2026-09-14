@@ -2,6 +2,7 @@
   <header class="ui-card__header">
     <h2 class="ui-card__title">{{ titleKey() | translate }}</h2>
     <span class="ui-spacer"></span>
+    <app-event-share-button [entry]="entry()" />
     <app-calendar-button [event]="entry()" [withLabel]="true" />
   </header>
 
@@ -19,11 +20,11 @@
           <span>{{ entry().team }}</span>
         </button>
         <span class="faint">·</span>
-        <span class="muted">{{ entry().programType }}</span>
+        <span class="muted">{{ ('program_type.' + entry().programType) | translate }}</span>
       </div>
 
       <div class="next__line muted">
-        <span class="icon icon--sm icon--fill ui-star" aria-hidden="true">star</span>
+        <svg class="icon icon--sm ui-star" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>
         @if (coordinator(); as c) {
           <button type="button" class="ui-link" (click)="nav.goTo('youth', c.id, $event)" [title]="'schedule.view_coordinator' | translate">{{ entry().coordinator }}</button>
         } @else {
@@ -41,7 +42,7 @@
 
       @if (hasNote()) {
         <div class="ui-note">
-          <span class="icon" aria-hidden="true">sticky_note_2</span>
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sticky_note_2"/></svg>
           <span>{{ entry().observations }}</span>
         </div>
       }
@@ -50,6 +51,8 @@
     <div class="next__countdown" [class.next__countdown--today]="isToday()">
       @if (isToday()) {
         <span class="next__cd-label">{{ 'common.today_excl' | translate }}</span>
+      } @else if (daysUntil() === 1) {
+        <span class="next__cd-label">{{ 'common.tomorrow' | translate }}</span>
       } @else {
         <span class="next__cd-num num">{{ daysUntil() }}</span>
         <span class="next__cd-label">{{ (daysUntil() === 1 ? 'common.day' : 'common.days') | translate }}</span>
@@ -65,7 +68,7 @@
           <button type="button" class="ui-chip" (click)="nav.goTo('youth', y.id, $event)">
             <span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span>
             {{ y.fullName }}
-            @if (data.isActiveCoordinator(y.id)) { <span class="icon icon--fill ui-star" aria-hidden="true">star</span> }
+            @if (data.isActiveCoordinator(y.id)) { <svg class="icon ui-star" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg> }
           </button>
         }
       </div>

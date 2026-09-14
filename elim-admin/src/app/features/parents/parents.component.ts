@@ -5,6 +5,7 @@ import { DataService } from '../../core/services/data.service';
 import { NavigationService } from '../../core/services/navigation.service';
 import { Parent } from '../../core/models';
 import { LDatePipe } from '../../core/i18n/ldate.pipe';
+import { UntilPipe } from '../../core/i18n/until.pipe';
 import { entryKey } from '../../core/utils/schedule.utils';
 import { daysBetween, isSameDay } from '../../core/utils/date.utils';
 import { EventRowComponent } from '../../shared/ui/event-row/event-row.component';
@@ -15,7 +16,7 @@ import { CalendarButtonComponent } from '../../shared/ui/calendar-button/calenda
 @Component({
     selector: 'app-parents',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgTemplateOutlet, TranslatePipe, LDatePipe, EventRowComponent, NextEventCardComponent, CalendarButtonComponent],
+    imports: [NgTemplateOutlet, TranslatePipe, LDatePipe, UntilPipe, EventRowComponent, NextEventCardComponent, CalendarButtonComponent],
     templateUrl: './parents.component.html',
     styleUrl: './parents.component.css'
 })
@@ -24,6 +25,8 @@ export class ParentsComponent {
   protected readonly nav = inject(NavigationService);
 
   readonly expanded = this.nav.expandedParentId;
+  /** Igual que en Tineri: la fecha de alta solo se muestra cuando no es la misma para todos. */
+  readonly showJoinedDate = new Set(this.data.parents.map(p => p.joinedDate.getTime())).size > 1;
   readonly showArchived = signal(false);
   readonly archivedOpen = computed(() => {
     const id = this.expanded();
