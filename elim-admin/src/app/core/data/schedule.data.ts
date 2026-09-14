@@ -39,7 +39,7 @@ export const SCHEDULE_DATA: ScheduleEntry[] = [
   
   { team: 'Echipa 5', coordinator: 'Toader Noemi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 8, 18), observations: '' },
   { team: 'Echipa 6', coordinator: 'Halas Noemi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 2), observations: 'Primul program cu implicarea parintilor 2026 - 2027', parentSupporters: ['p-008', 'p-007'] },
-  { team: 'Echipa 7', coordinator: 'Bereza Ionatan', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 9), observations: '', parentSupporters: ['p-010', 'p-005'] },
+  { team: 'Echipa 7', coordinator: 'Bereza Ionatan', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 9), observations: '', parentSupporters: ['p-010', 'p-009'] },
   { team: 'Echipa 1', coordinator: 'Halas Luigi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 16), observations: '', parentSupporters: ['p-003', 'p-011'] },
   { team: 'Echipa 2', coordinator: 'Dobre David', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 23), observations: '', parentSupporters: ['p-001', 'p-002'] },
   { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 30), observations: '', parentSupporters: ['p-005', 'p-006'] },
