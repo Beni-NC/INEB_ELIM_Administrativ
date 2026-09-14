@@ -84,6 +84,13 @@ describe('ScheduleIndex — derivación de personas', () => {
     expect(index().getParentById('p-1')?.initials).toBe('MDP');
   });
 
+  it('asigna a cada persona un tono de avatar estable entre 0 y 7', () => {
+    const idx = index();
+    for (const y of idx.youths) expect(y.tone).toBeGreaterThanOrEqual(0), expect(y.tone).toBeLessThan(8);
+    expect(idx.getYouthById('y-ion')!.tone).toBe(index().getYouthById('y-ion')!.tone);
+    expect(idx.getParentById('p-1')!.tone).toBe(index().getParentById('p-1')!.tone);
+  });
+
   it('ordena los jóvenes alfabéticamente y separa activos de archivados', () => {
     const idx = index();
     expect(idx.activeYouths.map(y => y.fullName)).toEqual(['Dinu Dan', 'Ionescu Ion', 'Rus Eva']);

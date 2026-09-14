@@ -51,14 +51,14 @@ src/
       data/                  datos crudos (importan modelos; nunca al revés)
         index.ts             DOMAIN_DATA: el objeto que consume ScheduleIndex
         schedule.data.ts     SCHEDULE_DATA
-        youths.data.ts       YOUTHS (YouthRecord: sin fullName/initials, se derivan)
+        youths.data.ts       YOUTHS (YouthRecord: sin fullName/initials/tone, se derivan)
         memberships.data.ts  YOUTH_TEAM_MEMBERSHIPS (activas e históricas)
-        parents.data.ts      PARENTS (ParentRecord: sin initials), PARENT_YOUTH_LINKS
+        parents.data.ts      PARENTS (ParentRecord: sin initials/tone), PARENT_YOUTH_LINKS
       domain/
         schedule-index.ts    ScheduleIndex(today, data = DOMAIN_DATA): TODA la lógica de dominio
                              (índices O(1), ventanas de pertenencia, composiciones activas e
                              históricas = `teams` / `teamsHistory`, agregados, derivación de
-                             fullName/iniciales). Sin Angular: app, Node y tests
+                             fullName/iniciales/tone de avatar). Sin Angular: app, Node y tests
         schedule-index.spec.ts  tests con un fixture propio (no con los datos reales)
       i18n/
         ldate.pipe.ts        pipe de fechas dependiente del idioma activo
@@ -108,8 +108,10 @@ Regla de dependencias: `features → shared/ui → core`; `layout → core`. `co
 
 1. `core/data` exporta `DOMAIN_DATA` con las colecciones crudas normalizadas: `schedule`,
    `youths`, `memberships`, `parents`, `parentYouthLinks`. En los datos **no se escribe nada
-   derivable**: ni `fullName`, ni iniciales, ni equipos. Las reglas (Reguli) son texto y viven
-   solo en los JSON de i18n.
+   derivable**: ni `fullName`, ni iniciales, ni equipos, ni el `tone` del avatar (hash estable
+   del `id` → 0–7, `toneOf`; así una persona conserva su color en cualquier vista, idioma o
+   sesión sin que nadie lo elija a mano). Las reglas (Reguli) son texto y viven solo en los JSON
+   de i18n.
 2. `ScheduleIndex` (`core/domain`) deriva jóvenes y padres completos, construye las composiciones
    de equipo (activas → `teams`, cerradas → `teamsHistory`, ambas `TeamComposition`), ordena,
    particiona (pasado/futuro respecto a `today`) e indexa todo en `Map`s en el constructor.

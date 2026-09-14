@@ -54,7 +54,7 @@
     <span class="ev__extra-label">{{ 'common.parents' | translate }}:</span>
     @for (p of parents(); track p.id) {
       <button type="button" class="ui-chip" (click)="nav.goTo('parent', p.id, $event)" [title]="'schedule.view_parent' | translate">
-        <span class="ui-avatar">{{ p.initials }}</span>
+        <span class="ui-avatar" [attr.data-tone]="p.tone">{{ p.initials }}</span>
         {{ p.name }}
       </button>
     }

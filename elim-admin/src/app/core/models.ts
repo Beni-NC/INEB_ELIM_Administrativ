@@ -46,6 +46,8 @@ export interface Youth {
   /** Año en que se incorporó al departamento. */
   joinedYear: number;
   initials: string;
+  /** Tono de avatar (0–7), derivado del id: color estable por persona. */
+  tone: number;
   gender: 'M' | 'F';
   address?: string;
   notes?: string;
@@ -58,7 +60,7 @@ export interface Youth {
 }
 
 /** Joven tal y como se escribe en los datos: lo derivable (`fullName`, `initials`) lo calcula el índice. */
-export type YouthRecord = Omit<Youth, 'fullName' | 'initials'>;
+export type YouthRecord = Omit<Youth, 'fullName' | 'initials' | 'tone'>;
 
 /** Relación joven ↔ equipo (activa o histórica). */
 export interface YouthTeamMembership {
@@ -82,6 +84,8 @@ export interface Parent {
   joinedDate: Date;
   notes: string;
   initials: string;
+  /** Tono de avatar (0–7), derivado del id. */
+  tone: number;
   available: boolean;
   /** `false` = archivado. Por defecto activo. */
   active?: boolean;
@@ -90,7 +94,7 @@ export interface Parent {
 }
 
 /** Padre tal y como se escribe en los datos: `initials` lo calcula el índice. */
-export type ParentRecord = Omit<Parent, 'initials'>;
+export type ParentRecord = Omit<Parent, 'initials' | 'tone'>;
 
 /** Asignación fija padre ↔ equipo (actualmente sin uso: el apoyo es por programación). */
 export interface ParentTeamAssignment {

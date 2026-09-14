@@ -1,19 +1,40 @@
 # Guía de estilos — ELIM Admin
 
 > **Vinculante** para cualquier cambio de interfaz (humano o IA). Si algo no está aquí, se
-> resuelve con el criterio "¿qué haría Gmail en modo compacto o Atlassian en su última versión?":
-> claro, denso, sobrio, un solo acento. Antes de inventar un patrón nuevo, buscar uno existente
-> en §6. Todos los valores viven en `src/styles/tokens.css`; **nunca** se escriben colores,
-> tamaños o radios literales en componentes.
+> resuelve con el criterio "¿qué haría Gmail en modo compacto, Atlassian o LinkedIn en su última
+> versión?": claro, denso, sobrio, un solo acento, superficies blancas ligeramente elevadas sobre
+> un lienzo cálido. Antes de inventar un patrón nuevo, buscar uno existente en §6. Todos los
+> valores viven en `src/styles/tokens.css`; **nunca** se escriben colores, tamaños o radios
+> literales en componentes.
+>
+> **Economía de lectura**: para un retoque pequeño basta el §0; el resto de la guía se lee solo
+> cuando se crea un patrón, una pestaña o se toca `tokens.css`/`components.css`.
+
+## 0. Resumen esencial (lo mínimo para tocar UI sin leer el resto)
+
+- **Lienzo cálido + tarjetas elevadas**: fondo `--c-bg` (#f3f2ef), tarjetas blancas `ui-card`
+  con radio 8 y `--shadow-card`. Nada más lleva sombra salvo `ui-kpis`, `ui-disclosure` y los
+  overlays (`--shadow-overlay`).
+- **Título dentro de la tarjeta**: toda lista o bloque empieza con `ui-card__header` (título
+  15/600 en frase + `ui-count` + `ui-spacer` + acciones a la derecha). No hay títulos sueltos
+  fuera de la tarjeta; `ui-section` solo apila tarjetas.
+- **Personas** = `ui-avatar` con `[attr.data-tone]="p.tone"` (8 tonos pastel derivados del id
+  en `ScheduleIndex`); **equipos** = `ui-team-badge` con `--team-color`. Nada más lleva color.
+- **Filas** `ui-row` de 36 px, 2 líneas máximo, chevron como `button.ui-btn--icon` en `__trail`.
+- **Textos** por i18n (ro **y** es), fechas con `ldate`, un acento (`--c-primary`), tokens
+  siempre, `!important` nunca, sin librerías de UI.
 
 ## 1. Principios
 
-1. **Un acento, muchos neutros.** El color transmite significado (equipo, estado), nunca decora.
-   Superficie blanca sobre fondo gris muy claro; texto slate; un azul de acción.
+1. **Un acento, muchos neutros.** El color transmite significado (equipo, estado, persona),
+   nunca decora. Superficie blanca sobre un lienzo cálido (`#f3f2ef`, como LinkedIn); texto
+   slate; un azul de acción. Los tonos pastel de avatar identifican personas y no se usan para
+   nada más.
 2. **Denso pero respirable.** Filas de 36 px, texto de 13 px, rejilla de 4 px. Se muestra más
    información por pantalla, no menos; el espacio en blanco se usa para agrupar, no para rellenar.
-3. **Plano.** Sin gradientes, sin sombras en superficies (solo en overlays), bordes de 1 px,
-   radios pequeños (4–8 px).
+3. **Elevación sutil, no decoración.** Sin gradientes. Las tarjetas se separan del lienzo con
+   borde 1 px + `--shadow-card` (1–2 px, casi imperceptible); nada más lleva sombra salvo los
+   overlays. Radios 4 (controles) y 8 (tarjetas).
 4. **La jerarquía la hace la tipografía**, no el color ni el tamaño de las cajas: peso 600 para
    lo primario, 400 secundario en gris, 11 px para metadatos.
 5. **Listas, no rejillas de tarjetas**, para colecciones (personas, equipos, eventos). Una fila =
@@ -29,12 +50,12 @@
 
 | Token | Valor | Uso |
 |---|---|---|
-| `--c-bg` | `#f6f7f9` | Fondo de la app |
+| `--c-bg` | `#f3f2ef` | Lienzo de la app (neutro cálido) |
 | `--c-surface` | `#ffffff` | Tarjetas, cabecera, filas |
-| `--c-surface-2` | `#f1f3f6` | Hover de filas, chips neutros, fondos de bloque secundario |
-| `--c-surface-3` | `#e9ecf1` | Fondo activo / pressed |
-| `--c-border` | `#e3e7ee` | Bordes por defecto |
-| `--c-border-strong` | `#c9d1dc` | Bordes de controles (input, botón) |
+| `--c-surface-2` | `#f5f4f1` | Hover de filas, chips neutros, `ui-card__toolbar`, detalle expandido |
+| `--c-surface-3` | `#ebeae6` | Fondo activo / pressed |
+| `--c-border` | `#e4e2dd` | Bordes por defecto |
+| `--c-border-strong` | `#cfcbc3` | Bordes de controles (input, botón) |
 | `--c-text` | `#1b2433` | Texto primario |
 | `--c-text-2` | `#4b5565` | Texto secundario |
 | `--c-text-3` | `#7d8797` | Metadatos, iconos inactivos, placeholders |
@@ -49,6 +70,7 @@
 | `--c-brand-ink` / `--c-brand-ink-hover` | `#1a365d` / `#122844` | Tinta del wordmark ELIM sobre superficie clara |
 | `--c-brand-gold` / `--c-brand-gold-deep` | `#d4af37` / `#9c7a1e` | Acento oro del wordmark (oscuro / claro, AA) |
 | `--c-brand-surface` / `--c-on-brand` / `--c-on-brand-muted` | `#1a365d` / `#faf9f6` / `#b9cbe6` | Banda navy del footer y su texto |
+| `--tone-0-bg`…`--tone-7-bg` / `--tone-N-fg` | azul, violeta, verde, naranja, rosa, teal, ámbar, slate (pastel 100 / tinta 700) | **Solo** en `ui-avatar[data-tone]`. En oscuro: tinte rgba .18 + tinta 300 |
 
 Los tokens de **marca** son los de MEDIA-ELIM (navy 700 / oro 500) y solo se usan en el wordmark
 y el footer; **nunca** como color de acción (eso es `--c-primary`).
@@ -63,6 +85,11 @@ script inline antes del primer pintado.
 
 **Colores de terceros**: `--c-whatsapp` (#25d366) y el azul de Telegram solo en su propio glifo
 (botón de WhatsApp, opciones de compartir). Nunca como fondo ni como acento de la app.
+
+**Tonos de persona** (`--tone-0` … `--tone-7`): cada joven y cada padre recibe un `tone` (0–7)
+derivado de su `id` en `ScheduleIndex` (`toneOf`), estable entre sesiones e idiomas. Se aplica
+con `[attr.data-tone]="y.tone"` en `ui-avatar`; el avatar sin `data-tone` sigue siendo neutro.
+Nunca se usa el tono para nada que no sea el avatar de esa persona.
 
 **Colores de equipo** (`--team-1` … `--team-7`): `#2563eb`, `#7c3aed`, `#059669`, `#ea580c`,
 `#dc2626`, `#0891b2`, `#db2777`. Se usan **solo** en: badge numerado (`ui-team-badge`), barra
@@ -89,8 +116,8 @@ Prohibido: gradientes, `accentColor` de personas como color de UI, hex literales
 | `--fs-2xl` | 24 | Cifra destacada (día del mes en tarjeta de próximo evento, KPI) |
 
 Pesos: 400 normal, 500 medio (labels de tab, nombre en fila), 600 seminegrita (títulos, cifras).
-Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-section__title` y
-`ui-eyebrow`. Sin cursivas salvo estados vacíos.
+Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-eyebrow`, `ui-group-head` y
+`ui-subsection__title`. Sin cursivas salvo estados vacíos.
 
 ### 2.3 Espaciado, tamaños, radios
 
@@ -98,11 +125,12 @@ Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-section__t
 - Alturas: `--h-header: 48px` (64 px desde 600 px) `--h-nav: 40px` `--h-row: 36px` `--h-control: 28px`.
 - Iconos: `--icon-sm: 16px` `--icon: 18px` `--icon-lg: 20px`. Avatar `--avatar: 24px`
   (`--avatar-lg: 32px` solo en tarjeta de próximo evento).
-- Radios: `--r-sm: 4px` (chips, badges, inputs) `--r-md: 6px` (tarjetas, botones)
-  `--r-full: 999px` (avatares, contador circular).
+- Radios: `--r-sm: 4px` (chips, badges, inputs, botones) `--r-md: 8px` (tarjetas, KPIs,
+  disclosure, diálogos) `--r-full: 999px` (avatares, contador circular, icono de KPI).
 - Ancho máximo de contenido `--content-max: 1080px`; padding lateral de página `--sp-4`
   (`--sp-3` en < 600 px).
-- Sombra: solo `--shadow-overlay` en menús/diálogos/banner PWA.
+- Sombras: `--shadow-card` (0 1px 2px .06 + anillo 1 px .02) **solo** en `ui-card`, `ui-kpis`
+  y `ui-disclosure`; `--shadow-overlay` en menús/diálogos/banner/dock. Ninguna otra.
 - Movimiento: `--dur: 120ms` `--ease: cubic-bezier(.2, 0, 0, 1)`; solo `background-color`,
   `border-color`, `color`, `opacity`. Sin `transform` en hover, sin animaciones de entrada.
 
@@ -201,14 +229,17 @@ Material Symbols Rounded, **outlined** (`FILL 0, wght 400, GRAD 0, opsz 20`), cl
 
 ## 5. Estados
 
-- **Hover** de fila/botón: `background: var(--c-surface-2)`. **Activo**: `--c-surface-3`.
+- **Hover** de fila/botón: `background: var(--c-surface-2)`, **siempre dentro de
+  `@media (hover: hover)`**: en pantallas táctiles el hover se queda pegado al último elemento
+  tocado (la pestaña anterior seguía gris tras deslizar). **Pulsado** (`:active`, el feedback
+  táctil): `--c-surface-3`.
 - **Foco**: `outline: 2px solid var(--c-focus); outline-offset: 2px` en `:focus-visible`.
 - **Seleccionado / expandido**: borde izquierdo 3 px `--c-primary` en la fila cabecera.
 - **Hoy**: badge `ui-badge--success` con texto "Azi". **Esta semana**: fondo `--c-primary-soft`
   del badge de días. **Completado**: icono `check_circle` en `--c-success`. **Inactivo /
   archivado**: `opacity: .7` en la fila + badge neutro "Inactiv".
-- **Vacío** (`ui-empty`): icono `info` 20 px gris + una frase 13 px `--c-text-2`. Siempre que
-  una lista pueda quedar vacía, tiene su `ui-empty`.
+- **Vacío** (`ui-empty`): icono 20 px gris dentro de un círculo de 36 px `--c-surface-2` + una
+  frase 13 px `--c-text-2`. Siempre que una lista pueda quedar vacía, tiene su `ui-empty`.
 - **Deshabilitado**: `opacity: .5; pointer-events: none`.
 
 ## 6. Catálogo de primitivas (`src/styles/components.css`)
@@ -218,7 +249,7 @@ de feature solo componen estas clases y añaden CSS encapsulado para su disposic
 
 | Clase | Qué es | Reglas |
 |---|---|---|
-| `ui-card` | Superficie blanca, borde 1 px, radio 6. `ui-card__header` (título 15/600 + acciones), `ui-card__body` (padding 12). | Sin sombra. Una tarjeta = una entidad o un bloque de sección. |
+| `ui-card` | Superficie blanca, borde 1 px, radio 8, `--shadow-card`. `ui-card__header` (mín. 44 px: `ui-card__title` 15/600 en frase + `ui-count` + acciones a la derecha), `ui-card__desc` opcional (13 gris, una frase de contexto bajo la cabecera), `ui-card__toolbar` opcional (fondo `--c-surface-2`: búsqueda + segmentado), `ui-card__body` (padding 12) o una `ui-list` directa. | Una tarjeta = un bloque de sección; **el título va siempre dentro**, nunca encima de la tarjeta. Tarjeta destacada (`--accent`): borde izquierdo 3 px `--c-danger`. |
 | `ui-list` | Contenedor de filas; separador 1 px entre filas (`ui-list > * + *`). | Dentro de `ui-card` sin padding. |
 | `ui-row` | Fila de 36 px mín.: `ui-row__lead` (badge/avatar/fecha), zona principal y `ui-row__trail` (badges, acciones, chevron). La zona principal es **o bien** `div.ui-row__main` (no clicable) **o bien** `button.ui-row__btn` que contiene opcionalmente un avatar/badge y un `span.ui-row__text`. Tanto `__main` como `__text` son la columna `ui-row__title` (13/500) + `ui-row__meta` (12 gris). `ui-row--expandable` (hover), `ui-row--expanded` (fondo gris + barra izquierda primaria), `ui-row--muted` (pasado/inactivo). | Máx. 2 líneas de texto. Acciones secundarias como hijos de `__trail`, nunca dentro del botón. El `button` lleva `aria-expanded` si despliega. |
 | `ui-row-detail` | Bloque de detalle bajo una fila expandida: fondo `--c-surface-2`, padding 12, borde izquierdo 3 px primario. Contiene `ui-subsection` (`ui-subsection__title` 11 mayúsculas + contenido). Si el título despliega su contenido es un `<button class="ui-subsection__title" aria-expanded>`. Las `ui-list` internas van con fondo blanco y borde. | Un nivel de anidación como máximo. |
@@ -227,7 +258,7 @@ de feature solo componen estas clases y añaden CSS encapsulado para su disposic
 | `ui-star` | Estrella ámbar de coordinador (`icon icon--sm icon--fill ui-star`, con `title`). | Ver §4. |
 | `ui-date` | Bloque de fecha de 40 px: `ui-date__dow` (11 mayúsculas gris) sobre `ui-date__day` (15/600 tabular) y `ui-date__mon` opcional (11). | Alineado al inicio de la fila. |
 | `ui-team-badge` | Cuadrado 20×20, radio 4, fondo `--team-color`, número blanco 11/600. `--lg` 28 px (fila de equipo y tarjeta de próximo evento), `--muted` para composiciones históricas. Recibe el color por `[style.--team-color]="getTeamColor(team)"`. | Única forma de mostrar el color de un equipo. |
-| `ui-avatar` | Círculo 24 px, fondo `--c-surface-3`, iniciales 10/600 `--c-text-2`. `--lg` 32 px. | Siempre neutro. |
+| `ui-avatar` | Círculo 24 px, iniciales 10/600. Con `[attr.data-tone]="p.tone"` (0–7) toma `--tone-N-bg/fg`; sin atributo es neutro (`--c-surface-3` / `--c-text-2`). `--lg` 32 px. | Una persona = siempre el mismo tono (viene del índice). Los chips de persona (`ui-chip`) incluyen su avatar con tono. |
 | `ui-badge` | Etiqueta 11/500, altura 18, radio 4, padding 0 6. Variantes `--primary` (esta semana), `--success` (hoy), `--warning`, `--danger` (indisponible), `--team` (tinte del equipo), neutro por defecto. | Estados y contadores cortos ("Azi!", "5 zile", "8 mai · 2z", "istoric"). |
 | `ui-chip` | Como badge pero 24 px con icono opcional; clicable (`<button>`) para enlaces cruzados (p. ej. padre en una fila). | Máx. una fila de chips; si hay más de 4, "+N". |
 | `ui-count` | Contador numérico neutro junto a un título (`ui-badge--neutral`). | |
@@ -235,9 +266,10 @@ de feature solo componen estas clases y añaden CSS encapsulado para su disposic
 | `ui-segmented` | Grupo de botones pegados (idioma, filtros): 28 px, borde 1 px, activo con `--c-primary-soft` y texto primario, `aria-pressed`. | Sustituye a chips de filtro y a menús de 2–3 opciones. |
 | `ui-input` | Campo 28 px, borde `--c-border-strong`, radio 4, icono `search` a la izquierda. | Foco = borde primario. |
 | `ui-toolbar` | Barra de sección: búsqueda + segmentado + contador, `gap 8`, `flex-wrap`. | Encima de una lista. |
-| `ui-kpis` | Fila de KPIs: `ui-kpi` = cifra 18/600 tabular + label 11 gris; separados por borde. | Sin iconos ni colores. |
-| `ui-section` | Bloque de página: `ui-section__head` (título 11 mayúsculas + `ui-count` + acciones) y contenido. `gap 8`. | |
-| `ui-disclosure` | Botón de fila completa "Istoric programări (31) ▾" que abre una sección colapsada; `aria-expanded`. | Para históricos y archivos. |
+| `ui-kpis` | Tarjeta de KPIs (radio 8, `--shadow-card`): cada `ui-kpi` = `ui-kpi__icon` (círculo 32 px `--c-primary-soft` con icono 18 primario) + `ui-kpi__meta` (cifra 18/600 tabular sobre label 11 gris); separados por borde; 2×2 en móvil, 4 en fila desde 600 px. | Un icono por KPI, siempre en primario; ninguna otra variación de color. |
+| `ui-section` | Bloque de página: apila tarjetas/disclosures con `gap 8`. Sin cabecera propia: el título va en `ui-card__header`. | |
+| `ui-spacer` | `flex: 1` entre el título y las acciones de una cabecera. | |
+| `ui-disclosure` | Botón de fila completa "Istoric echipe (3) ▾" que abre una sección colapsada; superficie blanca con borde, radio 8 y `--shadow-card`; `aria-expanded`. | Para históricos y archivos a nivel de página. Dentro de un detalle, el desplegable es `button.ui-subsection__title`. |
 | `ui-times` | Trío inline de horas: `🕒 19:30 → 20:30 🍴 20:00`; la de comida con `ui-times__food-icon` + `ui-times__food` (ámbar). | Los dos únicos iconos permitidos dentro de la meta de una fila. |
 | `ui-note` | Nota en línea bajo una fila: icono `sticky_note_2` + texto 12 gris, fondo `--c-warning-soft` suave. | Solo si `observations` no está vacío. |
 | `ui-empty` | Estado vacío. | Ver §5. |
@@ -268,6 +300,8 @@ evento/apoyo), `app-calendar-button` (descarga `.ics`). Ver [ARQUITECTURA.md](AR
    con `host: { class }` por eso.
 8. Los destinos de scroll (`[id]`) llevan `scroll-margin-top: var(--sticky-offset)` (en
    `base.css`) para no quedar bajo las tabs.
+9. Ningún `:hover` fuera de `@media (hover: hover) { … }` (una línea por regla, junto a la
+   primitiva). Lo que deba abrirse también con el dedo (tooltip de versión) usa `:focus`.
 
 ## 8. Textos e i18n
 
@@ -279,12 +313,14 @@ evento/apoyo), `app-calendar-button` (descarga `.ics`). Ver [ARQUITECTURA.md](AR
 
 ## 9. No hacer (lista negra)
 
-- Gradientes, sombras en tarjetas, `transform` en hover, animaciones de entrada.
-- Cabeceras de tarjeta coloreadas; fondos de color detrás de nombres de personas.
+- Gradientes, sombras distintas de `--shadow-card`/`--shadow-overlay`, `transform` en hover,
+  animaciones de entrada.
+- Cabeceras de tarjeta coloreadas; fondos de color detrás de nombres de personas (el tono va
+  solo en el avatar); títulos de sección fuera de la tarjeta.
 - Tarjetas para listar colecciones; más de 2 líneas de texto por fila.
 - Iconos junto a cada dato de una fila; pastillas ("pills") con icono + texto para metadatos que
   caben como texto gris.
-- Mayúsculas fuera de `ui-section__title` / `ui-eyebrow`; negritas 700.
+- Mayúsculas fuera de `ui-eyebrow` / `ui-group-head` / `ui-subsection__title`; negritas 700.
 - `<div (click)>` para acciones: usar `<button>` / `<a>`.
 - Reintroducir librerías de UI (Material, PrimeNG, Bootstrap…). Las primitivas de §6 bastan;
   si falta una, se añade a `components.css` y a esta guía.

@@ -82,6 +82,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (currentIdx === -1) return;
     const nextIdx = currentIdx + delta;
     if (nextIdx < 0 || nextIdx >= TAB_ORDER.length) return;
+    // La pestaña que se tocó antes conserva el foco y, en algunos navegadores, su anillo: al
+    // cambiar por gesto ya no representa nada, así que se suelta el foco.
+    (document.activeElement as HTMLElement | null)?.blur?.();
     this.router.navigateByUrl('/' + TAB_ORDER[nextIdx]);
   }
 }

@@ -192,6 +192,26 @@ verdad (feeds publicados en el deploy); quien la añada a su calendario recibir�
 - Verificado con Chromium headless: footer 375/700/1280, dock (aparición, ocultación en footer,
   volver arriba), diálogo de compartir, persistencia del tema tras recarga, sin errores de consola.
 
+### Entregado (2026-09-14, quinto bloque) — `v.2.4.0`
+- **Restyle "con vida" (referencia LinkedIn)** manteniendo densidad y sobriedad: lienzo neutro
+  cálido (`--c-bg #f3f2ef`) con tarjetas blancas elevadas (radio 8 + `--shadow-card` de 1–2 px);
+  **títulos dentro de la tarjeta** (`ui-card__header` 44 px con contador y acciones), texto de
+  apoyo `ui-card__desc` y barra `ui-card__toolbar` (búsqueda + filtros de Tineri sobre fondo
+  suave); **avatares con tono** (8 pastel derivados del `id` en `ScheduleIndex.toneOf`, aplicados
+  por `data-tone` en filas y chips de personas); **KPIs con icono** en círculo primario; estado
+  vacío con icono en círculo. `ui-section__head/__title` eliminados (muertos) y `ui-spacer`
+  como separador de cabecera. Modo oscuro ajustado en tokens (tintes rgba .18 + tinta 300).
+- Docs: guía con §0 "resumen esencial" y principios actualizados ("elevación sutil" en lugar de
+  "plano"); `CLAUDE.md` reescrito con las reglas de actuación (senior + diseñador experto,
+  arquitectura recomendada) y la **estrategia de ahorro de tokens** (reglas base siempre; docs
+  por sección y solo cuando toca; capturas solo si el cambio es visual; sin subagentes).
+- **Táctil**: todo `:hover` pasa a `@media (hover: hover)` (en el móvil la pestaña tocada antes
+  seguía gris tras cambiar deslizando), `:active` como feedback de pulsación en pestañas y
+  filas, y al deslizar se suelta el foco de la pestaña anterior (anillo azul en Chrome). El
+  tooltip de versión se abre también con el toque (`:focus`).
+- Verificado: `tsc`, 23 tests (nuevo test de estabilidad del tono), build de producción y
+  capturas headless de las cinco pestañas en 1240/375 px, claro y oscuro.
+
 **Utilidades analizadas y descartadas** (no aportan en esta app): QR de compartir (descartado
 por el propietario), enlaces a redes sociales (el departamento no tiene canales propios),
 formulario de contacto (sin backend; WhatsApp lo cubre), notificaciones push (requieren

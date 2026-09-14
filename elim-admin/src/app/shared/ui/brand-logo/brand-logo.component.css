@@ -13,7 +13,7 @@
   color: inherit;
   border-radius: var(--r-sm);
 }
-.brand:hover { text-decoration: none; }
+@media (hover: hover) { .brand:hover { text-decoration: none; } }
 .brand__name {
   justify-self: start;
   font-family: var(--font-brand);
@@ -39,4 +39,4 @@
   text-align-last: justify;
   color: var(--brand-accent);
 }
-a.brand:hover .brand__name { color: var(--brand-ink-hover); }
+@media (hover: hover) { a.brand:hover .brand__name { color: var(--brand-ink-hover); } }

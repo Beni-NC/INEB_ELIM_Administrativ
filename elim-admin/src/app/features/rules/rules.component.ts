@@ -17,19 +17,20 @@ interface RuleSection {
     imports: [TranslatePipe, ContactCardComponent],
     template: `
     <section class="ui-section">
-      <div class="ui-section__head">
-        <h2 class="ui-section__title">{{ 'rules.title' | translate }}</h2>
-        <span class="ui-count">{{ sections().length }}</span>
+      <div class="ui-card">
+        <header class="ui-card__header">
+          <h2 class="ui-card__title">{{ 'rules.title' | translate }}</h2>
+          <span class="ui-count">{{ sections().length }}</span>
+        </header>
+        <p class="ui-card__desc">{{ 'rules.subtitle' | translate }}</p>
+        <nav class="ui-chip-group ui-card__body" [attr.aria-label]="'rules.index' | translate">
+          @for (s of sections(); track s.id; let i = $index) {
+            <button type="button" class="ui-chip" (click)="scrollTo(s.id)">
+              <span class="rules__num">{{ i + 1 }}</span>{{ s.title }}
+            </button>
+          }
+        </nav>
       </div>
-      <p class="muted rules__intro">{{ 'rules.subtitle' | translate }}</p>
-
-      <nav class="ui-chip-group" [attr.aria-label]="'rules.index' | translate">
-        @for (s of sections(); track s.id; let i = $index) {
-          <button type="button" class="ui-chip" (click)="scrollTo(s.id)">
-            <span class="rules__num">{{ i + 1 }}</span>{{ s.title }}
-          </button>
-        }
-      </nav>
 
       <div class="ui-columns-2">
         @for (s of sections(); track s.id; let i = $index) {
@@ -56,7 +57,6 @@ interface RuleSection {
   `,
     styles: [`
     :host { display: flex; flex-direction: column; gap: var(--sp-4); }
-    .rules__intro { font-size: var(--fs-sm); margin-top: calc(-1 * var(--sp-1)); }
     .rules__num {
       display: inline-flex;
       align-items: center;

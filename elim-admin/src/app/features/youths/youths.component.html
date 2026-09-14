@@ -1,12 +1,13 @@
 <section class="ui-section">
-  <div class="ui-section__head">
-    <h2 class="ui-section__title">{{ 'tabs.youths' | translate }}</h2>
-    <span class="ui-count">{{ data.filteredYouths().length }}</span>
-    <span class="ui-section__spacer"></span>
-    <span class="faint num">{{ data.youthStats.total }} {{ 'common.youths' | translate }} · {{ data.youthStats.coordinators }} {{ 'common.coordinators' | translate }}</span>
-  </div>
+  <div class="ui-card">
+    <header class="ui-card__header">
+      <h2 class="ui-card__title">{{ 'tabs.youths' | translate }}</h2>
+      <span class="ui-count">{{ data.filteredYouths().length }}</span>
+      <span class="ui-spacer"></span>
+      <span class="faint num">{{ data.youthStats.total }} {{ 'common.youths' | translate }} · {{ data.youthStats.coordinators }} {{ 'common.coordinators' | translate }}</span>
+    </header>
 
-  <div class="ui-toolbar">
+  <div class="ui-card__toolbar">
     <label class="ui-input">
       <span class="icon" aria-hidden="true">search</span>
       <input type="search" class="ui-input__field"
@@ -29,7 +30,6 @@
     </div>
   </div>
 
-  <div class="ui-card">
     @if (data.filteredYouths().length === 0) {
       <div class="ui-empty">
         <span class="icon" aria-hidden="true">info</span>
@@ -72,7 +72,7 @@
     <div class="ui-row ui-row--expandable"
          [class.ui-row--expanded]="expanded() === y.id"
          [class.ui-row--muted]="y.active === false">
-      <div class="ui-row__lead"><span class="ui-avatar">{{ y.initials }}</span></div>
+      <div class="ui-row__lead"><span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span></div>
       <button type="button" class="ui-row__btn" (click)="toggle(y)" [attr.aria-expanded]="expanded() === y.id" [attr.aria-controls]="'detail-youth-' + y.id">
        <span class="ui-row__text">
         <span class="ui-row__title">
@@ -216,7 +216,7 @@
               @for (link of data.getParentsForYouth(y.id); track link.parent.id) {
                 <div class="ui-row ui-row--expandable">
                   <button type="button" class="ui-row__btn" (click)="nav.goTo('parent', link.parent.id, $event)" [title]="'schedule.view_parent' | translate">
-                    <span class="ui-avatar">{{ link.parent.initials }}</span>
+                    <span class="ui-avatar" [attr.data-tone]="link.parent.tone">{{ link.parent.initials }}</span>
                     <span class="ui-row__text">
                       <span class="ui-row__title"><span class="truncate">{{ link.parent.name }}</span></span>
                       <span class="ui-row__meta">{{ link.relationship }}@if (link.parent.role) { · {{ link.parent.role }}}</span>

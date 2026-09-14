@@ -3,47 +3,83 @@
 PWA Angular 22 zoneless (`elim-admin/`) para la programación de la preparación de la cena del departamento
 de tineret de la iglesia ELIM Arganda: programaciones, equipos, jóvenes, padres de apoyo, reglas.
 Sin backend: datos estáticos en `elim-admin/src/app/core/data/*.data.ts`. Idiomas ro/es.
-Deploy automático a GitHub Pages al hacer push a `main`.
+Deploy automático a GitHub Pages al hacer push a `main`. La app se usa sobre todo en el móvil.
 
-## Reglas (siempre)
+> Este fichero se carga siempre y es deliberadamente corto. Los documentos de `docs/` son
+> **vinculantes** pero se leen **bajo demanda** (§ "Cuándo leer qué"), nunca "por si acaso".
 
-1. **UI = seguir `docs/GUIA-ESTILOS.md` al pie de la letra.** Tokens, primitivas `ui-*`, listas
-   densas, un solo acento, sin gradientes/sombras/librerías de UI. Si un patrón no existe, se
-   añade a `components.css` **y** a la guía; no se improvisa en el componente.
-2. **Código = seguir `docs/ARQUITECTURA.md`.** Angular 22 zoneless, standalone + signals + OnPush;
-   identificadores en inglés, comentarios en español, textos solo por i18n (**ro y es**); fechas
-   con el pipe `ldate`. Lo derivable se deriva en `ScheduleIndex`, no se escribe en los datos.
-   Tocar `core/domain` o `core/utils` = actualizar o añadir su `.spec.ts` (`npm test`).
+## Cómo actuar (siempre)
+
+- **Como senior**: antes de tocar nada, entender el problema y elegir la **arquitectura más
+  recomendada** para este proyecto (Angular 22 zoneless, standalone, signals, OnPush, dominio puro
+  en `ScheduleIndex`, i18n). Sin atajos ni sobre-ingeniería: lo que haría un programador senior
+  experimentado en producción. Se sigue lo que ya existe; si hace falta un patrón nuevo, se
+  añade donde corresponde (primitiva, servicio, doc) y se documenta, no se improvisa en sitio.
+- **Como diseñador experto**: toda interfaz debe parecer diseñada por alguien que conoce Gmail
+  compacto, Atlassian y LinkedIn: profesional, compacta, con vida pero sobria. Cada decisión
+  visual sale de los tokens y primitivas existentes; nunca de un valor literal.
+- **Autonomía con criterio**: decisiones rutinarias se toman y se explican en una línea;
+  se pregunta solo cuando dos lecturas llevan a trabajos materialmente distintos.
+- **Verificación**: `npx tsc -p tsconfig.app.json --noEmit` + `npm test` siempre; `npm run build`
+  cuando se toca build/PWA/scripts. Lo que no se verifica se dice.
+
+## Reglas base (siempre)
+
+1. **UI = `docs/GUIA-ESTILOS.md`** (§0 basta para retoques). Tokens, primitivas `ui-*`, listas
+   densas, un solo acento, sombra solo `--shadow-card`/`--shadow-overlay`, sin librerías de UI.
+   Si un patrón no existe, se añade a `components.css` **y** a la guía.
+2. **Código = `docs/ARQUITECTURA.md`.** Identificadores en inglés, comentarios en español, textos
+   solo por i18n (**ro y es**), fechas con el pipe `ldate`. Lo derivable se deriva en
+   `ScheduleIndex`, no se escribe en los datos. Tocar `core/domain` o `core/utils` = actualizar o
+   añadir su `.spec.ts`.
 3. **No reintroducir** Angular Material, CDK, PrimeNG ni ninguna librería de componentes.
-4. **Sin código muerto**: lo que deja de usarse se borra.
-5. No commitear ni hacer push: dejar los cambios en el working tree; el usuario decide.
-6. Al terminar un bloque de trabajo relevante, actualizar el estado en `docs/PLAN-MAESTRO.md`
-   (§4 y §5) y subir `version` en `elim-admin/package.json` si hay cambios visibles
-   (`src/version.ts` se genera solo; no editarlo).
+4. **Sin código muerto**: lo que deja de usarse se borra (CSS, claves i18n, métodos).
+5. **No commitear ni hacer push**: dejar los cambios en el working tree y entregar el texto del
+   commit; el usuario decide. Recordar que `src/version.ts` es generado (`git rm --cached` si
+   quedó rastreado).
+6. **Al cerrar un bloque relevante**: actualizar `docs/PLAN-MAESTRO.md` (§4 y §5) y subir
+   `version` en `elim-admin/package.json` si hay cambios visibles.
 7. **La app se actualiza sola** (recarga automática al detectar versión nueva): no añadir avisos
-   ni confirmaciones de actualización; el usuario quiere ver siempre lo último publicado.
+   ni confirmaciones de actualización.
 8. **Modo oscuro solo manual** (botón de la cabecera, guardado en el dispositivo; claro por
    defecto). Nunca automático por `prefers-color-scheme`.
-9. Contacto y textos de WhatsApp: `core/contact.config.ts` + claves `contact.*` de i18n; una sola
-   entrada visible (dock flotante; bloque `app-contact-card` al final de Reguli). El footer es una
-   franja mínima: no añadirle contenido. El dock sigue el patrón de MEDIA-ELIM
+9. Contacto y textos de WhatsApp: `core/contact.config.ts` + claves `contact.*`; una sola
+   entrada visible (dock flotante; `app-contact-card` al final de Reguli). El footer es una franja
+   mínima: no añadirle contenido. El dock sigue el patrón de MEDIA-ELIM
    (`C:\workspace\iglesia-redes`); ante una duda de diseño, mirar primero esa app hermana.
 
-## Dónde mirar
+## Economía de tokens (siempre)
 
-| Necesito… | Lee |
+- **Leer lo justo**: este fichero + el fichero que se va a tocar. Los `docs/` se abren solo según
+  la tabla de abajo, y por secciones (`grep`/`sed -n`), no completos.
+- **Retoque pequeño** (texto, color, orden, un estilo): no se abre ningún doc; basta el §0 de la
+  guía si es UI. **Patrón/pestaña/dato nuevo o cambio de arquitectura**: entonces sí, el doc
+  correspondiente.
+- **Capturas de pantalla: por defecto NO.** Solo si el usuario las pide o el cambio es visual y no
+  se puede validar de otra forma (layout, tema oscuro, responsive). Nunca para textos,
+  traducciones u orden de campos. Si no se verifica en pantalla, se dice.
+- **Sin subagentes** salvo petición expresa; verificar en línea (tsc/test/build).
+- **Ediciones quirúrgicas**: `Edit` o scripts cortos sobre el fragmento, no reescribir ficheros
+  enteros ni volver a leer lo que ya se tiene en contexto.
+- **Respuestas concisas**: qué se hizo, qué se verificó, qué queda; sin recapitular.
+
+## Cuándo leer qué (bajo demanda)
+
+| Voy a… | Leo |
 |---|---|
-| Diseñar / tocar cualquier interfaz | `docs/GUIA-ESTILOS.md` |
-| Estructura, convenciones, cómo añadir pestaña/primitiva/dato | `docs/ARQUITECTURA.md` |
-| Qué se decidió y por qué; qué queda pendiente | `docs/PLAN-MAESTRO.md` |
-| Datos (jóvenes, equipos, programaciones, padres) | `elim-admin/src/app/core/data/*.data.ts` (reglas: en los JSON de i18n) |
-| Textos | `elim-admin/src/assets/i18n/ro.json`, `es.json` |
+| Retocar UI existente | `docs/GUIA-ESTILOS.md` §0 (10 líneas) |
+| Crear patrón/primitiva, pestaña o tocar `tokens.css`/`components.css` | `docs/GUIA-ESTILOS.md` completa (§2, §6, §9) |
+| Tocar dominio, servicios, estructura, build/PWA, añadir dato o feed | `docs/ARQUITECTURA.md` (la sección que toque) |
+| Retomar trabajo, saber qué se decidió y por qué, qué queda | `docs/PLAN-MAESTRO.md` §4–§5 |
+| Cambiar datos (jóvenes, equipos, programaciones, padres) | `elim-admin/src/app/core/data/*.data.ts` (reglas: JSON de i18n) |
+| Cambiar textos | `elim-admin/src/assets/i18n/ro.json` **y** `es.json` |
 
 ## Comandos
 
 ```bash
 # Requiere Node ≥ 22.22. Si la máquina tiene otro Node: npx -y -p node@22 -p npm@11 -- <comando>
-cd elim-admin && npm start          # genera feeds .ics + dev en http://localhost:4200
-cd elim-admin && npm run build      # genera feeds .ics + producción
+cd elim-admin && npm start          # genera version.ts + feeds .ics + dev en http://localhost:4200
+cd elim-admin && npm run build      # producción (GitHub Pages)
 cd elim-admin && npm test           # vitest (dominio puro)
+cd elim-admin && npx tsc -p tsconfig.app.json --noEmit   # comprobación rápida de tipos
 ```

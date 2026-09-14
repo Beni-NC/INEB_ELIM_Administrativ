@@ -6,11 +6,11 @@
 <!-- Próximas programaciones con padres -->
 @if (data.upcomingParentEvents.length > 0) {
   <section class="ui-section">
-    <div class="ui-section__head">
-      <h2 class="ui-section__title">{{ 'parents.upcoming_with_parents' | translate }}</h2>
-      <span class="ui-count">{{ data.upcomingParentEvents.length }}</span>
-    </div>
     <div class="ui-card">
+      <header class="ui-card__header">
+        <h2 class="ui-card__title">{{ 'parents.upcoming_with_parents' | translate }}</h2>
+        <span class="ui-count">{{ data.upcomingParentEvents.length }}</span>
+      </header>
       <div class="ui-list">
         @for (pe of data.upcomingParentEvents; track entryKey(pe.entry)) {
           <app-event-row [entry]="pe.entry" [showMonth]="true" />
@@ -22,12 +22,12 @@
 
 <!-- Directorio -->
 <section class="ui-section">
-  <div class="ui-section__head">
-    <h2 class="ui-section__title">{{ 'parents.support_parents' | translate }}</h2>
-    <span class="ui-count">{{ data.activeParents.length }}</span>
-  </div>
-  <p class="muted parents__intro">{{ 'parents.support_intro' | translate }}</p>
   <div class="ui-card">
+    <header class="ui-card__header">
+      <h2 class="ui-card__title">{{ 'parents.support_parents' | translate }}</h2>
+      <span class="ui-count">{{ data.activeParents.length }}</span>
+    </header>
+    <p class="ui-card__desc">{{ 'parents.support_intro' | translate }}</p>
     @if (data.activeParents.length === 0) {
       <div class="ui-empty"><span class="icon" aria-hidden="true">info</span>{{ 'parents.empty' | translate }}</div>
     } @else {
@@ -88,7 +88,7 @@
     <div class="ui-row ui-row--expandable"
          [class.ui-row--expanded]="expanded() === p.id"
          [class.ui-row--muted]="p.active === false">
-      <div class="ui-row__lead"><span class="ui-avatar">{{ p.initials }}</span></div>
+      <div class="ui-row__lead"><span class="ui-avatar" [attr.data-tone]="p.tone">{{ p.initials }}</span></div>
       <button type="button" class="ui-row__btn" (click)="toggle(p)" [attr.aria-expanded]="expanded() === p.id" [attr.aria-controls]="'detail-parent-' + p.id">
         <span class="ui-row__text">
           <span class="ui-row__title">
@@ -159,7 +159,7 @@
               @for (link of data.getYouthsForParent(p.id); track link.youth.id) {
                 <div class="ui-row ui-row--expandable">
                   <button type="button" class="ui-row__btn" (click)="nav.goTo('youth', link.youth.id, $event)" [title]="'youths.view_profile' | translate">
-                    <span class="ui-avatar">{{ link.youth.initials }}</span>
+                    <span class="ui-avatar" [attr.data-tone]="link.youth.tone">{{ link.youth.initials }}</span>
                     <span class="ui-row__text">
                       <span class="ui-row__title">
                         <span class="truncate">{{ link.youth.fullName }}</span>

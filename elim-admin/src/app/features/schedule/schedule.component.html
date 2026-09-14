@@ -1,20 +1,32 @@
 <!-- Resumen numérico -->
 <div class="ui-kpis">
   <div class="ui-kpi">
-    <span class="ui-kpi__value">{{ data.scheduleStats.upcoming }}</span>
-    <span class="ui-kpi__label">{{ 'schedule.stat_upcoming' | translate }}</span>
+    <span class="ui-kpi__icon"><span class="icon" aria-hidden="true">event_upcoming</span></span>
+    <span class="ui-kpi__meta">
+      <span class="ui-kpi__value">{{ data.scheduleStats.upcoming }}</span>
+      <span class="ui-kpi__label">{{ 'schedule.stat_upcoming' | translate }}</span>
+    </span>
   </div>
   <div class="ui-kpi">
-    <span class="ui-kpi__value">{{ data.scheduleStats.thisMonth }}</span>
-    <span class="ui-kpi__label">{{ 'schedule.stat_this_month' | translate }}</span>
+    <span class="ui-kpi__icon"><span class="icon" aria-hidden="true">today</span></span>
+    <span class="ui-kpi__meta">
+      <span class="ui-kpi__value">{{ data.scheduleStats.thisMonth }}</span>
+      <span class="ui-kpi__label">{{ 'schedule.stat_this_month' | translate }}</span>
+    </span>
   </div>
   <div class="ui-kpi">
-    <span class="ui-kpi__value">{{ data.scheduleStats.teams }}</span>
-    <span class="ui-kpi__label">{{ 'schedule.stat_active_teams' | translate }}</span>
+    <span class="ui-kpi__icon"><span class="icon" aria-hidden="true">groups</span></span>
+    <span class="ui-kpi__meta">
+      <span class="ui-kpi__value">{{ data.scheduleStats.teams }}</span>
+      <span class="ui-kpi__label">{{ 'schedule.stat_active_teams' | translate }}</span>
+    </span>
   </div>
   <div class="ui-kpi">
-    <span class="ui-kpi__value">{{ data.scheduleStats.completed }}</span>
-    <span class="ui-kpi__label">{{ 'schedule.stat_completed' | translate }}</span>
+    <span class="ui-kpi__icon"><span class="icon" aria-hidden="true">check_circle</span></span>
+    <span class="ui-kpi__meta">
+      <span class="ui-kpi__value">{{ data.scheduleStats.completed }}</span>
+      <span class="ui-kpi__label">{{ 'schedule.stat_completed' | translate }}</span>
+    </span>
   </div>
 </div>
 
@@ -25,13 +37,13 @@
 
 <!-- Todas las próximas, agrupadas por mes -->
 <section class="ui-section">
-  <div class="ui-section__head">
-    <h2 class="ui-section__title">{{ 'schedule.all_schedules' | translate }}</h2>
-    <span class="ui-count">{{ data.upcomingSchedule.length }}</span>
-    <span class="ui-section__spacer"></span>
-    <app-calendar-button [all]="true" [withLabel]="true" />
-  </div>
   <div class="ui-card">
+    <header class="ui-card__header">
+      <h2 class="ui-card__title">{{ 'schedule.all_schedules' | translate }}</h2>
+      <span class="ui-count">{{ data.upcomingSchedule.length }}</span>
+      <span class="ui-spacer"></span>
+      <app-calendar-button [all]="true" [withLabel]="true" />
+    </header>
     @if (data.upcomingSchedule.length === 0) {
       <div class="ui-empty">
         <span class="icon" aria-hidden="true">info</span>
@@ -56,10 +68,10 @@
 <!-- Resumen de coordinadores (histórico) -->
 @if (topCoordinators.length > 0) {
   <section class="ui-section">
-    <div class="ui-section__head">
-      <h2 class="ui-section__title">{{ 'schedule.coordinator_summary' | translate }}</h2>
-    </div>
     <div class="ui-card">
+      <header class="ui-card__header">
+        <h2 class="ui-card__title">{{ 'schedule.coordinator_summary' | translate }}</h2>
+      </header>
       <div class="ui-list coord-list">
         @for (c of topCoordinators; track c.name + '|' + c.team) {
           <div class="ui-row ui-row--expandable" [style.--team-color]="getTeamColor(c.team)">

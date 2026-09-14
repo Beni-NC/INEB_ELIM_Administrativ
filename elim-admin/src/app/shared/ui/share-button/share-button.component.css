@@ -17,7 +17,7 @@
   text-decoration: none;
   transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
-.share__option:hover { background: var(--c-surface-2); color: var(--c-text); text-decoration: none; }
+@media (hover: hover) { .share__option:hover { background: var(--c-surface-2); color: var(--c-text); text-decoration: none; } }
 .share__badge {
   display: inline-flex;
   align-items: center;

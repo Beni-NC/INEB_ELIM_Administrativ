@@ -35,7 +35,7 @@
   flex: 1;
   color: inherit;
 }
-.ui-header__brand:hover { text-decoration: none; }
+@media (hover: hover) { .ui-header__brand:hover { text-decoration: none; } }
 .ui-header__divider {
   width: 1px;
   height: 32px;
@@ -116,7 +116,8 @@
   white-space: nowrap;
   transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
 }
-.ui-tab:hover { color: var(--c-text); background: var(--c-surface-2); text-decoration: none; }
+@media (hover: hover) { .ui-tab:hover { color: var(--c-text); background: var(--c-surface-2); text-decoration: none; } }
+.ui-tab:active { background: var(--c-surface-3); }
 .ui-tab.is-active { color: var(--c-primary); }
 .ui-tab.is-active::after {
   content: '';
@@ -173,7 +174,7 @@
 .ui-footer__actions { display: flex; align-items: center; gap: var(--sp-1); margin-left: auto; }
 .ui-footer__sep { width: 1px; height: 24px; margin: 0 var(--sp-2); background: rgba(255, 255, 255, 0.18); }
 .ui-footer__partner { display: inline-flex; align-items: center; opacity: 0.9; border-radius: var(--r-sm); transition: opacity var(--dur) var(--ease); }
-.ui-footer__partner:hover { opacity: 1; }
+@media (hover: hover) { .ui-footer__partner:hover { opacity: 1; } }
 .ui-footer__partner img { height: clamp(24px, 3.2vw, 44px); width: auto; }
 
 /* Chip de versión: el detalle técnico aparece en un tooltip al pasar el ratón o enfocar. */
@@ -189,8 +190,8 @@
   cursor: help;
   transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
-.ui-footer__version:hover,
-.ui-footer__version:focus-visible { color: var(--c-on-brand); border-color: rgba(255, 255, 255, 0.4); }
+.ui-footer__version:focus { color: var(--c-on-brand); border-color: rgba(255, 255, 255, 0.4); }
+@media (hover: hover) { .ui-footer__version:hover { color: var(--c-on-brand); border-color: rgba(255, 255, 255, 0.4); } }
 .ui-footer__build {
   position: absolute;
   bottom: calc(100% + var(--sp-2));
@@ -211,8 +212,8 @@
   visibility: hidden;
   transition: opacity var(--dur) var(--ease), visibility var(--dur) var(--ease);
 }
-.ui-footer__version:hover .ui-footer__build,
-.ui-footer__version:focus-visible .ui-footer__build { opacity: 1; visibility: visible; }
+.ui-footer__version:focus .ui-footer__build { opacity: 1; visibility: visible; }
+@media (hover: hover) { .ui-footer__version:hover .ui-footer__build { opacity: 1; visibility: visible; } }
 .ui-footer__build-row { display: flex; justify-content: space-between; gap: var(--sp-4); color: var(--c-text-2); }
 .ui-footer__build-row b { font-weight: 600; color: var(--c-text); }
 

@@ -1,7 +1,7 @@
 <section class="ui-card next" [style.--team-color]="teamColor()">
   <header class="ui-card__header">
-    <span class="ui-section__title">{{ titleKey() | translate }}</span>
-    <span class="ui-section__spacer"></span>
+    <h2 class="ui-card__title">{{ titleKey() | translate }}</h2>
+    <span class="ui-spacer"></span>
     <app-calendar-button [event]="entry()" [withLabel]="true" />
   </header>
 
@@ -63,7 +63,7 @@
       <div class="ui-chip-group">
         @for (y of roster(); track y.id) {
           <button type="button" class="ui-chip" (click)="nav.goTo('youth', y.id, $event)">
-            <span class="ui-avatar">{{ y.initials }}</span>
+            <span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span>
             {{ y.fullName }}
             @if (data.isActiveCoordinator(y.id)) { <span class="icon icon--fill ui-star" aria-hidden="true">star</span> }
           </button>
@@ -78,7 +78,7 @@
       <div class="ui-chip-group">
         @for (p of parents(); track p.id) {
           <button type="button" class="ui-chip" (click)="nav.goTo('parent', p.id, $event)" [title]="'schedule.view_parent' | translate">
-            <span class="ui-avatar">{{ p.initials }}</span>
+            <span class="ui-avatar" [attr.data-tone]="p.tone">{{ p.initials }}</span>
             {{ p.name }}
           </button>
         }

@@ -1,10 +1,9 @@
 <section class="ui-section">
-  <div class="ui-section__head">
-    <h2 class="ui-section__title">{{ 'teams.active_teams' | translate }}</h2>
-    <span class="ui-count">{{ data.teams.length }}</span>
-  </div>
-
   <div class="ui-card">
+    <header class="ui-card__header">
+      <h2 class="ui-card__title">{{ 'teams.active_teams' | translate }}</h2>
+      <span class="ui-count">{{ data.teams.length }}</span>
+    </header>
     <div class="ui-list">
       @for (team of data.teams; track team.teamName) {
         <div [id]="'card-team-' + team.teamName" class="team">
@@ -48,7 +47,7 @@
                   @for (y of members(team); track y.id) {
                     <div class="ui-row ui-row--expandable">
                       <button type="button" class="ui-row__btn" (click)="nav.goTo('youth', y.id, $event)" [title]="'youths.view_profile' | translate">
-                        <span class="ui-avatar">{{ y.initials }}</span>
+                        <span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span>
                         <span class="ui-row__text">
                           <span class="ui-row__title">
                             <span class="truncate">{{ y.fullName }}</span>
@@ -154,7 +153,7 @@
                       @for (y of members(hist); track y.id) {
                         <div class="ui-row ui-row--expandable">
                           <button type="button" class="ui-row__btn" (click)="nav.goTo('youth', y.id, $event)" [title]="'youths.view_profile' | translate">
-                            <span class="ui-avatar">{{ y.initials }}</span>
+                            <span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span>
                             <span class="ui-row__text">
                               <span class="ui-row__title">
                                 <span class="truncate">{{ y.fullName }}</span>

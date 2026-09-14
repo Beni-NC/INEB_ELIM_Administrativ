@@ -22,7 +22,7 @@
   color: var(--c-text);
   border-radius: var(--r-sm);
 }
-.next__team:hover { color: var(--c-primary); }
+@media (hover: hover) { .next__team:hover { color: var(--c-primary); } }
 .next__star { color: var(--c-warning); }
 
 /* Horas: tres pares etiqueta/valor en una línea; se apilan en móvil. */

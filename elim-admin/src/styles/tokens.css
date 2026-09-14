@@ -4,13 +4,13 @@
    Documentación y reglas de uso: docs/GUIA-ESTILOS.md §2.
    ============================================================================ */
 :root {
-  /* ---- Color: neutros (slate) ---- */
-  --c-bg: #f6f7f9;
+  /* ---- Color: neutros. Lienzo cálido (como LinkedIn) para que las tarjetas blancas "floten" ---- */
+  --c-bg: #f3f2ef;
   --c-surface: #ffffff;
-  --c-surface-2: #f1f3f6;
-  --c-surface-3: #e9ecf1;
-  --c-border: #e3e7ee;
-  --c-border-strong: #c9d1dc;
+  --c-surface-2: #f5f4f1;
+  --c-surface-3: #ebeae6;
+  --c-border: #e4e2dd;
+  --c-border-strong: #cfcbc3;
   --c-text: #1b2433;
   --c-text-2: #4b5565;
   --c-text-3: #7d8797;
@@ -90,11 +90,22 @@
 
   /* ---- Radios ---- */
   --r-sm: 4px;
-  --r-md: 6px;
+  --r-md: 8px;
   --r-full: 999px;
 
-  /* ---- Sombra (solo overlays: banner PWA, menús, diálogos) ---- */
+  /* ---- Sombras: una muy leve para elevar tarjetas sobre el lienzo; la de overlays para menús/diálogos ---- */
+  --shadow-card: 0 1px 2px rgba(31, 27, 20, 0.06), 0 0 0 1px rgba(31, 27, 20, 0.02);
   --shadow-overlay: 0 4px 16px rgba(15, 23, 42, 0.12), 0 1px 3px rgba(15, 23, 42, 0.08);
+
+  /* ---- Tonos de avatar: tinte suave + texto del mismo tono, asignados por persona (hash) ---- */
+  --tone-0-bg: #dbeafe; --tone-0-fg: #1d4ed8;
+  --tone-1-bg: #ede9fe; --tone-1-fg: #6d28d9;
+  --tone-2-bg: #dcfce7; --tone-2-fg: #15803d;
+  --tone-3-bg: #ffedd5; --tone-3-fg: #c2410c;
+  --tone-4-bg: #fce7f3; --tone-4-fg: #be185d;
+  --tone-5-bg: #ccfbf1; --tone-5-fg: #0f766e;
+  --tone-6-bg: #fef3c7; --tone-6-fg: #b45309;
+  --tone-7-bg: #e2e8f0; --tone-7-fg: #334155;
 
   /* ---- Movimiento ---- */
   --dur: 120ms;
@@ -150,7 +161,17 @@
   --team-default: #94a3b8;
   --team-badge-ink: #0b1220;
 
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
   --shadow-overlay: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  --tone-0-bg: rgba(96, 165, 250, 0.18); --tone-0-fg: #93c5fd;
+  --tone-1-bg: rgba(167, 139, 250, 0.18); --tone-1-fg: #c4b5fd;
+  --tone-2-bg: rgba(52, 211, 153, 0.18); --tone-2-fg: #6ee7b7;
+  --tone-3-bg: rgba(251, 146, 60, 0.18); --tone-3-fg: #fdba74;
+  --tone-4-bg: rgba(244, 114, 182, 0.18); --tone-4-fg: #f9a8d4;
+  --tone-5-bg: rgba(45, 212, 191, 0.18); --tone-5-fg: #5eead4;
+  --tone-6-bg: rgba(251, 191, 36, 0.18); --tone-6-fg: #fcd34d;
+  --tone-7-bg: rgba(148, 163, 184, 0.18); --tone-7-fg: #cbd5e1;
 }
 
 @media (min-width: 600px) {

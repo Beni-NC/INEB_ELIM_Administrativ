@@ -422,13 +422,20 @@ export class ScheduleIndex {
 
 /** Completa un joven con lo derivable: nombre canónico "Apellido Nombre" e iniciales. */
 function toYouth(r: YouthRecord): Youth {
-  return { ...r, fullName: `${r.lastName} ${r.firstName}`, initials: (r.lastName.charAt(0) + r.firstName.charAt(0)).toUpperCase() };
+  return { ...r, fullName: `${r.lastName} ${r.firstName}`, initials: (r.lastName.charAt(0) + r.firstName.charAt(0)).toUpperCase(), tone: toneOf(r.id) };
 }
 
 /** Completa un padre con sus iniciales (una por palabra del nombre, máximo tres). */
 function toParent(r: ParentRecord): Parent {
   const initials = r.name.trim().split(/\s+/).slice(0, 3).map(w => w.charAt(0)).join('').toUpperCase();
-  return { ...r, initials };
+  return { ...r, initials, tone: toneOf(r.id) };
+}
+
+/** Tono de avatar 0–7 a partir del id: estable entre sesiones y repartido entre los 8 tonos. */
+export function toneOf(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return h % 8;
 }
 
 /** "Echipa 4" → 4 (sin número → al final). */
