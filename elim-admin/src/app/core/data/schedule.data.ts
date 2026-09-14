@@ -3,7 +3,7 @@ import type { ScheduleEntry } from '../models';
 /* ===================== PROGRAMARE ===================== */
 
 export const SCHEDULE_DATA: ScheduleEntry[] = [
-  { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'youth_evening', estimatedPersons: 60, date: new Date(2025, 2, 10),  observations: '' },
+  { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'youth_evening', estimatedPersons: 60, date: new Date(2025, 2, 7),  observations: '' },
   { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'youth_evening', estimatedPersons: 60, date: new Date(2025, 9, 10),  observations: '' },
   { team: 'Echipa 3', coordinator: 'Istrătoaie Ruben',programType: 'youth_evening', estimatedPersons: 60, date: new Date(2025, 9, 17),  observations: '' },
   { team: 'Echipa 4', coordinator: 'Ivaşcu Simona',   programType: 'youth_evening', estimatedPersons: 60, date: new Date(2025, 9, 24),  observations: '' },
@@ -35,10 +35,21 @@ export const SCHEDULE_DATA: ScheduleEntry[] = [
   { team: 'Echipa 1', coordinator: 'Halas Luigi',     programType: 'youth_evening', estimatedPersons: 45, date: new Date(2026, 5, 5),  observations: '', parentSupporters: ['p-001', 'p-004']},
   { team: 'Echipa 2', coordinator: 'Dobre David',     programType: 'youth_evening', estimatedPersons: 45, date: new Date(2026, 5, 12),   observations: '', parentSupporters: ['p-003', 'p-002']},
   { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'youth_evening', estimatedPersons: 45, date: new Date(2026, 5, 19),  observations: '', parentSupporters: ['p-006', 'p-011']},
-  
   { team: 'Echipa 4', coordinator: 'Mic Karina', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 8, 11),  observations: ''},
-  { team: 'Echipa 5', coordinator: 'Toader Noemi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 8, 18),  observations: '', parentSupporters: ['p-007', 'p-009']},
-
+  
+  { team: 'Echipa 5', coordinator: 'Toader Noemi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 8, 18), observations: '' },
+  { team: 'Echipa 6', coordinator: 'Halas Noemi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 2), observations: 'Primul program cu implicarea parintilor 2026 - 2027', parentSupporters: ['p-008', 'p-007'] },
+  { team: 'Echipa 7', coordinator: 'Bereza Ionatan', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 9), observations: '', parentSupporters: ['p-010', 'p-005'] },
+  { team: 'Echipa 1', coordinator: 'Halas Luigi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 16), observations: '', parentSupporters: ['p-003', 'p-011'] },
+  { team: 'Echipa 2', coordinator: 'Dobre David', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 23), observations: '', parentSupporters: ['p-001', 'p-002'] },
+  { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 9, 30), observations: '', parentSupporters: ['p-005', 'p-006'] },
+  { team: 'Echipa 4', coordinator: 'Mic Karina', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 10, 6), observations: '', parentSupporters: ['p-012', 'p-004'] },
+  { team: 'Echipa 5', coordinator: 'Toader Noemi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 10, 13), observations: '', parentSupporters: ['p-013', 'p-009'] },
+  { team: 'Echipa 6', coordinator: 'Halas Noemi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 10, 20), observations: '', parentSupporters: ['p-011', 'p-008'] },
+  { team: 'Echipa 7', coordinator: 'Bereza Ionatan', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 10, 27), observations: '', parentSupporters: ['p-007', 'p-010'] },
+  { team: 'Echipa 1', coordinator: 'Halas Luigi', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 11, 4), observations: '', parentSupporters: ['p-012', 'p-004'] },
+  { team: 'Echipa 2', coordinator: 'Dobre David', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 11, 11), observations: '', parentSupporters: ['p-001', 'p-003'] },
+  { team: 'Echipa 3', coordinator: 'Istrătoaie Dina', programType: 'youth_evening', estimatedPersons: 60, date: new Date(2026, 11, 18), observations: '', parentSupporters: ['p-002', 'p-006'] },
 
   /* 
   ### TABARA + VACANTA.

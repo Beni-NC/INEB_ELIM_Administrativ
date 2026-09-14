@@ -5,7 +5,7 @@
       <h3 class="ui-card__title">{{ 'admin.parents_title' | translate }}</h3>
       <span class="ui-count">{{ events().length }}</span>
       @if (changed().length > 0) {
-        <span class="ui-badge ui-badge--primary">{{ 'admin.changed_rows' | translate:{ n: changed().length } }}</span>
+        <span class="ui-badge ui-badge--primary">{{ changed().length | plural:'admin.changed_rows' }}</span>
       }
       <span class="ui-spacer"></span>
       <button type="button" class="ui-btn" (click)="autoAssign()">
@@ -99,17 +99,22 @@
             <span class="ui-row__meta">
               @if (p.last) {
                 <span>{{ 'admin.rotation_last' | translate }} {{ p.last | ldate:'short' }}</span>
+                <!-- Lo que de verdad decide el turno: cuánto lleva esperando. -->
+                <span class="num" [title]="'admin.rota_waiting' | translate">{{ p.daysSinceLast }}{{ 'common.day_letter' | translate }}</span>
               } @else {
                 <span class="faint">{{ 'parents.never_helped' | translate }}</span>
               }
-              @if (p.upcoming > 0) {
-                <span class="faint">·</span>
-                <span class="num">{{ 'admin.upcoming_count' | translate:{ n: p.upcoming } }}</span>
+              <span class="faint num">{{ 'admin.since' | translate }} {{ p.parent.joinedDate | ldate:'short' }}</span>
+              @if (childrenOf(p.parent.id); as kids) {
+                <span class="truncate faint">{{ kids }}</span>
               }
             </span>
           </div>
           <div class="ui-row__trail">
-            <span class="ui-badge num" [class.ui-badge--warning]="p.total === 0">{{ 'admin.support_total' | translate:{ n: p.total } }}</span>
+            @if (p.next) {
+              <span class="ui-badge ui-badge--primary num">{{ p.next | ldate:'dayMonth' }}</span>
+            }
+            <span class="ui-badge num" [class.ui-badge--warning]="p.total === 0">{{ p.total | plural:'admin.support_total' }}</span>
           </div>
         </div>
       }

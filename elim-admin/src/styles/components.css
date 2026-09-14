@@ -250,6 +250,7 @@ button.ui-subsection__title { width: 100%; cursor: pointer; border-radius: var(-
   flex-shrink: 0;
 }
 .ui-team-badge--lg { width: 28px; height: 28px; font-size: var(--fs-md); border-radius: var(--r-md); }
+.ui-team-badge--xs { width: 14px; height: 14px; border-radius: 3px; font-size: 9px; }
 .ui-team-badge--muted { opacity: 0.55; }
 
 .ui-avatar {
@@ -353,6 +354,8 @@ button.ui-chip[aria-pressed="true"] { background: var(--c-primary-soft); border-
 .ui-btn--primary { background: var(--c-primary); border-color: var(--c-primary); color: var(--c-on-primary); }
 @media (hover: hover) { .ui-btn--primary:hover { background: var(--c-primary-hover); border-color: var(--c-primary-hover); } }
 .ui-btn--ghost { border-color: transparent; background: transparent; color: var(--c-text-2); }
+/* Acción destructiva (borrar un registro en /admin): solo el texto en rojo, sin relleno. */
+.ui-btn--danger { color: var(--c-danger); border-color: var(--c-danger); }
 @media (hover: hover) { .ui-btn--ghost:hover { color: var(--c-text); background: var(--c-surface-2); } }
 .ui-btn--icon { width: var(--h-control); padding: 0; }
 .ui-btn--icon.ui-btn--ghost { color: var(--c-text-3); }
@@ -456,6 +459,59 @@ button.ui-chip[aria-pressed="true"] { background: var(--c-primary-soft); border-
   line-height: 1.5;
   white-space: pre;
   tab-size: 2;
+}
+
+/* ---- Rejilla de selección múltiple ----
+   Para elegir personas entre muchas (composición de un equipo): en vez de 60 filas de una línea,
+   una rejilla de casillas compactas que llena el ancho disponible. La casilla nativa se oculta
+   (sigue ahí para el teclado y el lector de pantalla) y el estado se ve por el fondo y el check. */
+.ui-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--sp-1);
+}
+.ui-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  min-height: 32px;
+  min-width: 0;
+  /* Con dos líneas (nombre + equipos) hace falta aire abajo o el badge roza el borde. */
+  padding: 3px var(--sp-2) 4px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  background: var(--c-surface);
+  font-size: var(--fs-md);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+@media (hover: hover) { .ui-choice:hover { background: var(--c-surface-2); } }
+.ui-choice:active { background: var(--c-surface-3); }
+.ui-choice:focus-within { outline: 2px solid var(--c-focus); outline-offset: 2px; }
+.ui-choice input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.ui-choice__body { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.ui-choice__line { display: flex; align-items: center; gap: var(--sp-1); min-width: 0; }
+.ui-choice__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Los equipos van alineados bajo el nombre, no bajo el icono. */
+.ui-choice__tags { display: flex; flex-wrap: wrap; gap: 2px; padding-left: calc(var(--icon-sm) + var(--avatar) + var(--sp-1) * 2); }
+.ui-choice__mark { color: var(--c-text-3); opacity: 0.35; }
+.ui-choice--on {
+  background: var(--c-primary-soft);
+  border-color: var(--c-primary);
+  color: var(--c-primary);
+}
+.ui-choice--on .ui-choice__mark { color: var(--c-primary); opacity: 1; }
+@media (max-width: 599px) {
+  /* En una columna caben más nombres si la casilla es la de una fila de lista. */
+  .ui-choice-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px; }
+  .ui-choice { min-height: var(--h-row); }
+  .ui-choice__tags { padding-left: 0; }
 }
 
 /* Desplegable nativo con el aspecto de los demás controles (panel /admin). */

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DataService } from '../../../core/services/data.service';
-import { DOMAIN_DATA } from '../../../core/data';
+import { PluralPipe } from '../../../core/i18n/plural.pipe';
+import { AdminDataService } from '../admin-data.service';
 import { checkDomainData, errorsOf, warningsOf } from '../../../core/domain/data-health';
 
 /**
@@ -12,17 +12,17 @@ import { checkDomainData, errorsOf, warningsOf } from '../../../core/domain/data
 @Component({
   selector: 'app-admin-health-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, PluralPipe],
   template: `
     <section class="ui-section">
       <div class="ui-card">
         <header class="ui-card__header">
           <h3 class="ui-card__title">{{ 'admin.health_title' | translate }}</h3>
           @if (errors().length > 0) {
-            <span class="ui-badge ui-badge--danger">{{ 'admin.health_errors' | translate:{ n: errors().length } }}</span>
+            <span class="ui-badge ui-badge--danger">{{ errors().length | plural:'admin.health_errors' }}</span>
           }
           @if (warnings().length > 0) {
-            <span class="ui-badge ui-badge--warning">{{ 'admin.health_warnings' | translate:{ n: warnings().length } }}</span>
+            <span class="ui-badge ui-badge--warning">{{ warnings().length | plural:'admin.health_warnings' }}</span>
           }
         </header>
         <p class="ui-card__desc">{{ 'admin.health_desc' | translate }}</p>
@@ -59,9 +59,9 @@ import { checkDomainData, errorsOf, warningsOf } from '../../../core/domain/data
   `,
 })
 export class HealthSectionComponent {
-  private readonly data = inject(DataService);
+  private readonly admin = inject(AdminDataService);
 
-  private readonly all = computed(() => checkDomainData(DOMAIN_DATA, this.data.today));
+  private readonly all = computed(() => checkDomainData(this.admin.raw, this.admin.data.today));
   readonly errors = computed(() => errorsOf(this.all()));
   readonly warnings = computed(() => warningsOf(this.all()));
   /** Primero lo que rompe la app, después lo que solo conviene mirar. */

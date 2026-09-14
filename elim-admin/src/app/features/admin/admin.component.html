@@ -1,21 +1,27 @@
-<section class="ui-section">
-  <div class="ui-card">
-    <header class="ui-card__header">
-      <h2 class="ui-card__title">{{ 'admin.title' | translate }}</h2>
-      <span class="ui-badge ui-badge--primary">{{ 'admin.private' | translate }}</span>
-    </header>
-    <p class="ui-card__desc">{{ 'admin.intro' | translate }}</p>
-    <div class="ui-card__toolbar">
-      <div class="ui-segmented" role="group" [attr.aria-label]="'admin.sections' | translate">
-        @for (s of sections; track s) {
-          <button type="button" class="ui-segmented__btn" [attr.aria-pressed]="section() === s" (click)="select(s)">
-            {{ ('admin.section_' + s) | translate }}
-          </button>
-        }
-      </div>
-    </div>
-  </div>
-</section>
+<!-- Barra del panel: una sola línea (identidad + secciones + ayuda), pegada bajo las pestañas de la app. -->
+<header class="admin-bar">
+  <nav class="admin-bar__nav" [attr.aria-label]="'admin.sections' | translate">
+    @for (s of sections; track s.id) {
+      <button type="button" class="ui-tab" [class.is-active]="section() === s.id" (click)="select(s.id)"
+              [attr.aria-current]="section() === s.id ? 'page' : null" [title]="('admin.section_' + s.id) | translate">
+        <svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + s.icon"/></svg>
+        <span>{{ ('admin.section_' + s.id) | translate }}</span>
+      </button>
+    }
+  </nav>
+  <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon admin-bar__info-btn" (click)="showInfo.set(!showInfo())"
+          [attr.aria-expanded]="showInfo()" [attr.aria-label]="'admin.what_is_this' | translate"
+          [title]="'admin.what_is_this' | translate">
+    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>
+  </button>
+</header>
+
+@if (showInfo()) {
+  <p class="admin-info">
+    <span class="ui-badge ui-badge--primary">{{ 'admin.private' | translate }}</span>
+    {{ 'admin.intro' | translate }}
+  </p>
+}
 
 @switch (section()) {
   @case ('health')   { <app-admin-health-section /> }
@@ -23,4 +29,5 @@
   @case ('parents')  { <app-admin-parents-section /> }
   @case ('teams')    { <app-admin-teams-section /> }
   @case ('people')   { <app-admin-people-section /> }
+  @case ('data')     { <app-admin-data-section /> }
 }

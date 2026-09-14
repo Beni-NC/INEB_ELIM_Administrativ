@@ -29,7 +29,8 @@ Deploy automático a GitHub Pages al hacer push a `main`. La app se usa sobre to
    densas, un solo acento, sombra solo `--shadow-card`/`--shadow-overlay`, sin librerías de UI.
    Si un patrón no existe, se añade a `components.css` **y** a la guía.
 2. **Código = `docs/ARQUITECTURA.md`.** Identificadores en inglés, comentarios en español, textos
-   solo por i18n (**ro y es**), fechas con el pipe `ldate`. Lo derivable se deriva en
+   solo por i18n (**ro y es**; los contadores, con el pipe `plural` y su clave `_one`), fechas con
+   el pipe `ldate`. Lo derivable se deriva en
    `ScheduleIndex`, no se escribe en los datos; los enumerados de los datos son **códigos**
    traducidos por la vista. Tocar `core/domain` o `core/utils` = actualizar o añadir su
    `.spec.ts`; tocar datos = `npm test` (hay un spec de integridad sobre los datos reales).

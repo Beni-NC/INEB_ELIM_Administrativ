@@ -1,4 +1,48 @@
-:host { display: flex; flex-direction: column; gap: var(--sp-4); }
+:host { display: flex; flex-direction: column; gap: var(--sp-3); }
 
-/* El selector de sección tiene cinco opciones: en móvil se desliza en horizontal antes de apilarse. */
-.ui-card__toolbar { overflow-x: auto; }
+/* Barra de secciones: ocupa el ancho de la columna (sin aspecto de tarjeta) y se queda pegada
+   justo bajo las pestañas de la app, para cambiar de sección sin volver arriba. */
+.admin-bar {
+  position: sticky;
+  /* Justo debajo de las pestañas de la app —que son las que quedan fijas arriba—, sin hueco por el
+     que se vea pasar el contenido: 48 px en móvil (icono sobre texto) y --h-nav + borde desde 600. */
+  top: 48px;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  /* A sangre: ocupa todo el ancho de la ventana y recoloca su contenido sobre la columna, como
+     las pestañas de la app. Si no, el contenido se vería pasar por los lados al hacer scroll. */
+  margin: calc(var(--page-pad) * -1) calc(50% - 50vw) 0;
+  /* El contenido arranca justo donde arrancan las pestañas de la app: el padding lateral es solo
+     lo que sobra hasta la columna (el `--page-pad` ya lo trae el propio `ui-tab`). */
+  padding: 0 calc(50vw - 50%);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+}
+
+@media (min-width: 600px) { .admin-bar { top: calc(var(--h-nav) + 1px); } }
+.admin-bar__nav {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.admin-bar__nav::-webkit-scrollbar { display: none; }
+.admin-bar__nav .ui-tab { flex: 0 0 auto; min-height: 38px; gap: var(--sp-1); }
+.admin-bar__info-btn { flex-shrink: 0; }
+
+/* La explicación solo cuando se pide: una línea bajo la barra. */
+.admin-info {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--c-text-2);
+}
+
+@media (max-width: 599px) {
+  /* En el móvil manda el contenido: la barra se queda con el icono de la sección y el texto corto. */
+  .admin-bar__nav .ui-tab { flex-direction: row; padding: 0 var(--sp-1); font-size: var(--fs-sm); }
+}

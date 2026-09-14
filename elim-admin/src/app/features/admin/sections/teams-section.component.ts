@@ -6,8 +6,9 @@ import { Youth, YouthRole } from '../../../core/models';
 import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
 import { normalizeForSearch } from '../../../core/utils/text.utils';
 import {
-  closedMembershipBlock, joinBlocks, membershipBlock, membershipLine, removeHint, withHeader,
+  closedMembershipBlock, joinBlocks, membershipBlock, membershipLine, removeHint, todoComment, withHeader,
 } from '../../../core/utils/data-source.utils';
+import { TranslateService } from '@ngx-translate/core';
 import { AdminCodeComponent } from '../../../shared/ui/admin-code/admin-code.component';
 
 const MEMBERSHIPS_FILE = 'src/app/core/data/memberships.data.ts';
@@ -30,6 +31,11 @@ export class TeamsSectionComponent {
   protected readonly data = this.admin.data;
   protected readonly getTeamColor = getTeamColor;
   protected readonly getTeamNumber = getTeamNumber;
+  private readonly translate = inject(TranslateService);
+
+  private todo(issues: readonly string[]): string {
+    return todoComment(issues.map(i => this.translate.instant(`admin.check.${i}`) as string));
+  }
 
   readonly teams = this.admin.teams;
   /** Filtro de la lista de miembros: con 60 jóvenes, buscar es más rápido que recorrer. */
@@ -61,6 +67,22 @@ export class TeamsSectionComponent {
     if (this.coordinatorId() === id && !this.isMember(id)) this.coordinatorId.set('');
   }
 
+  /** Marca de una vez a todos los que se están viendo (respeta el buscador). */
+  selectVisible(): void {
+    const visible = this.youths().map(y => y.id);
+    this.members.update(list => [...new Set([...list, ...visible])]);
+  }
+
+  clearMembers(): void {
+    this.members.set([]);
+    this.coordinatorId.set('');
+  }
+
+  /** Equipos activos de un joven, para el tooltip de la casilla. */
+  teamsOf(id: string): string {
+    return this.data.getActiveTeamsForYouth(id).map(t => t.teamName).join(' · ');
+  }
+
   /** Miembros marcados, en el orden alfabético de la app y con el coordinador primero. */
   readonly chosen = computed<Youth[]>(() => {
     const ids = new Set(this.members());
@@ -69,17 +91,19 @@ export class TeamsSectionComponent {
     return coord ? [coord, ...list.filter(y => y.id !== coord.id)] : list;
   });
 
-  readonly compositionIssue = computed(() => {
-    if (this.members().length === 0) return 'no_members';
-    if (!this.coordinatorId()) return 'no_coordinator';
-    if (!this.members().includes(this.coordinatorId())) return 'coordinator_not_member';
-    return null;
+  readonly compositionIssues = computed(() => {
+    const out: string[] = [];
+    if (this.members().length === 0) out.push('no_members');
+    if (!this.coordinatorId()) out.push('no_coordinator');
+    else if (!this.members().includes(this.coordinatorId())) out.push('coordinator_not_member');
+    return out;
   });
 
   readonly compositionCode = computed(() => {
-    if (this.compositionIssue()) return '';
+    if (this.members().length === 0) return '';
     const rows = this.chosen().map(y => ({ id: y.id, role: (y.id === this.coordinatorId() ? 'coordonator' : 'membru') as YouthRole }));
-    return withHeader(`${MEMBERSHIPS_FILE} (înlocuiește blocul activ al echipei)`, membershipBlock(this.team(), rows));
+    return this.todo(this.compositionIssues())
+      + withHeader(`${MEMBERSHIPS_FILE} (înlocuiește blocul activ al echipei)`, membershipBlock(this.team(), rows));
   });
 
   /* ═════════ Cierre de la composición ═════════ */
@@ -105,18 +129,19 @@ export class TeamsSectionComponent {
   readonly moveYouth = computed(() => this.data.getYouthById(this.moveYouthId()) ?? null);
   readonly moveFrom = computed(() => this.data.getActiveTeamsForYouth(this.moveYouthId()).map(t => t.teamName));
 
-  readonly moveIssue = computed(() => {
-    if (!this.moveYouthId()) return 'missing_youth';
-    if (this.moveFrom().includes(this.moveTo())) return 'same_team';
-    if (this.moveRole() === 'coordonator' && this.data.getCoordinatorForTeam(this.moveTo())) return 'team_has_coordinator';
-    return null;
+  readonly moveIssues = computed(() => {
+    const out: string[] = [];
+    if (!this.moveYouthId()) out.push('missing_youth');
+    if (this.moveFrom().includes(this.moveTo())) out.push('same_team');
+    if (this.moveRole() === 'coordonator' && this.data.getCoordinatorForTeam(this.moveTo())) out.push('team_has_coordinator');
+    return out;
   });
 
   readonly moveCode = computed(() => {
     const y = this.moveYouth();
-    if (!y || this.moveIssue()) return '';
+    if (!y) return '';
     const from = this.moveFrom();
-    return joinBlocks(
+    return this.todo(this.moveIssues()) + joinBlocks(
       from.length > 0
         ? removeHint(MEMBERSHIPS_FILE, from.map(t => `membership('${y.id}', '${t}')`).join(' · '))
         : '',

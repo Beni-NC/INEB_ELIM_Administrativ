@@ -84,12 +84,14 @@
       </div>
     </div>
 
-    @if (newYouthIssue(); as issue) {
+    @if (newYouthIssues().length > 0) {
       <div class="ui-card__body checks">
-        <span class="checks__item checks__item--warning">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
-          {{ ('admin.check.' + issue) | translate }}
-        </span>
+        @for (issue of newYouthIssues(); track issue) {
+          <span class="checks__item checks__item--warning">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+            {{ ('admin.check.' + issue) | translate }}
+          </span>
+        }
       </div>
     }
     <app-admin-code [code]="newYouthCode()" hint="admin.new_youth_hint" />
@@ -197,12 +199,14 @@
       </div>
     </div>
 
-    @if (newParentIssue(); as issue) {
+    @if (newParentIssues().length > 0) {
       <div class="ui-card__body checks">
-        <span class="checks__item checks__item--warning">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
-          {{ ('admin.check.' + issue) | translate }}
-        </span>
+        @for (issue of newParentIssues(); track issue) {
+          <span class="checks__item checks__item--warning">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+            {{ ('admin.check.' + issue) | translate }}
+          </span>
+        }
       </div>
     }
     <app-admin-code [code]="newParentCode()" hint="admin.new_parent_hint" />
@@ -284,7 +288,7 @@
     @if (linkParentId(); as parentId) {
       <div class="ui-card__body">
         @if (existingChildren(parentId).length > 0) {
-          <p class="ui-card__desc">{{ 'admin.link_existing' | translate:{ n: existingChildren(parentId).length } }}</p>
+          <p class="ui-card__desc">{{ existingChildren(parentId).length | plural:'admin.link_existing' }}</p>
         }
         @for (row of linkChildren(); track row.id) {
           <div class="row-edit__line">
@@ -312,12 +316,14 @@
       </div>
     }
 
-    @if (linkIssue(); as issue) {
+    @if (linkIssues().length > 0) {
       <div class="ui-card__body checks">
-        <span class="checks__item checks__item--warning">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
-          {{ ('admin.check.' + issue) | translate }}
-        </span>
+        @for (issue of linkIssues(); track issue) {
+          <span class="checks__item checks__item--warning">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+            {{ ('admin.check.' + issue) | translate }}
+          </span>
+        }
       </div>
     }
     <app-admin-code [code]="linkCode()" hint="admin.link_hint" />

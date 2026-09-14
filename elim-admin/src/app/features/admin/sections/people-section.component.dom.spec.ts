@@ -16,7 +16,7 @@ describe('PeopleSectionComponent', () => {
 
   it('da de alta un joven con su pertenencia y los padres que ya existen', async () => {
     const { fixture, cmp } = await render();
-    expect(cmp.newYouthCode()).toBe('');           // formulario incompleto
+    expect(cmp.newYouthCode()).toContain('// TODO:');   // incompleto, pero con estructura
     cmp.ny.firstName.set('Ana');
     cmp.ny.lastName.set('Bîrle');
     cmp.ny.birthDate.set('2008-03-14');
@@ -39,8 +39,9 @@ describe('PeopleSectionComponent', () => {
     cmp.ny.lastName.set('Dinu');
     cmp.ny.birthDate.set('2005-01-01');
     await fixture.whenStable();
-    expect(cmp.newYouthIssue()).toBe('youth_exists');
-    expect(cmp.newYouthCode()).toBe('');
+    // La estructura se genera igualmente, pero avisa y deja el TODO dentro del código.
+    expect(cmp.newYouthIssues()).toContain('youth_exists');
+    expect(cmp.newYouthCode()).toContain('// TODO:');
   });
 
   it('archiva un joven y cierra sus pertenencias activas', async () => {
@@ -72,8 +73,8 @@ describe('PeopleSectionComponent', () => {
     // El mismo hijo dos veces se avisa y no genera nada.
     cmp.patchChild(cmp.npChildren()[1].id, { youthId: 'y-dan' });
     await fixture.whenStable();
-    expect(cmp.newParentIssue()).toBe('duplicate_children');
-    expect(cmp.newParentCode()).toBe('');
+    expect(cmp.newParentIssues()).toContain('duplicate_children');
+    expect(cmp.newParentCode()).toContain('// TODO:');
   });
 
   it('vincula a un padre existente hijos que ya estaban dados de alta', async () => {
@@ -83,10 +84,10 @@ describe('PeopleSectionComponent', () => {
     // y-dan ya está vinculado en el fixture: no se puede repetir.
     cmp.patchLinkChild(cmp.linkChildren()[0].id, { youthId: 'y-dan' });
     await fixture.whenStable();
-    expect(cmp.linkIssue()).toBe('link_exists');
+    expect(cmp.linkIssues()).toContain('link_exists');
     cmp.patchLinkChild(cmp.linkChildren()[0].id, { youthId: 'y-ion', relationship: 'father' });
     await fixture.whenStable();
-    expect(cmp.linkIssue()).toBeNull();
+    expect(cmp.linkIssues()).toEqual([]);
     expect(cmp.linkCode()).toContain("{ parentId: 'p-1', youthId: 'y-ion', relationship: 'father' },");
   });
 });
@@ -118,8 +119,8 @@ describe('TeamsSectionComponent', () => {
     cmp.toggleMember('y-ion');   // era el coordinador: al quitarlo, deja de estar elegido
     await fixture.whenStable();
     expect(cmp.coordinatorId()).toBe('');
-    expect(cmp.compositionIssue()).toBe('no_coordinator');
-    expect(cmp.compositionCode()).toBe('');
+    expect(cmp.compositionIssues()).toContain('no_coordinator');
+    expect(cmp.compositionCode()).toContain('// TODO:');
   });
 
   it('cierra la composición con su fecha', async () => {
@@ -139,7 +140,7 @@ describe('TeamsSectionComponent', () => {
     expect(cmp.moveCode()).toContain("membership('y-dan', 'Echipa 2'),");
     cmp.moveRole.set('coordonator');
     await fixture.whenStable();
-    expect(cmp.moveIssue()).toBe('team_has_coordinator');
+    expect(cmp.moveIssues()).toContain('team_has_coordinator');
   });
 });
 

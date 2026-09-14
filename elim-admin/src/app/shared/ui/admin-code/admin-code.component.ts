@@ -5,7 +5,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 /**
  * Bloque de código generado por el panel `/admin`: el texto exacto que se pega en un fichero de
  * datos, con su botón de copiar. Se repite en todas las secciones, así que vive en un solo sitio.
- * Si no hay nada que generar (formulario incompleto), no se pinta.
+ * Si no hay nada que generar (formulario vacío), no se pinta.
  */
 @Component({
   selector: 'app-admin-code',
@@ -28,7 +28,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 })
 export class AdminCodeComponent {
   readonly code = input('');
-  /** Clave i18n del botón; por defecto "Copiază". */
+  /** Clave i18n del botón de copiar. */
   readonly label = input('admin.copy_lines');
   /** Clave i18n de una frase de ayuda sobre qué hacer con el código. */
   readonly hint = input('');

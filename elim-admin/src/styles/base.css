@@ -68,6 +68,10 @@ button {
 }
 a, [role="button"] { touch-action: manipulation; }
 
+/* `<router-outlet>` es un marcador, no contenido: dentro de un contenedor flex contaba como un
+   elemento más y su `gap` añadía un hueco fantasma antes de cada pantalla. */
+router-outlet { display: none; }
+
 /* Solo para lectores de pantalla. */
 .sr-only {
   position: absolute;

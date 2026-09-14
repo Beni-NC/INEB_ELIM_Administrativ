@@ -1,0 +1,397 @@
+<section class="ui-section">
+  <div class="ui-card">
+    <header class="ui-card__header">
+      <h3 class="ui-card__title">{{ 'admin.data.title' | translate }}</h3>
+      <span class="ui-count">{{ count() }}</span>
+    </header>
+    <p class="ui-card__desc">{{ 'admin.data.desc' | translate }}</p>
+
+    <div class="ui-card__toolbar">
+      <div class="ui-segmented" role="group" [attr.aria-label]="'admin.data.title' | translate">
+        @for (e of entities; track e) {
+          <button type="button" class="ui-segmented__btn" [attr.aria-pressed]="entity() === e" (click)="selectEntity(e)">
+            {{ ('admin.data.entity_' + e) | translate }}
+          </button>
+        }
+      </div>
+      <label class="ui-input">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#search"/></svg>
+        <input type="search" class="ui-input__field" [ngModel]="search()" (ngModelChange)="search.set($event)"
+               [placeholder]="'admin.data.search' | translate" [attr.aria-label]="'admin.data.search' | translate">
+      </label>
+    </div>
+
+    @if (count() === 0) {
+      <div class="ui-empty">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>
+        <span>{{ 'youths.no_results' | translate }}</span>
+      </div>
+    }
+
+    <!-- ══════════ Programaciones ══════════ -->
+    @if (entity() === 'schedule') {
+      <div class="ui-list">
+        @for (e of schedule(); track entryKey(e)) {
+          <div>
+            <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen(entryKey(e))" [style.--team-color]="getTeamColor(e.team)">
+              <div class="ui-row__lead"><span class="ui-team-badge">{{ getTeamNumber(e.team) }}</span></div>
+              <button type="button" class="ui-row__btn" (click)="openEntry(e)" [attr.aria-expanded]="isOpen(entryKey(e))">
+                <span class="ui-row__title data-row__line">
+                  <span class="num">{{ e.date | ldate:'short' }}</span>
+                  <span class="truncate">{{ e.team }}</span>
+                  <span class="faint truncate">{{ e.coordinator }}</span>
+                  <span class="faint num">{{ e.estimatedPersons }}p</span>
+                  @if (e.parentSupporters; as supporters) {
+                    <span class="faint num" [title]="'schedule.support_parents' | translate">
+                      <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#family_restroom"/></svg>{{ supporters.length }}
+                    </span>
+                  }
+                </span>
+              </button>
+              <div class="ui-row__trail">
+                <svg class="icon faint" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isOpen(entryKey(e)) ? 'expand_less' : 'expand_more')"/></svg>
+              </div>
+            </div>
+
+            @if (isOpen(entryKey(e)) && entryDraft(); as d) {
+              <div class="ui-row-detail">
+                <div class="ui-form-grid">
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_date' | translate }}</span>
+                    <input type="date" class="ui-control" [ngModel]="dateInput(d.date)" (ngModelChange)="patchEntry({ date: admin.fromInput($event) })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_team' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.teamName" (ngModelChange)="patchEntry({ teamName: $event })">
+                      @for (t of admin.teams(); track t) { <option [value]="t">{{ t }}</option> }
+                    </select>
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_coordinator' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.coordinatorName" (ngModelChange)="patchEntry({ coordinatorName: $event })">
+                      @for (y of admin.teamMembers(d.teamName); track y.id) { <option [value]="y.fullName">{{ y.fullName }}</option> }
+                      @if (!admin.teamMembers(d.teamName).length) { <option [value]="d.coordinatorName">{{ d.coordinatorName }}</option> }
+                    </select>
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_persons' | translate }}</span>
+                    <input type="number" class="ui-control" min="1" max="500" [ngModel]="d.estimatedPersons" (ngModelChange)="patchEntry({ estimatedPersons: +$event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'calendar.field_program_type' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.programType || 'youth_evening'" (ngModelChange)="patchEntry({ programType: $event })">
+                      @for (t of programTypes; track t) { <option [value]="t">{{ ('program_type.' + t) | translate }}</option> }
+                    </select>
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'schedule.youths_present' | translate }}</span>
+                    <input type="time" class="ui-control" [ngModel]="d.youthsArrivalTime || ''" (ngModelChange)="patchEntry({ youthsArrivalTime: $event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'event.program' | translate }}</span>
+                    <input type="time" class="ui-control" [ngModel]="d.programStartTime || ''" (ngModelChange)="patchEntry({ programStartTime: $event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'schedule.parents_food' | translate }}</span>
+                    <input type="time" class="ui-control" [ngModel]="d.parentsFoodArrivalTime || ''" (ngModelChange)="patchEntry({ parentsFoodArrivalTime: $event })">
+                  </label>
+                  @for (slot of [0, 1]; track slot) {
+                    <label class="ui-field">
+                      <span>{{ 'schedule.support_parents' | translate }} {{ slot + 1 }}</span>
+                      <select class="ui-select" [ngModel]="d.parentIds[slot] || ''" (ngModelChange)="setEntryParent(slot, $event)">
+                        <option value="">{{ 'admin.no_parent' | translate }}</option>
+                        @for (p of parentsSorted(); track p.parent.id) { <option [value]="p.parent.id">{{ p.parent.name }}</option> }
+                      </select>
+                    </label>
+                  }
+                  <label class="ui-field ui-field--wide">
+                    <span>{{ 'admin.field_observations' | translate }}</span>
+                    <input type="text" class="ui-control" [ngModel]="d.observations || ''" (ngModelChange)="patchEntry({ observations: $event })">
+                  </label>
+                </div>
+                <ng-container *ngTemplateOutlet="actions" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══════════ Jóvenes ══════════ -->
+    @if (entity() === 'youths') {
+      <div class="ui-list">
+        @for (y of youths(); track y.id) {
+          <div>
+            <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen(y.id)" [class.ui-row--muted]="y.active === false">
+              <div class="ui-row__lead"><span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span></div>
+              <button type="button" class="ui-row__btn" (click)="openYouth(y)" [attr.aria-expanded]="isOpen(y.id)">
+                <span class="ui-row__title data-row__line">
+                  <span class="truncate">{{ y.fullName }}</span>
+                  @for (t of data.getActiveTeamsForYouth(y.id); track t.teamName) {
+                    <span class="ui-team-badge ui-team-badge--xs" [style.--team-color]="getTeamColor(t.teamName)">{{ getTeamNumber(t.teamName) }}</span>
+                  }
+                  <span class="faint num truncate">{{ y.id }}</span>
+                </span>
+              </button>
+              <div class="ui-row__trail">
+                <svg class="icon faint" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isOpen(y.id) ? 'expand_less' : 'expand_more')"/></svg>
+              </div>
+            </div>
+
+            @if (isOpen(y.id) && youthDraft(); as d) {
+              <div class="ui-row-detail">
+                <div class="ui-form-grid">
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_first_name' | translate }}</span>
+                    <input type="text" class="ui-control" [ngModel]="d.firstName" (ngModelChange)="patchYouth({ firstName: $event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_last_name' | translate }}</span>
+                    <input type="text" class="ui-control" [ngModel]="d.lastName" (ngModelChange)="patchYouth({ lastName: $event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_gender' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.gender" (ngModelChange)="patchYouth({ gender: $event })">
+                      <option value="M">{{ 'admin.gender_m' | translate }}</option>
+                      <option value="F">{{ 'admin.gender_f' | translate }}</option>
+                    </select>
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_birth' | translate }}</span>
+                    <input type="date" class="ui-control" [ngModel]="dateInput(d.birthDate)" (ngModelChange)="patchYouth({ birthDate: admin.fromInput($event) })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_joined_year' | translate }}</span>
+                    <input type="number" class="ui-control" min="2000" max="2100" [ngModel]="d.joinedYear" (ngModelChange)="patchYouth({ joinedYear: +$event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_phone' | translate }}</span>
+                    <input type="tel" class="ui-control" [ngModel]="d.phone || ''" (ngModelChange)="patchYouth({ phone: $event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_email' | translate }}</span>
+                    <input type="email" class="ui-control" [ngModel]="d.email || ''" (ngModelChange)="patchYouth({ email: $event })">
+                  </label>
+                  <label class="ui-field ui-field--wide">
+                    <span>{{ 'admin.field_notes' | translate }}</span>
+                    <input type="text" class="ui-control" [ngModel]="d.notes || ''" (ngModelChange)="patchYouth({ notes: $event })">
+                  </label>
+                  <label class="ui-check">
+                    <input type="checkbox" [ngModel]="d.active === false" (ngModelChange)="patchYouth({ active: $event ? false : undefined })">
+                    <span>{{ 'admin.archive_youth' | translate }}</span>
+                  </label>
+                  @if (d.active === false) {
+                    <label class="ui-field">
+                      <span>{{ 'youths.inactive_from' | translate }}</span>
+                      <input type="date" class="ui-control" [ngModel]="dateInput(d.inactiveSince)" (ngModelChange)="patchYouth({ inactiveSince: admin.fromInput($event) })">
+                    </label>
+                    <label class="ui-field ui-field--wide">
+                      <span>{{ 'youths.inactive_reason' | translate }}</span>
+                      <input type="text" class="ui-control" [ngModel]="d.inactiveReason || ''" (ngModelChange)="patchYouth({ inactiveReason: $event })">
+                    </label>
+                  }
+                </div>
+                <ng-container *ngTemplateOutlet="actions" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══════════ Padres ══════════ -->
+    @if (entity() === 'parents') {
+      <div class="ui-list">
+        @for (p of parents(); track p.id) {
+          <div>
+            <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen(p.id)" [class.ui-row--muted]="p.active === false">
+              <div class="ui-row__lead"><span class="ui-avatar" [attr.data-tone]="p.tone">{{ p.initials }}</span></div>
+              <button type="button" class="ui-row__btn" (click)="openParent(p)" [attr.aria-expanded]="isOpen(p.id)">
+                <span class="ui-row__title data-row__line">
+                  <span class="truncate">{{ p.name }}</span>
+                  <span class="faint truncate">{{ childrenOf(p.id) }}</span>
+                  <span class="faint num">{{ p.id }}</span>
+                </span>
+              </button>
+              <div class="ui-row__trail">
+                <svg class="icon faint" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isOpen(p.id) ? 'expand_less' : 'expand_more')"/></svg>
+              </div>
+            </div>
+
+            @if (isOpen(p.id) && parentDraft(); as d) {
+              <div class="ui-row-detail">
+                <div class="ui-form-grid">
+                  <label class="ui-field ui-field--wide">
+                    <span>{{ 'admin.field_name' | translate }}</span>
+                    <input type="text" class="ui-control" [ngModel]="d.name" (ngModelChange)="patchParent({ name: $event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_phone' | translate }}</span>
+                    <input type="tel" class="ui-control" [ngModel]="d.phone || ''" (ngModelChange)="patchParent({ phone: $event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_email' | translate }}</span>
+                    <input type="email" class="ui-control" [ngModel]="d.email || ''" (ngModelChange)="patchParent({ email: $event })">
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'parents.member_from' | translate }}</span>
+                    <input type="date" class="ui-control" [ngModel]="dateInput(d.joinedDate)" (ngModelChange)="patchParent({ joinedDate: admin.fromInput($event) })">
+                  </label>
+                  <label class="ui-check">
+                    <input type="checkbox" [ngModel]="d.available !== false" (ngModelChange)="patchParent({ available: $event })">
+                    <span>{{ 'admin.available' | translate }}</span>
+                  </label>
+                  <label class="ui-check">
+                    <input type="checkbox" [ngModel]="d.active === false" (ngModelChange)="patchParent({ active: $event ? false : undefined })">
+                    <span>{{ 'admin.archive_parent' | translate }}</span>
+                  </label>
+                  @if (d.active === false) {
+                    <label class="ui-field">
+                      <span>{{ 'parents.inactive_from' | translate }}</span>
+                      <input type="date" class="ui-control" [ngModel]="dateInput(d.inactiveSince)" (ngModelChange)="patchParent({ inactiveSince: admin.fromInput($event) })">
+                    </label>
+                    <label class="ui-field ui-field--wide">
+                      <span>{{ 'parents.inactive_reason' | translate }}</span>
+                      <input type="text" class="ui-control" [ngModel]="d.inactiveReason || ''" (ngModelChange)="patchParent({ inactiveReason: $event })">
+                    </label>
+                  }
+                </div>
+                <ng-container *ngTemplateOutlet="actions" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══════════ Pertenencias ══════════ -->
+    @if (entity() === 'memberships') {
+      <div class="ui-list">
+        @for (row of memberships(); track row.index) {
+          <div>
+            <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen('m-' + row.index)"
+                 [class.ui-row--muted]="!row.m.active" [style.--team-color]="getTeamColor(row.m.teamName)">
+              <div class="ui-row__lead"><span class="ui-team-badge">{{ getTeamNumber(row.m.teamName) }}</span></div>
+              <button type="button" class="ui-row__btn" (click)="openMembership(row.m, row.index)" [attr.aria-expanded]="isOpen('m-' + row.index)">
+                <span class="ui-row__title data-row__line">
+                  <span class="truncate">{{ row.name }}</span>
+                  @if (row.m.role === 'coordonator') {
+                    <svg class="icon icon--sm ui-star" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>
+                  }
+                  <span class="faint truncate">{{ row.m.teamName }}</span>
+                  @if (!row.m.active) {
+                    <span class="ui-badge">{{ row.m.endDate | ldate:'short' }}</span>
+                  }
+                </span>
+              </button>
+              <div class="ui-row__trail">
+                <svg class="icon faint" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isOpen('m-' + row.index) ? 'expand_less' : 'expand_more')"/></svg>
+              </div>
+            </div>
+
+            @if (isOpen('m-' + row.index) && membershipDraft(); as d) {
+              <div class="ui-row-detail">
+                <div class="ui-form-grid">
+                  <label class="ui-field ui-field--wide">
+                    <span>{{ 'tabs.youths' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.youthId" (ngModelChange)="patchMembership({ youthId: $event })">
+                      @for (y of data.youthsSorted; track y.id) { <option [value]="y.id">{{ y.fullName }}</option> }
+                    </select>
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_team' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.teamName" (ngModelChange)="patchMembership({ teamName: $event })">
+                      @for (t of admin.teams(); track t) { <option [value]="t">{{ t }}</option> }
+                    </select>
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_role' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.role" (ngModelChange)="patchMembership({ role: $event })">
+                      @for (r of roles; track r) { <option [value]="r">{{ ('admin.role_' + r) | translate }}</option> }
+                    </select>
+                  </label>
+                  <label class="ui-check">
+                    <input type="checkbox" [ngModel]="d.active" (ngModelChange)="patchMembership({ active: $event })">
+                    <span>{{ 'admin.data.membership_active' | translate }}</span>
+                  </label>
+                  @if (!d.active) {
+                    <label class="ui-field">
+                      <span>{{ 'admin.field_end' | translate }}</span>
+                      <input type="date" class="ui-control" [ngModel]="dateInput(d.endDate)" (ngModelChange)="patchMembership({ endDate: admin.fromInput($event) })">
+                    </label>
+                  }
+                </div>
+                <ng-container *ngTemplateOutlet="actions" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══════════ Vínculos ══════════ -->
+    @if (entity() === 'links') {
+      <div class="ui-list">
+        @for (row of links(); track row.index) {
+          <div>
+            <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen('l-' + row.index)">
+              <div class="ui-row__lead">
+                <svg class="icon faint" aria-hidden="true"><use href="assets/icons.svg#family_restroom"/></svg>
+              </div>
+              <button type="button" class="ui-row__btn" (click)="openLink(row.l, row.index)" [attr.aria-expanded]="isOpen('l-' + row.index)">
+                <span class="ui-row__title data-row__line">
+                  <span class="truncate">{{ row.parent }} → {{ row.youth }}</span>
+                  <span class="faint">{{ ('relationship.' + row.l.relationship) | translate }}</span>
+                </span>
+              </button>
+              <div class="ui-row__trail">
+                <svg class="icon faint" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isOpen('l-' + row.index) ? 'expand_less' : 'expand_more')"/></svg>
+              </div>
+            </div>
+
+            @if (isOpen('l-' + row.index) && linkDraft(); as d) {
+              <div class="ui-row-detail">
+                <div class="ui-form-grid">
+                  <label class="ui-field ui-field--wide">
+                    <span>{{ 'tabs.parents' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.parentId" (ngModelChange)="patchLink({ parentId: $event })">
+                      @for (p of data.parents; track p.id) { <option [value]="p.id">{{ p.name }}</option> }
+                    </select>
+                  </label>
+                  <label class="ui-field ui-field--wide">
+                    <span>{{ 'tabs.youths' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.youthId" (ngModelChange)="patchLink({ youthId: $event })">
+                      @for (y of data.youthsSorted; track y.id) { <option [value]="y.id">{{ y.fullName }}</option> }
+                    </select>
+                  </label>
+                  <label class="ui-field">
+                    <span>{{ 'admin.field_relationship' | translate }}</span>
+                    <select class="ui-select" [ngModel]="d.relationship" (ngModelChange)="patchLink({ relationship: $event })">
+                      @for (r of relationships; track r) { <option [value]="r">{{ ('relationship.' + r) | translate }}</option> }
+                    </select>
+                  </label>
+                </div>
+                <ng-container *ngTemplateOutlet="actions" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Acciones comunes a cualquier registro abierto: cambiar o borrar, y el código resultante. -->
+<ng-template #actions>
+  <div class="ui-subsection">
+    <div class="section__actions">
+      <button type="button" class="ui-btn ui-btn--ghost" (click)="close()">{{ 'common.close' | translate }}</button>
+      <button type="button" class="ui-btn" [class.ui-btn--danger]="removing()" (click)="removing.set(!removing())">
+        <svg class="icon" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (removing() ? 'close' : 'delete')"/></svg>
+        {{ (removing() ? 'admin.data.cancel_remove' : 'admin.data.remove') | translate }}
+      </button>
+    </div>
+    <app-admin-code [code]="code()" [label]="removing() ? 'admin.copy_remove' : 'admin.copy_replace'"
+                    [hint]="removing() ? 'admin.data.remove_hint' : 'admin.data.replace_hint'" />
+  </div>
+</ng-template>

@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { PluralPipe } from '../../../core/i18n/plural.pipe';
 import { AdminDataService } from '../admin-data.service';
 import { Relationship, YouthRole } from '../../../core/models';
 import {
   DraftYouth, closeMembershipLine, joinBlocks, membershipLine, nextParentId, parentBlock, parentBlockFor,
-  parentYouthLinkLine, parentYouthLinkLines, withHeader, youthId, youthLineFor, youthLine,
+  parentYouthLinkLine, parentYouthLinkLines, todoComment, withHeader, youthId, youthLineFor, youthLine,
 } from '../../../core/utils/data-source.utils';
+import { TranslateService } from '@ngx-translate/core';
 import { AdminCodeComponent } from '../../../shared/ui/admin-code/admin-code.component';
 
 const FILES = {
@@ -27,14 +29,20 @@ interface ChildRow { id: number; youthId: string; relationship: Relationship }
 @Component({
   selector: 'app-admin-people-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TranslatePipe, AdminCodeComponent],
+  imports: [FormsModule, TranslatePipe, PluralPipe, AdminCodeComponent],
   templateUrl: './people-section.component.html',
   styleUrl: './section.css',
 })
 export class PeopleSectionComponent {
   protected readonly admin = inject(AdminDataService);
   protected readonly data = this.admin.data;
+  private readonly translate = inject(TranslateService);
   readonly relationships: Relationship[] = ['mother', 'father', 'guardian'];
+
+  /** Texto traducido de cada aviso, para escribirlo como TODO dentro del código generado. */
+  private todo(issues: readonly string[]): string {
+    return todoComment(issues.map(i => this.translate.instant(`admin.check.${i}`) as string));
+  }
   readonly roles: YouthRole[] = ['membru', 'coordonator'];
 
   readonly youths = computed(() => this.data.activeYouths);
@@ -62,28 +70,34 @@ export class PeopleSectionComponent {
   }
   removeYouthParent(id: number): void { this.nyParents.update(l => l.filter(r => r.id !== id)); }
 
-  readonly newYouthIssue = computed(() => {
+  readonly newYouthIssues = computed(() => {
     const n = this.ny;
-    if (!n.firstName().trim() || !n.lastName().trim()) return 'missing_name';
-    if (!n.birthDate()) return 'missing_birth';
+    const out: string[] = [];
+    if (!n.firstName().trim() || !n.lastName().trim()) out.push('missing_name');
+    if (!n.birthDate()) out.push('missing_birth');
     const fullName = `${n.lastName().trim()} ${n.firstName().trim()}`;
-    if (this.data.getYouthById(this.newYouthId()) || this.data.getYouthByName(fullName)) return 'youth_exists';
-    if (!n.team()) return 'missing_team';
-    return null;
+    if (n.firstName().trim() && (this.data.getYouthById(this.newYouthId()) || this.data.getYouthByName(fullName))) {
+      out.push('youth_exists');
+    }
+    if (!n.team()) out.push('missing_team');
+    const parents = this.nyParents().map(r => r.parentId).filter(Boolean);
+    if (new Set(parents).size !== parents.length) out.push('duplicate_parents');
+    return out;
   });
 
   readonly newYouthCode = computed(() => {
-    if (this.newYouthIssue()) return '';
     const n = this.ny;
     const id = this.newYouthId();
     const draft: DraftYouth = {
       firstName: n.firstName().trim(), lastName: n.lastName().trim(), gender: n.gender(),
-      birthDate: this.admin.fromInput(n.birthDate()), joinedYear: Number(n.joinedYear()),
+      // Sin fecha, un marcador reconocible: el TODO de arriba recuerda completarla.
+      birthDate: n.birthDate() ? this.admin.fromInput(n.birthDate()) : new Date(2000, 0, 1),
+      joinedYear: Number(n.joinedYear()),
       phone: n.phone(), email: n.email(), notes: n.notes(),
     };
     // Un vínculo por cada padre elegido (el joven es el mismo en todos).
     const links = this.nyParents().filter(r => r.parentId);
-    return joinBlocks(
+    return this.todo(this.newYouthIssues()) + joinBlocks(
       withHeader(FILES.youths, youthLine(draft)),
       withHeader(FILES.memberships, membershipLine(id, n.team(), n.role())),
       withHeader(FILES.links, links.map(r => parentYouthLinkLine(r.parentId, id, r.relationship)).join('\n')),
@@ -145,18 +159,18 @@ export class PeopleSectionComponent {
   }
   removeChild(id: number): void { this.npChildren.update(l => l.filter(r => r.id !== id)); }
 
-  readonly newParentIssue = computed(() => {
-    if (!this.np.name().trim()) return 'missing_name';
+  readonly newParentIssues = computed(() => {
+    const out: string[] = [];
+    if (!this.np.name().trim()) out.push('missing_name');
     const chosen = this.npChildren().map(c => c.youthId).filter(Boolean);
-    if (new Set(chosen).size !== chosen.length) return 'duplicate_children';
-    return null;
+    if (new Set(chosen).size !== chosen.length) out.push('duplicate_children');
+    return out;
   });
 
   readonly newParentCode = computed(() => {
-    if (this.newParentIssue()) return '';
     const id = this.newParentId();
     const children = this.npChildren().filter(c => c.youthId).map(c => ({ youthId: c.youthId, relationship: c.relationship }));
-    return joinBlocks(
+    return this.todo(this.newParentIssues()) + joinBlocks(
       withHeader(FILES.parents, parentBlock({
         id, name: this.np.name().trim(), phone: this.np.phone(), email: this.np.email(), joinedDate: this.data.today,
       })),
@@ -213,19 +227,22 @@ export class PeopleSectionComponent {
     return this.data.getYouthsForParent(parentId).map(l => l.youth.id);
   }
 
-  readonly linkIssue = computed(() => {
+  readonly linkIssues = computed(() => {
     const parentId = this.linkParentId();
-    if (!parentId) return 'missing_parent';
+    const out: string[] = [];
+    if (!parentId) out.push('missing_parent');
     const chosen = this.linkChildren().map(c => c.youthId).filter(Boolean);
-    if (chosen.length === 0) return 'missing_child';
-    if (new Set(chosen).size !== chosen.length) return 'duplicate_children';
-    if (chosen.some(id => this.existingChildren(parentId).includes(id))) return 'link_exists';
-    return null;
+    if (chosen.length === 0) out.push('missing_child');
+    if (new Set(chosen).size !== chosen.length) out.push('duplicate_children');
+    if (parentId && chosen.some(id => this.existingChildren(parentId).includes(id))) out.push('link_exists');
+    return out;
   });
 
   readonly linkCode = computed(() => {
-    if (this.linkIssue()) return '';
-    return withHeader(FILES.links, parentYouthLinkLines(this.linkParentId(),
-      this.linkChildren().filter(c => c.youthId).map(c => ({ youthId: c.youthId, relationship: c.relationship }))));
+    const children = this.linkChildren().filter(c => c.youthId).map(c => ({ youthId: c.youthId, relationship: c.relationship }));
+    if (children.length === 0) return '';
+    return this.todo(this.linkIssues())
+      + withHeader(FILES.links, parentYouthLinkLines(this.linkParentId() || 'p-???', children));
   });
+
 }

@@ -341,6 +341,89 @@ defecto es deliberado).
   una publicada, altas, archivo, vínculos, composición, mover, reparto), build de producción y el
   panel probado en el navegador (quitar fila, jueves con aviso, horas, código regenerado) en 1280 y 390 px.
 
+### Entregado (2026-09-14, décimo bloque) — `v.2.9.0` (generar siempre, publicar solo y repaso de detalle)
+- **La estructura se genera en cualquier momento**, aunque falten datos: los formularios ya no se
+  quedan en blanco. Lo que falta se lista en pantalla (varios avisos a la vez, no solo el primero)
+  y queda escrito dentro del código como `// TODO: …`.
+- **Repaso de detalle**: pipe `plural` para que no salga "1 avertismente" ni "acum 1 zile" (claves
+  `…_one` en ro y es); las cinco secciones caben sin scroll lateral en 390 px; el texto de la
+  cabecera ya no dice que no hay ningún enlace (lo hay, discreto, en el pie); `ui-input__field`
+  (buscador) se sustituye por `ui-control` en los 36 campos del panel, que era lo que estiraba las
+  fechas y los números a todo el ancho.
+- **Composición de equipo compacta**: equipo, coordinador y buscador en una sola fila, y los 60
+  jóvenes en una **rejilla responsive** (`ui-choice-grid`, 5 columnas en escritorio, 2 en tablet,
+  1 en móvil) con avatar, nombre, badge del equipo actual y estrella del coordinador: la tarjeta
+  pasa de ~2.900 px de alto a 870 px. Atajos "Toți / Niciunul" sobre lo que filtra el buscador.
+- Verificado: `tsc`, 67 tests de Node y 26 de componente, build de producción, y en el navegador:
+  plurales, navegación en móvil, aviso de fecha ocupada, la app pública sin scroll horizontal y sin
+  dock ni banner en /admin.
+
+### Entregado (2026-09-14, undécimo bloque) — `v.2.10.0` (sección "Datele" y barra del panel)
+- **Nueva sección "Datele"**: las cinco tablas de `core/data` tal y como están (programaciones,
+  jóvenes, padres, pertenencias y vínculos), con buscador y contador. Cada registro se abre en una
+  fila expandible con **todos sus campos editables** (fechas, horas, textos, números, selects,
+  archivado…) y da la **línea exacta de reemplazo**; con "Șterge" da en cambio lo que hay que
+  eliminar, **incluidas las filas que dependen de él** (las pertenencias y los vínculos de un
+  joven, los `parentSupporters` de un padre), que es justo lo que se olvida al borrar a mano.
+- **Barra del panel** en lugar de la tarjeta con segmentado: **una sola línea de 39 px** (las seis
+  secciones como pestañas con icono + botón `info` que despliega la explicación, que antes ocupaba
+  tres líneas siempre). Va **a sangre**, pegada justo bajo las pestañas de la app y **alineada al
+  píxel con ellas** por los dos lados: sin hueco entre ambas barras ni contenido asomando por los
+  costados al hacer scroll.
+- **La rotación pasa a ser una tabla**: siete frases de 53 px se convierten en filas de 30 px con
+  columnas alineadas (equipo · coordinador · última · espera · turnos de la temporada · próxima ·
+  **padres de ese turno**), cifras tabulares y una barra tenue proporcional a la espera que hace
+  visible el orden. En móvil se ocultan coordinador y temporada.
+- **Resumen "Cine ajută și când"** dentro del planificador: una línea por programación (fecha ·
+  equipo · padres) mezclando lo publicado con lo que se está preparando (marcado con barra
+  primaria), en rejilla densa con scroll propio; los padres que salen más de una vez van en ámbar
+  y la cabecera lo resume. Es lo que se mira para repartir sin cargar siempre a los mismos.
+- **Reparto justo de los padres** (`parent-fairness.ts`, puro y con 14 tests): el problema no es
+  ayudar muchas veces al año, sino que a alguien le toque dos viernes seguidos mientras otros
+  llevan meses sin salir. La sugerencia ordena por (1) no quedar a menos de **4 semanas** de otro
+  apoyo suyo, (2) menos apoyos en total —contando pasado, futuro y lo que se está preparando—,
+  (3) mayor separación y (4) el criterio elegido en el desplegable. Si no hay alternativa,
+  propone igualmente y **avisa**: el resumen marca en ámbar a quien ayuda demasiado seguido y la
+  cabecera dice cuántos son y con qué separación. Lo usan el generador, "Adaugă o programare",
+  "rellenar los que falten" y el reparto automático de la sección Părinți.
+- **Consejo en cada hueco de padre** (`adviseSlot`): al lado de cada desplegable, un botón propone
+  quién iría mejor **ahí**, contando el historial y el resto de la tanda y descartando a quien ya
+  ocupa el otro hueco de esa programación; pulsándolo repetidamente se recorren las alternativas de
+  mejor a peor (no hace falta recordar nada entre clic y clic: el orden es el mismo). Si quien está
+  puesto vuelve a ayudar **antes de cuatro semanas**, el hueco se marca en ámbar y el botón enseña
+  ya el nombre del recambio —un clic lo aplica y el aviso desaparece—; si no hay a quien proponer,
+  avisa igualmente con un icono. Está en las filas en preparación y en el editor de una
+  programación publicada (ahí, la propia programación no cuenta como carga de sus padres).
+- **El aviso y su arreglo, en el mismo sitio**: en el resumen "Cine ajută și când", el nombre en
+  ámbar de quien ayuda demasiado seguido **es el botón que lo cambia** (`clashes()` da la fecha
+  exacta del apoyo que conviene mover, no solo el nombre). Si esa programación se está preparando,
+  se cambia en su fila; si **ya está publicada**, el cambio se anota aparte y abajo aparece un
+  desplegable —solo cuando hace falta— con las **líneas que la reemplazan** y un "anula los
+  cambios". El editor de abajo parte de ese cambio pendiente, y la programación que esté abierta
+  ahí no se repite en el desplegable: nunca hay dos líneas para la misma fecha.
+- Solo se avisa de lo que aún se puede arreglar: los choques cuyo segundo apoyo ya pasó no se
+  marcan (cambiar el pasado no es una opción).
+- **La columna de padres de la rotación** dice ahora de qué fecha habla: `Părinți (următoarea)`.
+  Eran los padres de la **próxima** programación —lo que hace falta para planificar—, pero puesta
+  al lado de "Ultima" se leía como si fueran los de aquella.
+- **Cât a ajutat fiecare părinte** pasa de "última vez · N programados" a la ficha completa en una
+  línea: última vez, **días esperando** (el criterio real del reparto), desde cuándo participa,
+  sus hijos, y en la derecha la **próxima fecha** que ya tiene y el total de apoyos.
+- **La fila añadida a mano ya viene repartida**: con "Repartizează și părinți" activo, "Adaugă o
+  programare" asigna los padres que tocan según el criterio elegido y **contando lo ya repartido**
+  en esa tanda, así no repite a quien acaba de salir; al activar el reparto o
+  cambiar de criterio se rellenan solo las filas vacías, sin tocar lo elegido a mano.
+- De paso, `router-outlet { display: none }`: como elemento de un contenedor flex, el marcador del
+  router contaba para el `gap` y metía **16 px fantasma** al principio de todas las pestañas.
+- **Datos comprimidos**: cada registro de la sección Datele en **una línea de 36 px** (fecha ·
+  equipo · coordinador · personas · padres; nombre · equipos · id; padre → hijo · parentesco…),
+  en vez de dos líneas por fila.
+- El panel pasa a leer los datos por la costura `APP_DATA` (`AdminDataService.raw`) en vez del
+  fichero real: enseña exactamente lo que ve la app y se puede probar con el fixture.
+- Verificado: `tsc`, 82 tests de Node (orden de padres, reparto justo, consejo por hueco y choques con su fecha) y **35 de componente** (8 nuevos de la sección de datos, del reparto al añadir fila, del aviso en el hueco y del cambio sobre una programación publicada:
+  listado y filtro por tabla, edición de campos, borrado con dependencias, activar/cerrar una
+  pertenencia, vínculos), build de producción y el panel probado en el navegador.
+
 ## 5. Pendiente (no hecho, por decisión o por alcance)
 
 - **A1 — Datos personales en el bundle público** (fecha de nacimiento, teléfono y e-mail de los
@@ -357,8 +440,9 @@ defecto es deliberado).
 - **Protección de `/admin`**: es una ruta con un acceso discreto en el pie (la app es estática y no
   hay backend, así que no hay contraseña posible). Si algún día molesta que sea accesible, lo
   razonable es un despliegue aparte.
-- **Aplicar los cambios sin copiar y pegar**: requeriría un backend o una acción de GitHub que
-  reescriba los `*.data.ts`. Hoy el panel deja el texto exacto; el pegado es el único paso manual.
+- **Aplicar los cambios sin copiar y pegar** (idea guardada, no se hará por ahora): el panel podría
+  escribir en el repositorio con la API de GitHub y un token personal guardado en el dispositivo.
+  Se descartó a propósito: se prefiere que **una persona revise el cambio** antes de publicarlo.
 
 ## 6. Auditoría 2 (2026-09-14): qué se podría **añadir** — HECHO en v2.6.0 (todo salvo U3)
 

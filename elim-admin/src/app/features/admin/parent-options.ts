@@ -15,6 +15,10 @@ export interface ParentStat {
   readonly last: Date | null;
   /** Apoyos ya programados en el futuro. */
   readonly upcoming: number;
+  /** Próximo apoyo ya programado; `null` si no tiene ninguno. */
+  readonly next: Date | null;
+  /** Días desde la última vez que ayudó; `null` si nunca lo ha hecho. */
+  readonly daysSinceLast: number | null;
 }
 
 /** Ordena por el criterio elegido; a igualdad, el que lleva más tiempo sin ayudar y luego por nombre. */
@@ -26,23 +30,6 @@ export function sortParents(stats: readonly ParentStat[], sort: ParentSort): Par
     if (sort === 'oldest') return byLast(a, b) || a.total - b.total || byName(a, b);
     return a.total - b.total || byLast(a, b) || byName(a, b);
   });
-}
-
-/**
- * Reparte `perEvent` padres a cada programación recorriendo la lista **en el orden recibido**, que
- * es el criterio elegido (menos solicitados primero). Nunca repite dentro de la misma programación
- * y, si hay menos padres que huecos, asigna los que haya.
- */
-export function distributeParents(count: number, pool: readonly string[], perEvent = 2): string[][] {
-  const take = Math.min(perEvent, pool.length);
-  const out: string[][] = [];
-  let i = 0;
-  for (let e = 0; e < count; e++) {
-    const ids: string[] = [];
-    while (ids.length < take) ids.push(pool[i++ % pool.length]);
-    out.push(ids);
-  }
-  return out;
 }
 
 /** "Maria Bîrle · 2× · 15 mai 2026" (o "· niciodată" si nunca ha ayudado). */

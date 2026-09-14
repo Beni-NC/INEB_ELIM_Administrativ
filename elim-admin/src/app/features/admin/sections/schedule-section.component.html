@@ -4,37 +4,63 @@
     <header class="ui-card__header">
       <h3 class="ui-card__title">{{ 'admin.rotation_title' | translate }}</h3>
       @if (data.scheduleStats.teamsWithoutUpcoming > 0) {
-        <span class="ui-badge ui-badge--warning">{{ 'admin.rotation_without' | translate:{ n: data.scheduleStats.teamsWithoutUpcoming } }}</span>
+        <span class="ui-badge ui-badge--warning">{{ data.scheduleStats.teamsWithoutUpcoming | plural:'admin.rotation_without' }}</span>
       }
     </header>
     <p class="ui-card__desc">{{ 'admin.rotation_desc' | translate }}</p>
-    <div class="ui-list">
-      @for (r of data.teamRotation; track r.teamName) {
-        <div class="ui-row" [style.--team-color]="getTeamColor(r.teamName)">
-          <div class="ui-row__lead"><span class="ui-team-badge">{{ getTeamNumber(r.teamName) }}</span></div>
-          <div class="ui-row__main">
-            <span class="ui-row__title"><span class="truncate">{{ r.teamName }}</span></span>
-            <span class="ui-row__meta">
-              @if (r.last) {
-                <span>{{ 'admin.rotation_last' | translate }} {{ r.last.date | ldate:'short' }}</span>
-                <span class="faint">·</span>
-                <span class="num">{{ 'admin.rotation_days_ago' | translate:{ n: r.daysSinceLast } }}</span>
-              } @else {
-                <span class="faint">{{ 'admin.rotation_never' | translate }}</span>
-              }
-              <span class="faint">·</span>
-              <span class="num">{{ 'admin.rotation_season' | translate:{ n: r.turnsThisSeason } }}</span>
-            </span>
-          </div>
-          <div class="ui-row__trail">
-            @if (r.next) {
-              <span class="ui-badge ui-badge--primary num">{{ r.next.date | ldate:'short' }}</span>
-            } @else {
-              <span class="ui-badge ui-badge--warning">{{ 'common.no_schedule' | translate }}</span>
-            }
-          </div>
-        </div>
-      }
+    <div class="ui-card__body rota-wrap">
+      <table class="rota">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'admin.rota_team' | translate }}</th>
+            <th scope="col" class="rota--coord">{{ 'admin.rota_coordinator' | translate }}</th>
+            <th scope="col" class="rota--num">{{ 'admin.rota_last' | translate }}</th>
+            <th scope="col" class="rota--num">{{ 'admin.rota_waiting' | translate }}</th>
+            <th scope="col" class="rota--num rota--season">{{ 'admin.rota_season' | translate }}</th>
+            <th scope="col" class="rota__next">{{ 'admin.rota_next' | translate }}</th>
+            <th scope="col">{{ 'admin.rota_parents' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of data.teamRotation; track r.teamName) {
+            <tr [style.--team-color]="getTeamColor(r.teamName)">
+              <td class="rota__team">
+                <span class="ui-team-badge ui-team-badge--xs">{{ getTeamNumber(r.teamName) }}</span>
+                <span class="truncate">{{ r.teamName }}</span>
+              </td>
+              <td class="rota--coord rota__soft"><span class="truncate">{{ admin.coordinatorOf(r.teamName) }}</span></td>
+              <td class="rota__last rota--num">
+                @if (r.last) { {{ r.last.date | ldate:'short' }} } @else { <span class="faint">—</span> }
+              </td>
+              <!-- La barra hace visible el orden: quien más espera, más llena. -->
+              <td class="rota--num rota__wait" [style.--fill.%]="waitShare(r.daysSinceLast)">
+                @if (r.daysSinceLast !== null) { {{ r.daysSinceLast }}{{ 'common.day_letter' | translate }} }
+                @else { <span class="faint">—</span> }
+              </td>
+              <td class="rota--num rota--season num">{{ r.turnsThisSeason }}</td>
+              <td class="rota__next">
+                @if (r.next) {
+                  <span class="ui-badge ui-badge--primary num">{{ r.next.date | ldate:'dayMonth' }}</span>
+                } @else {
+                  <span class="ui-badge ui-badge--warning">{{ 'common.no_schedule' | translate }}</span>
+                }
+              </td>
+              <!-- Quién ayuda en ese turno: si falta por repartir, se dice aquí mismo. -->
+              <td class="rota__parents rota__soft">
+                @if (r.next) {
+                  @if (parentsOf(r.next); as names) {
+                    <span class="truncate">{{ names }}</span>
+                  } @else {
+                    <span class="faint">{{ 'event.no_parents' | translate }}</span>
+                  }
+                } @else {
+                  <span class="faint">—</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -46,10 +72,10 @@
       <h3 class="ui-card__title">{{ 'admin.planner_title' | translate }}</h3>
       <span class="ui-count">{{ rows().length }}</span>
       @if (errorCount() > 0) {
-        <span class="ui-badge ui-badge--danger">{{ 'admin.rows_with_errors' | translate:{ n: errorCount() } }}</span>
+        <span class="ui-badge ui-badge--danger">{{ errorCount() | plural:'admin.rows_with_errors' }}</span>
       }
       @if (warningCount() > 0) {
-        <span class="ui-badge ui-badge--warning">{{ 'admin.rows_with_warnings' | translate:{ n: warningCount() } }}</span>
+        <span class="ui-badge ui-badge--warning">{{ warningCount() | plural:'admin.rows_with_warnings' }}</span>
       }
       <span class="ui-spacer"></span>
       <button type="button" class="ui-btn ui-btn--ghost" (click)="regenerate()">
@@ -76,12 +102,12 @@
       </label>
       <label class="ui-field">
         <span>{{ 'admin.field_parent_sort' | translate }}</span>
-        <select class="ui-select" [ngModel]="parentSort()" (ngModelChange)="parentSort.set($event)">
+        <select class="ui-select" [ngModel]="parentSort()" (ngModelChange)="parentSort.set($event); fillMissingParents()">
           @for (s of sorts; track s) { <option [value]="s">{{ ('admin.sort_' + s) | translate }}</option> }
         </select>
       </label>
       <label class="ui-check">
-        <input type="checkbox" [ngModel]="withParents()" (ngModelChange)="withParents.set($event)">
+        <input type="checkbox" [ngModel]="withParents()" (ngModelChange)="withParents.set($event); fillMissingParents()">
         <span>{{ 'admin.field_with_parents' | translate }}</span>
       </label>
       <label class="ui-check">
@@ -89,6 +115,60 @@
         <span>{{ 'admin.field_show_times' | translate }}</span>
       </label>
     </div>
+
+    <!-- Quién ayuda y cuándo: lo publicado + lo que se está preparando, para repartir con criterio. -->
+    @if (agenda().length > 0) {
+      <div class="ui-card__body agenda">
+        <div class="agenda__head">
+          <button type="button" class="ui-btn ui-btn--ghost agenda__toggle" (click)="showAgenda.set(!showAgenda())"
+                  [attr.aria-expanded]="showAgenda()">
+            <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (showAgenda() ? 'expand_less' : 'expand_more')"/></svg>
+            {{ 'admin.agenda_title' | translate }}
+            <span class="ui-count">{{ agenda().length }}</span>
+          </button>
+          @if (crowded().length > 0) {
+            <span class="ui-badge ui-badge--warning" [title]="crowdedNames().join(' · ')">
+              {{ crowded().length | plural:'admin.agenda_crowded' }}
+            </span>
+          }
+        </div>
+
+        @if (showAgenda()) {
+          <div class="agenda__grid">
+            @for (row of agenda(); track row.time) {
+              <div class="agenda__item" [class.agenda__item--draft]="row.draft" [style.--team-color]="getTeamColor(row.teamName)">
+                <span class="agenda__date num">{{ row.date | ldate:'dayMonth' }}</span>
+                <span class="ui-team-badge ui-team-badge--xs" [title]="row.teamName">{{ getTeamNumber(row.teamName) }}</span>
+                @if (row.parents.length > 0) {
+                  <span class="agenda__parents">
+                    @for (p of row.parents; track p.id) {
+                      @if (!$first) { <span class="agenda__sep" aria-hidden="true">·</span> }
+                      @if (fixFor(row, p.id); as fix) {
+                        @if (fix.suggestionId) {
+                          <!-- Quien ayuda demasiado seguido: el propio nombre lo cambia por el recambio. -->
+                          <button type="button" class="agenda__parent agenda__parent--repeat agenda__fix"
+                                  [title]="slotTitle(fix)" [attr.aria-label]="p.name + ' · ' + slotTitle(fix)"
+                                  (click)="applyFix(row, p.id)">
+                            <span class="truncate">{{ p.name }}</span>
+                            <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#sync"/></svg>
+                          </button>
+                        } @else {
+                          <span class="agenda__parent agenda__parent--repeat" [title]="slotTitle(fix)">{{ p.name }}</span>
+                        }
+                      } @else {
+                        <span class="agenda__parent">{{ p.name }}</span>
+                      }
+                    }
+                  </span>
+                } @else {
+                  <span class="agenda__parents faint">{{ 'event.no_parents' | translate }}</span>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
 
     @if (rows().length === 0) {
       <div class="ui-empty">
@@ -128,14 +208,32 @@
 
             <div class="row-edit__line">
               @for (slot of slots; track slot) {
-                <select class="ui-select row-edit__grow" [ngModel]="row.parentIds[slot] || ''"
-                        (ngModelChange)="setRowParent(row.id, slot, $event)"
-                        [attr.aria-label]="'schedule.support_parents' | translate">
-                  <option value="">{{ 'admin.no_parent' | translate }}</option>
-                  @for (p of parents(); track p.parent.id) {
-                    <option [value]="p.parent.id">{{ admin.parentLabel(p, 'parents.never_helped' | translate) }}</option>
-                  }
-                </select>
+                @if (hintFor(row.id, slot); as hint) {
+                  <!-- El desplegable y, al lado, quién iría mejor ahí: un clic lo cambia, otro pasa al siguiente. -->
+                  <span class="row-edit__slot row-edit__grow" [class.row-edit__slot--warn]="hint.tooSoon"
+                        [attr.title]="slotTitle(hint) || null">
+                    <select class="ui-select" [ngModel]="row.parentIds[slot] || ''"
+                            (ngModelChange)="setRowParent(row.id, slot, $event)"
+                            [attr.aria-label]="'schedule.support_parents' | translate">
+                      <option value="">{{ 'admin.no_parent' | translate }}</option>
+                      @for (p of parents(); track p.parent.id) {
+                        <option [value]="p.parent.id">{{ admin.parentLabel(p, 'parents.never_helped' | translate) }}</option>
+                      }
+                    </select>
+                    @if (hint.suggestionId) {
+                      <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon slot-swap"
+                              [class.slot-swap--warn]="hint.tooSoon" [attr.aria-label]="slotTitle(hint)"
+                              (click)="suggestRowParent(row.id, slot)">
+                        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sync"/></svg>
+                        @if (hint.tooSoon) { <span class="truncate">{{ hint.name }}</span> }
+                      </button>
+                    } @else if (hint.tooSoon) {
+                      <svg class="icon icon--sm slot-warn" role="img" [attr.aria-label]="slotTitle(hint)">
+                        <use href="assets/icons.svg#warning"/>
+                      </svg>
+                    }
+                  </span>
+                }
               }
               <input type="text" class="ui-control row-edit__grow" [ngModel]="row.observations"
                      (ngModelChange)="patchRow(row.id, { observations: $event })"
@@ -196,6 +294,40 @@
     </div>
 
     <app-admin-code [code]="code()" hint="admin.planner_hint" />
+
+    <!-- Solo aparece si se ha cambiado algo ya publicado: son líneas que se reemplazan, no que se añaden. -->
+    @if (editedPublished().length > 0) {
+      <div class="ui-card__body edits">
+        <button type="button" class="ui-disclosure" (click)="showEdits.set(!showEdits())"
+                [attr.aria-expanded]="showEdits()">
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#event_repeat"/></svg>
+          {{ 'admin.edited_published' | translate }}
+          <span class="ui-count">{{ editedPublished().length }}</span>
+          <svg class="icon ui-disclosure__chevron" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (showEdits() ? 'expand_less' : 'expand_more')"/></svg>
+        </button>
+        @if (showEdits()) {
+          <div class="ui-disclosure__panel edits__panel">
+            <div class="edits__list">
+              @for (x of editedPublished(); track x.draft.date.getTime()) {
+                <div class="edits__row">
+                  <span class="agenda__date num">{{ x.draft.date | ldate:'dayMonth' }}</span>
+                  <span class="ui-team-badge ui-team-badge--xs" [style.--team-color]="getTeamColor(x.draft.teamName)"
+                        [title]="x.draft.teamName">{{ getTeamNumber(x.draft.teamName) }}</span>
+                  <span class="truncate">{{ parentNames(x.draft.parentIds) }}</span>
+                </div>
+              }
+            </div>
+            <app-admin-code [code]="publishedCode()" label="admin.copy_replace" hint="admin.edited_published_hint" />
+            <div class="edits__actions">
+              <button type="button" class="ui-btn ui-btn--ghost" (click)="clearPublishedEdits()">
+                <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>
+                {{ 'admin.edited_published_clear' | translate }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </div>
 </section>
 
@@ -243,15 +375,34 @@
                  [ngModel]="d.estimatedPersons" (ngModelChange)="patchEdit({ estimatedPersons: +$event })">
         </label>
         @for (slot of slots; track slot) {
-          <label class="ui-field">
-            <span>{{ 'schedule.support_parents' | translate }} {{ slot + 1 }}</span>
-            <select class="ui-select" [ngModel]="d.parentIds[slot] || ''" (ngModelChange)="setEditParent(slot, $event)">
-              <option value="">{{ 'admin.no_parent' | translate }}</option>
-              @for (p of parents(); track p.parent.id) {
-                <option [value]="p.parent.id">{{ admin.parentLabel(p, 'parents.never_helped' | translate) }}</option>
-              }
-            </select>
-          </label>
+          @if (editHints()[slot]; as hint) {
+            <!-- Sin <label>: el botón de al lado no debe abrir el desplegable, así que va con aria-label. -->
+            <div class="ui-field field-parent">
+              <span>{{ 'schedule.support_parents' | translate }} {{ slot + 1 }}</span>
+              <span class="row-edit__slot" [class.row-edit__slot--warn]="hint.tooSoon"
+                    [attr.title]="slotTitle(hint) || null">
+                <select class="ui-select" [ngModel]="d.parentIds[slot] || ''" (ngModelChange)="setEditParent(slot, $event)"
+                        [attr.aria-label]="('schedule.support_parents' | translate) + ' ' + (slot + 1)">
+                  <option value="">{{ 'admin.no_parent' | translate }}</option>
+                  @for (p of parents(); track p.parent.id) {
+                    <option [value]="p.parent.id">{{ admin.parentLabel(p, 'parents.never_helped' | translate) }}</option>
+                  }
+                </select>
+                @if (hint.suggestionId) {
+                  <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon slot-swap"
+                          [class.slot-swap--warn]="hint.tooSoon" [attr.aria-label]="slotTitle(hint)"
+                          (click)="suggestEditParent(slot)">
+                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sync"/></svg>
+                    @if (hint.tooSoon) { <span class="truncate">{{ hint.name }}</span> }
+                  </button>
+                } @else if (hint.tooSoon) {
+                  <svg class="icon icon--sm slot-warn" role="img" [attr.aria-label]="slotTitle(hint)">
+                    <use href="assets/icons.svg#warning"/>
+                  </svg>
+                }
+              </span>
+            </div>
+          }
         }
         <label class="ui-field">
           <span>{{ 'schedule.youths_present' | translate }}</span>

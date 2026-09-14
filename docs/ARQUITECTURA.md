@@ -69,6 +69,7 @@ src/
         title.strategy.ts    título del documento por pestaña ("Echipe · ELIM Tineret"), traducido
         translate.loader.ts  rumano EMPAQUETADO (import del JSON; sin petición al arrancar), otros por HTTP
         until.pipe.ts        cuenta atrás corta para badges: "Azi!" / "Mâine" / "4z" (impuro, sigue al idioma)
+        plural.pipe.ts       contador con forma singular: usa `<clave>_one` cuando vale 1
         translate-loader.factory.ts
       services/
         data.service.ts      `extends ScheduleIndex` + signals de búsqueda/filtro de jóvenes
@@ -112,10 +113,15 @@ src/
         <x>.component.ts + .html + .css   (CSS encapsulado, solo disposición)
       admin/                 PANEL PRIVADO (/admin), un componente por sección:
         admin.component.*      carcasa: elige sección y la recuerda (localStorage `admin.section`)
-        admin-data.service.ts  apoyo común: carga de cada padre, miembros de un equipo, viernes libres, fechas de <input>
+        admin-data.service.ts  apoyo común: datos crudos (`raw`, desde APP_DATA), carga de cada padre,
+                             miembros de un equipo, viernes libres, fechas de <input>
         draft-checks.ts        avisos de una programación en preparación (+ .spec.ts)
-        parent-options.ts      orden y reparto de padres, etiqueta "nombre · Nx · última vez"
-        sections/              health · schedule (propuesta + editor) · parents · teams · people
+        parent-options.ts      orden de los padres y etiqueta "nombre · Nx · última vez"
+        parent-fairness.ts     reparto justo: a quién le toca según carga y separación entre
+                             apoyos (pickParents), qué aconsejar en un hueco concreto
+                             (adviseSlot) y qué apoyos caen demasiado juntos, con su fecha
+                             (clashes/crowdedParents) (+ .spec.ts)
+        sections/              health · schedule (propuesta + editor) · parents · teams · people · data
   testing/
     domain-fixture.ts        fixture de dominio (TODAY, DATA) compartido por tests de Node y de componente
     test-providers.ts        providers del TestBed: zoneless, router real, i18n sin cargador, APP_TODAY/APP_DATA
@@ -223,6 +229,16 @@ toca). Todo lo que sirva para **decidir y escribir** los datos —propuestas, ro
 espera, reparto de padres, avisos de integridad, generadores de líneas— va al panel. El panel no
 escribe nada (no hay backend): produce el texto exacto que se pega en `core/data/*.data.ts`, y
 `data-source.utils.ts` es quien conoce ese formato.
+
+**Generar siempre**: los formularios producen la estructura aunque falten datos; lo que falta se
+avisa en pantalla y se escribe como `// TODO: …` en el propio código (`todoComment`): el panel no
+decide por nadie, solo deja constancia de lo que falta revisar.
+
+**Las seis secciones**: `health` (diagnóstico), `schedule` (propuesta de turnos + editor de una
+publicada), `parents` (reparto), `teams` (composiciones), `people` (altas, edición y vínculos) y
+`data` (las cinco tablas en crudo: cada registro se abre con todos sus campos y da su línea de
+reemplazo o lo que hay que borrar, incluidas las filas dependientes). Las cinco primeras resuelven
+un flujo; la última es el editor genérico para corregir un dato suelto.
 
 **Cómo crece el panel**: una sección = un componente en `features/admin/sections/` con su estado en
 signals; lo común (carga de padres, viernes libres, conversión de fechas) va a `AdminDataService`; el

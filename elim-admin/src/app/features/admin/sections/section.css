@@ -15,3 +15,144 @@
 
 .section__actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); justify-content: flex-end; }
 .section__spacer { flex: 1; }
+
+/* Sección Datele: una línea por registro, a la altura de fila del resto de la app. */
+.data-row { min-height: var(--h-row); }
+.data-row__line { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; font-weight: 500; }
+.data-row__line .faint { font-weight: 400; }
+
+/* Resumen "quién ayuda y cuándo": lo más denso posible, con scroll propio para no empujar las filas. */
+.agenda { gap: var(--sp-1); background: var(--c-surface-2); border-top: 1px solid var(--c-border); }
+.agenda__head { display: flex; align-items: center; gap: var(--sp-2); }
+.agenda__toggle { padding-left: 0; font-weight: 600; }
+.agenda__grid {
+  display: grid;
+  /* 280 px: lo justo para que dos nombres quepan enteros; por debajo se recortan los dos. */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2px var(--sp-3);
+  max-height: 180px;
+  overflow-y: auto;
+  margin-top: var(--sp-1);
+}
+.agenda__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  min-width: 0;
+  padding: 1px 0 1px var(--sp-1);
+  border-left: 2px solid transparent;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+.agenda__item--draft { border-left-color: var(--c-primary); }
+.agenda__date { flex: 0 0 52px; color: var(--c-text-2); }
+/* Cada nombre se recorta por su cuenta (y no la línea entera): si uno es un botón, su parte
+   visible sigue siendo la suya y se puede pulsar. */
+.agenda__parents { display: flex; align-items: center; gap: 4px; min-width: 0; color: var(--c-text-2); }
+.agenda__parent { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agenda__sep { flex: 0 0 auto; color: var(--c-text-3); }
+/* Quien sale más de una vez en lo que se ve: se marca para no cargarle otra más. */
+.agenda__parent--repeat { color: var(--c-warning); font-weight: 500; }
+
+/* Rotación: datos tabulares, así que una tabla de verdad —columnas alineadas y cifras tabulares—
+   en vez de siete frases. Cada fila mide 30 px en vez de 53. */
+.rota-wrap { overflow-x: auto; }
+.rota { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.rota th {
+  padding: 0 var(--sp-2) var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  text-align: left;
+  white-space: nowrap;
+}
+.rota td { padding: 0 var(--sp-2); height: 30px; border-top: 1px solid var(--c-border); white-space: nowrap; }
+.rota tbody tr:first-child td { border-top-color: var(--c-border-strong); }
+/* Solo la columna del equipo se estira; las demás miden lo que su contenido (truco de `width: 1%`). */
+.rota__team { display: flex; align-items: center; gap: var(--sp-1); min-width: 0; font-weight: 500; }
+.rota__last, .rota__wait, .rota--season, .rota__next { width: 1%; }
+/* Coordinador y padres son los textos largos: se reparten el ancho sobrante y recortan con puntos. */
+.rota--coord, .rota__parents { max-width: 0; }
+.rota--coord { width: 25%; }
+.rota__parents { width: 35%; }
+.rota__soft { color: var(--c-text-2); }
+.rota__soft .truncate { display: block; }
+.rota__last { color: var(--c-text-2); }
+/* La cabecera se alinea con sus valores: si la cifra va a la derecha, el rótulo también. */
+.rota .rota--num, .rota .rota__next { text-align: right; }
+.rota .rota--num { font-variant-numeric: tabular-nums; }
+/* Barra proporcional a la espera, en el color del equipo y muy tenue: ordena de un vistazo. */
+.rota__wait {
+  position: relative;
+  color: var(--c-text);
+  font-weight: 500;
+}
+.rota__wait::before {
+  content: '';
+  position: absolute;
+  inset: 3px auto 3px 0;
+  width: calc(var(--fill, 0) * 1%);
+  background: color-mix(in srgb, var(--team-color, var(--c-primary)) 14%, transparent);
+  border-radius: 2px;
+}
+.rota__wait > * { position: relative; }
+
+@media (max-width: 599px) {
+  /* En el móvil sobra la columna de la temporada: lo que se decide es quién lleva más esperando. */
+  .rota--season, .rota--coord { display: none; }
+}
+
+/* Hueco de padre: el desplegable y el botón que propone recambio, pegados y sin ensanchar la fila.
+   Si quien está puesto vuelve a ayudar demasiado pronto, el hueco se marca en ámbar y el botón
+   enseña ya el nombre del recambio (un clic lo aplica; otro pasa a la siguiente alternativa). */
+.row-edit__slot { display: flex; align-items: center; gap: 2px; min-width: 0; }
+/* El botón pertenece a SU desplegable: pegado a él y algo separado del hueco siguiente. */
+.row-edit__slot + .row-edit__slot { margin-left: var(--sp-1); }
+/* Hueco para la flecha del desplegable: al estrecharse, el nombre no debe meterse debajo. */
+.row-edit__slot > .ui-select { flex: 1; min-width: 0; padding-right: 20px; }
+.row-edit__slot--warn > .ui-select { border-color: var(--c-warning); }
+.ui-btn--icon.slot-swap--warn {
+  width: auto;
+  max-width: 152px;
+  padding-inline: var(--sp-1);
+  border-color: var(--c-warning);
+  background: var(--c-warning-soft);
+  color: var(--c-warning);
+  font-size: var(--fs-sm);
+}
+.slot-swap--warn .icon { font-size: var(--icon-sm); }
+.slot-warn { color: var(--c-warning); }
+/* En el editor, el hueco de padre es el campo con más texto (nombre, apoyos y fecha):
+   ocupa dos columnas de la rejilla para que se lea entero. */
+.field-parent { grid-column: span 2; }
+@media (hover: hover) {
+  .ui-btn--icon.slot-swap--warn:hover { border-color: var(--c-warning); color: var(--c-warning); }
+}
+
+/* El aviso y su arreglo en el mismo sitio: el nombre en ámbar es el botón que lo cambia. */
+.agenda__fix {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 500;
+  color: var(--c-warning);
+  cursor: pointer;
+}
+.agenda__fix { overflow: visible; }
+.agenda__fix .truncate { min-width: 0; }
+.agenda__fix .icon { opacity: 0.65; }
+@media (hover: hover) { .agenda__fix:hover { text-decoration: underline; } }
+
+/* Cambios sobre lo ya publicado: líneas que se REEMPLAZAN, así que van aparte del código normal. */
+.edits { border-top: 1px solid var(--c-border); }
+.edits__panel { display: flex; flex-direction: column; gap: var(--sp-2); }
+.edits__list { display: flex; flex-direction: column; gap: 2px; }
+.edits__row { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; font-size: var(--fs-sm); }
+.edits__actions { display: flex; justify-content: flex-end; }
+

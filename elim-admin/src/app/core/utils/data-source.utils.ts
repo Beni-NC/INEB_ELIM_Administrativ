@@ -242,6 +242,15 @@ export function withHeader(file: string, body: string): string {
   return body.trim() ? `// → ${file}\n${body}\n` : '';
 }
 
+/**
+ * Línea de TODO con lo que falta por completar. La estructura se genera igualmente —a veces se
+ * quiere el esqueleto para rellenarlo luego—, pero queda escrito en el propio código lo que hay
+ * que revisar antes de publicarlo.
+ */
+export function todoComment(pending: readonly string[]): string {
+  return pending.length > 0 ? `// TODO: ${pending.join(' · ')}\n` : '';
+}
+
 /** Une varios bloques ya encabezados, separados por una línea en blanco. */
 export function joinBlocks(...blocks: readonly string[]): string {
   return blocks.filter(b => b.trim()).join('\n');

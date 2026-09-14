@@ -4,6 +4,13 @@
     <header class="ui-card__header">
       <h3 class="ui-card__title">{{ 'admin.composition_title' | translate }}</h3>
       <span class="ui-count">{{ members().length }}</span>
+      <span class="ui-spacer"></span>
+      <button type="button" class="ui-btn ui-btn--ghost" (click)="selectVisible()" [disabled]="youths().length === 0">
+        {{ 'admin.select_all' | translate }}
+      </button>
+      <button type="button" class="ui-btn ui-btn--ghost" (click)="clearMembers()" [disabled]="members().length === 0">
+        {{ 'admin.select_none' | translate }}
+      </button>
     </header>
     <p class="ui-card__desc">{{ 'admin.composition_desc' | translate }}</p>
 
@@ -15,52 +22,68 @@
         </select>
       </label>
       <label class="ui-field">
-        <span>{{ 'youths.search_placeholder' | translate }}</span>
-        <input type="search" class="ui-control" [ngModel]="search()" (ngModelChange)="search.set($event)">
-      </label>
-      <label class="ui-field ui-field--wide">
         <span>{{ 'common.coordinator' | translate }}</span>
         <select class="ui-select" [ngModel]="coordinatorId()" (ngModelChange)="coordinatorId.set($event)">
           <option value="">{{ 'admin.select_coordinator' | translate }}</option>
           @for (y of chosen(); track y.id) { <option [value]="y.id">{{ y.fullName }}</option> }
         </select>
       </label>
+      <label class="ui-field">
+        <span>{{ 'admin.field_search' | translate }}</span>
+        <input type="search" class="ui-control" [ngModel]="search()" (ngModelChange)="search.set($event)"
+               [placeholder]="'youths.search_placeholder' | translate">
+      </label>
     </div>
 
-    <div class="ui-list">
-      @for (y of youths(); track y.id) {
-        <label class="ui-row row-edit" [class.ui-row--expanded]="isMember(y.id)">
-          <div class="ui-row__lead">
-            <input type="checkbox" [checked]="isMember(y.id)" (change)="toggleMember(y.id)"
-                   [attr.aria-label]="y.fullName">
-          </div>
-          <div class="row-edit__main">
-            <span class="ui-row__title">
-              <span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span>
-              <span class="truncate">{{ y.fullName }}</span>
-              @if (y.id === coordinatorId()) {
-                <svg class="icon icon--sm ui-star" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>
-              }
-            </span>
-            <span class="ui-row__meta">
-              @for (t of data.getActiveTeamsForYouth(y.id); track t.teamName) {
-                <span class="faint">{{ t.teamName }}</span>
-              }
-              @if (!data.getActiveTeamsForYouth(y.id).length) {
-                <span class="faint">{{ 'youths.no_active_team' | translate }}</span>
-              }
-            </span>
-          </div>
-        </label>
+    <div class="ui-card__body">
+      @if (youths().length === 0) {
+        <div class="ui-empty ui-empty--inline">
+          <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>
+          <span>{{ 'youths.no_results' | translate }}</span>
+        </div>
+      } @else {
+        <div class="ui-choice-grid">
+          @for (y of youths(); track y.id) {
+            <label class="ui-choice" [class.ui-choice--on]="isMember(y.id)"
+                   [title]="y.fullName + (teamsOf(y.id) ? ' · ' + teamsOf(y.id) : '')">
+              <input type="checkbox" [checked]="isMember(y.id)" (change)="toggleMember(y.id)">
+              <span class="ui-choice__body">
+                <span class="ui-choice__line">
+                  <svg class="icon icon--sm ui-choice__mark" aria-hidden="true">
+                    <use [attr.href]="'assets/icons.svg#' + (isMember(y.id) ? 'check_circle' : 'circle')"/>
+                  </svg>
+                  <span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span>
+                  <span class="ui-choice__name">{{ y.fullName }}</span>
+                  @if (y.id === coordinatorId()) {
+                    <svg class="icon icon--sm ui-star" aria-hidden="true"><use href="assets/icons.svg#star-fill"/></svg>
+                  }
+                </span>
+                <!-- Sus equipos actuales, en pequeño: se ve de un vistazo a quién habría que mover. -->
+                @if (data.getActiveTeamsForYouth(y.id); as teams) {
+                  @if (teams.length > 0) {
+                    <span class="ui-choice__tags">
+                      @for (t of teams; track t.teamName) {
+                        <span class="ui-team-badge ui-team-badge--xs" [style.--team-color]="getTeamColor(t.teamName)"
+                              [title]="t.teamName">{{ getTeamNumber(t.teamName) }}</span>
+                      }
+                    </span>
+                  }
+                }
+              </span>
+            </label>
+          }
+        </div>
       }
     </div>
 
-    @if (compositionIssue(); as issue) {
+    @if (compositionIssues().length > 0) {
       <div class="ui-card__body checks">
-        <span class="checks__item checks__item--warning">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
-          {{ ('admin.check.' + issue) | translate }}
-        </span>
+        @for (issue of compositionIssues(); track issue) {
+          <span class="checks__item checks__item--warning">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+            {{ ('admin.check.' + issue) | translate }}
+          </span>
+        }
       </div>
     }
     <app-admin-code [code]="compositionCode()" label="admin.copy_replace" hint="admin.composition_hint" />
@@ -121,12 +144,14 @@
       }
     </div>
 
-    @if (moveIssue(); as issue) {
+    @if (moveIssues().length > 0) {
       <div class="ui-card__body checks">
-        <span class="checks__item checks__item--warning">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
-          {{ ('admin.check.' + issue) | translate }}
-        </span>
+        @for (issue of moveIssues(); track issue) {
+          <span class="checks__item checks__item--warning">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#warning"/></svg>
+            {{ ('admin.check.' + issue) | translate }}
+          </span>
+        }
       </div>
     }
     <app-admin-code [code]="moveCode()" hint="admin.move_hint" />

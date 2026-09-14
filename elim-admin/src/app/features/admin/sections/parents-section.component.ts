@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { PluralPipe } from '../../../core/i18n/plural.pipe';
 import { AdminDataService } from '../admin-data.service';
-import { ParentSort, distributeParents } from '../parent-options';
+import { ParentSort } from '../parent-options';
+import { pickParents } from '../parent-fairness';
 import { ScheduleEntry } from '../../../core/models';
 import { LDatePipe } from '../../../core/i18n/ldate.pipe';
 import { entryKey } from '../../../core/utils/schedule.utils';
@@ -20,11 +22,16 @@ const SCHEDULE_FILE = 'src/app/core/data/schedule.data.ts';
 @Component({
   selector: 'app-admin-parents-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TranslatePipe, LDatePipe, AdminCodeComponent],
+  imports: [FormsModule, TranslatePipe, LDatePipe, PluralPipe, AdminCodeComponent],
   templateUrl: './parents-section.component.html',
   styleUrl: './section.css',
 })
 export class ParentsSectionComponent {
+  /** Hijos de un padre en una línea; cadena vacía si no tiene ninguno vinculado. */
+  childrenOf(id: string): string {
+    return this.data.getYouthsForParent(id).map(l => l.youth.fullName).join(', ');
+  }
+
   protected readonly admin = inject(AdminDataService);
   protected readonly data = this.admin.data;
   protected readonly getTeamColor = getTeamColor;
@@ -54,11 +61,19 @@ export class ParentsSectionComponent {
     this.chosen.update(all => ({ ...all, [entryKey(entry)]: next.filter(Boolean) }));
   }
 
-  /** Reparte dos padres por programación recorriendo la lista ordenada, sin repetir en la misma. */
+  /**
+   * Reparte dos padres por programación con el criterio elegido y **respetando la separación**:
+   * a nadie le toca dos veces en menos de cuatro semanas si hay alternativa.
+   */
   autoAssign(): void {
-    const events = this.events();
-    const assigned = distributeParents(events.length, this.parents().map(p => p.parent.id));
-    this.chosen.set(Object.fromEntries(events.map((e, i) => [entryKey(e), assigned[i]])));
+    const booked = new Map<string, number[]>();
+    const chosen: Record<string, string[]> = {};
+    for (const e of this.events()) {
+      const ids = pickParents(this.admin.parentLoads(this.sort(), booked), e.date);
+      for (const id of ids) booked.set(id, [...(booked.get(id) ?? []), e.date.getTime()]);
+      chosen[entryKey(e)] = ids;
+    }
+    this.chosen.set(chosen);
   }
 
   clearAssignments(): void { this.chosen.set({}); }
