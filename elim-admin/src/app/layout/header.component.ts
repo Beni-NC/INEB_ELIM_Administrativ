@@ -15,7 +15,7 @@ import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component
     template: `
     <header class="ui-header">
       <div class="ui-header__inner ui-container">
-      <app-brand-logo size="sm" tone="light" link="/" />
+      <app-brand-logo tone="light" link="/" />
       <span class="ui-header__divider" aria-hidden="true"></span>
       <a routerLink="/" class="ui-header__brand" [attr.aria-label]="'common.back_to_main' | translate">
         <div class="ui-header__text">

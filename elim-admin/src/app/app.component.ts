@@ -25,7 +25,9 @@ const SWIPE_MAX_Y = 60;
     <app-footer />
     <app-pwa-install-prompt />
     <app-floating-dock />
-  `
+  `,
+    // Flechas ←/→ para cambiar de pestaña con teclado (equivalente al gesto de deslizar en móvil).
+    host: { '(document:keydown)': 'onKeydown($event)' },
 })
 export class AppComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mainContent') mainContent!: ElementRef<HTMLElement>;
@@ -63,6 +65,20 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   private onTouchCancel = (): void => { this.touchActive = false; };
 
+  /**
+   * ← / → cambian de pestaña. Se ignora si hay modificadores (Alt+← es "atrás" en el navegador),
+   * si el foco está en un campo de texto (las flechas mueven el cursor) o si hay un diálogo
+   * abierto (el foco pertenece al diálogo).
+   */
+  protected onKeydown(ev: KeyboardEvent): void {
+    if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
+    if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.defaultPrevented) return;
+    const target = ev.target as HTMLElement | null;
+    if (target?.closest('input, textarea, select, [contenteditable="true"], dialog[open]')) return;
+    ev.preventDefault();
+    this.navigateTab(ev.key === 'ArrowRight' ? 1 : -1, 'keyboard');
+  }
+
   /** Deslizar a la izquierda → pestaña siguiente; a la derecha → anterior. */
   private onTouchEnd = (ev: TouchEvent): void => {
     if (!this.touchActive) return;
@@ -73,10 +89,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     const dy = t.clientY - this.touchStartY;
     // Debe ser un gesto horizontal claro para no interferir con el scroll.
     if (Math.abs(dx) < SWIPE_MIN_X || Math.abs(dy) > SWIPE_MAX_Y) return;
-    this.navigateTab(dx < 0 ? 1 : -1);
+    this.navigateTab(dx < 0 ? 1 : -1, 'touch');
   };
 
-  private navigateTab(delta: number): void {
+  private navigateTab(delta: number, source: 'touch' | 'keyboard'): void {
     const currentPath = this.router.url.split('?')[0].split('#')[0].replace(/^\//, '');
     const currentIdx = TAB_ORDER.indexOf(currentPath);
     if (currentIdx === -1) return;
@@ -85,6 +101,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     // La pestaña que se tocó antes conserva el foco y, en algunos navegadores, su anillo: al
     // cambiar por gesto ya no representa nada, así que se suelta el foco.
     (document.activeElement as HTMLElement | null)?.blur?.();
-    this.router.navigateByUrl('/' + TAB_ORDER[nextIdx]);
+    void this.router.navigateByUrl('/' + TAB_ORDER[nextIdx]).then(ok => {
+      // Con teclado el foco sigue a la pestaña nueva: el anillo indica dónde se está y el lector
+      // de pantalla anuncia el cambio. En táctil no hay foco que mostrar.
+      if (ok && source === 'keyboard') document.querySelector<HTMLElement>('.ui-tab.is-active')?.focus();
+    });
   }
 }

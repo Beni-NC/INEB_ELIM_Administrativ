@@ -25,8 +25,10 @@
   gap: var(--sp-3);
   height: var(--h-header);
 }
-/* El wordmark manda en la cabecera: 28 px en móvil y 32–40 px en escritorio (cabecera de 64 px). */
-.ui-header app-brand-logo { --brand-size: clamp(28px, 3vw, 40px); }
+/* El wordmark manda en la cabecera: 28 px en móvil (cabecera de 48 px) y 28–36 px en escritorio
+   (cabecera de 64 px); la línea de la ciudad escala con él (0.289×). */
+.ui-header app-brand-logo { --brand-size: 28px; }
+@media (min-width: 600px) { .ui-header app-brand-logo { --brand-size: clamp(28px, 3vw, 36px); } }
 .ui-header__brand {
   display: flex;
   align-items: center;
@@ -167,7 +169,7 @@
   align-items: center;
   gap: var(--sp-2) var(--sp-4);
 }
-.ui-footer app-brand-logo { --brand-size: clamp(28px, 3.2vw, 44px); }
+.ui-footer app-brand-logo { --brand-size: clamp(28px, 3vw, 36px); }
 .ui-footer__text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px; line-height: 1.35; }
 .ui-footer__line--strong { color: var(--c-on-brand); font-weight: 500; }
 /* Acciones compactas (WhatsApp, compartir) y crédito, agrupados a la derecha. */

@@ -209,6 +209,12 @@ verdad (feeds publicados en el deploy); quien la añada a su calendario recibir�
   seguía gris tras cambiar deslizando), `:active` como feedback de pulsación en pestañas y
   filas, y al deslizar se suelta el foco de la pestaña anterior (anillo azul en Chrome). El
   tooltip de versión se abre también con el toque (`:focus`).
+- **Teclado**: flechas ←/→ cambian de pestaña (mismo `navigateTab` que el gesto); se ignoran
+  con modificadores, en campos de texto y con diálogo abierto; el foco sigue a la pestaña nueva.
+- **Wordmark de la cabecera**: el `clamp` fluido de `layout.css` nunca se aplicaba (perdía por
+  especificidad ante `:host(.is-sm)` del componente) y el logo salía a 24 px fijos. El tamaño
+  deja de ser input (`size` eliminado) y pasa a ser la propiedad `--brand-size` leída con
+  fallback; cabecera 28 px móvil / 28–36 px escritorio, footer 28–36 px.
 - Verificado: `tsc`, 23 tests (nuevo test de estabilidad del tono), build de producción y
   capturas headless de las cinco pestañas en 1240/375 px, claro y oscuro.
 

@@ -155,9 +155,15 @@ Nunca 700+. Interlineado 1.4 (1.2 en cifras). Mayúsculas solo en `ui-eyebrow`, 
 - **Marca** (`app-brand-logo`): el mismo wordmark tipográfico de MEDIA-ELIM ("ELIM" en
   `--font-brand`, tracking 0.22em; "ARGANDA DEL REY" en oro, justificado al ancho del nombre).
   Es la **única** representación de la iglesia; los PNG blancos (`logo-elim.png`) no se usan en
-  la UI. `tone="light"` sobre claro, `tone="dark"` sobre la banda navy.
+  la UI. `tone="light"` sobre claro, `tone="dark"` sobre la banda navy. El **tamaño no es un
+  input**: lo fija el contexto con `--brand-size` (24 px por defecto): cabecera 28 px en móvil y
+  `clamp(28px, 3vw, 36px)` desde 600 px (debe caber con aire en los 64 px: nombre + 0.14em +
+  ciudad ≈ 1.43 × tamaño); footer `clamp(28px, 3vw, 36px)`.
 - **Tabs**: `ui-tabs` con `<a>` por pestaña; icono 18 + label 13/500; activo = texto primario
-  y subrayado 2 px; en < 600 px icono sobre label (11 px).
+  y subrayado 2 px; en < 600 px icono sobre label (11 px). Además del toque/clic, se cambia de
+  pestaña **deslizando** sobre el contenido (móvil) y con las **flechas ←/→** (teclado; no
+  actúan con modificadores, dentro de un campo de texto ni con un diálogo abierto). Con
+  teclado el foco pasa a la pestaña nueva.
 - **Secciones** (`ui-section`): título en mayúsculas 11/600 gris con contador opcional
   (`ui-count`) y acción a la derecha; contenido en `ui-card` o lista.
 - **Footer** (`ui-footer`): **franja mínima** en `--c-brand-surface` (misma banda que

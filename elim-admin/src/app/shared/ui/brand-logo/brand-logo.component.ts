@@ -2,8 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
-/** Escalas del wordmark: `sm` (24 px) cabecera de app, `md` (32 px). El footer la sobrescribe con un `clamp` fluido. */
-export type BrandLogoSize = 'sm' | 'md';
 /** Fondo sobre el que se pinta: decide tinta y acento (no hay dos ficheros). */
 export type BrandLogoTone = 'light' | 'dark';
 
@@ -17,6 +15,9 @@ export type BrandLogoTone = 'light' | 'dark';
  * `max-content` fijada por el nombre; el `letter-spacing` del nombre se compensa con un margen
  * negativo, y la localidad no aporta ancho (`width: 0; min-width: 100%`) y reparte la holgura
  * con `text-align-last: justify`. Su tamaño deriva del nombre, así la proporción es fija.
+ *
+ * El tamaño no es un input: lo decide el contexto con la propiedad `--brand-size` (cabecera y
+ * footer usan un `clamp` fluido en `layout.css`); sin ella, 24 px.
  */
 @Component({
     selector: 'app-brand-logo',
@@ -39,10 +40,9 @@ export type BrandLogoTone = 'light' | 'dark';
     styleUrl: './brand-logo.component.css'
 })
 export class BrandLogoComponent {
-  readonly size = input<BrandLogoSize>('sm');
   readonly tone = input<BrandLogoTone>('light');
   /** Ruta interna del enlace; `null` la pinta como imagen no navegable. */
   readonly link = input<string | null>('/');
 
-  protected readonly hostClass = computed(() => `is-${this.size()} is-${this.tone()}`);
+  protected readonly hostClass = computed(() => `is-${this.tone()}`);
 }

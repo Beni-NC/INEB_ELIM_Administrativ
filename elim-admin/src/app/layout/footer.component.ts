@@ -26,7 +26,7 @@ import { ShareButtonComponent } from '../shared/ui/share-button/share-button.com
   template: `
     <footer class="ui-footer">
       <div class="ui-footer__inner ui-container">
-        <app-brand-logo size="md" tone="dark" [link]="null" />
+        <app-brand-logo tone="dark" [link]="null" />
         <div class="ui-footer__text">
           <span class="ui-footer__line ui-footer__line--strong">{{ 'footer.department' | translate }}</span>
           <span class="ui-footer__line">
