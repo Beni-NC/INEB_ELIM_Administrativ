@@ -88,4 +88,8 @@
       </div>
     </div>
   }
+
+  <!-- Lo que viene después, comprimido al máximo: "¿cuándo me toca?" sin bajar a la lista larga. -->
+  @if (showTeamStrip()) { <app-upcoming-strip mode="teams" [highlight]="entry().date.getTime()" /> }
+  @if (showParentStrip()) { <app-upcoming-strip mode="parents" [highlight]="entry().date.getTime()" /> }
 </section>

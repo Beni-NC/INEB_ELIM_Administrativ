@@ -409,6 +409,13 @@ defecto es deliberado).
   cortada). Con seis columnas, un nombre largo se recorta antes que descuadrar la barra.
 - **El acceso al panel en el pie** pasa a verse como las demás acciones (ya no al 35 % de opacidad)
   y estrena icono propio de administrador (`admin_panel_settings` en el sprite).
+- **"Lo que viene", en la app pública** (`app-upcoming-strip`, con test de componente): al pie de la
+  tarjeta destacada, una línea por programación con fecha, equipo y —en el modo `parents`— quién
+  ayuda. En Programare van las dos tiras (a quién le toca y qué padres ayudan) y en Părinți solo la
+  de padres. Responde de un vistazo a "¿cuándo me toca?" sin bajar a la lista larga; es **solo
+  lectura** (nada de planificación fuera del panel) y cada nombre lleva a su ficha. La programación
+  de la tarjeta va marcada con la barra primaria —en Părinți no es la primera de la lista, porque
+  la tarjeta enseña el próximo apoyo **con padres**—.
 - **La columna de padres de la rotación** dice ahora de qué fecha habla: `Părinți (următoarea)`.
   Eran los padres de la **próxima** programación —lo que hace falta para planificar—, pero puesta
   al lado de "Ultima" se leía como si fueran los de aquella.

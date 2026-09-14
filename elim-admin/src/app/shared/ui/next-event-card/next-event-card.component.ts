@@ -9,6 +9,7 @@ import { daysBetween, isSameDay } from '../../../core/utils/date.utils';
 import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
 import { CalendarButtonComponent } from '../calendar-button/calendar-button.component';
 import { EventShareButtonComponent } from '../event-share-button/event-share-button.component';
+import { UpcomingStripComponent } from '../upcoming-strip/upcoming-strip.component';
 
 /**
  * Tarjeta destacada de una programación (el próximo evento en Programare, el próximo apoyo
@@ -18,7 +19,7 @@ import { EventShareButtonComponent } from '../event-share-button/event-share-but
 @Component({
     selector: 'app-next-event-card',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TranslatePipe, LDatePipe, CalendarButtonComponent, EventShareButtonComponent],
+    imports: [TranslatePipe, LDatePipe, CalendarButtonComponent, EventShareButtonComponent, UpcomingStripComponent],
     templateUrl: './next-event-card.component.html',
     styleUrl: './next-event-card.component.css'
 })
@@ -28,6 +29,10 @@ export class NextEventCardComponent {
   readonly titleKey = input('schedule.next_event');
   /** Muestra la lista de jóvenes del equipo preparador. */
   readonly showRoster = input(true);
+  /** Añade la tira de lo que viene: a qué equipo le toca cada viernes. */
+  readonly showTeamStrip = input(false);
+  /** Añade la tira de lo que viene: quién ayuda cada viernes. */
+  readonly showParentStrip = input(false);
 
   protected readonly data = inject(DataService);
   protected readonly nav = inject(NavigationService);

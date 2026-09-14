@@ -72,7 +72,7 @@
 
 <!-- Próximo evento -->
 @if (data.nextEvent; as next) {
-  <app-next-event-card [entry]="next" titleKey="schedule.next_event" />
+  <app-next-event-card [entry]="next" titleKey="schedule.next_event" [showTeamStrip]="true" [showParentStrip]="true" />
 }
 
 <!-- Todas las próximas, agrupadas por mes -->

@@ -106,6 +106,8 @@ src/
       share-button/          app-share-button: Web Share API o <dialog> (WhatsApp, Telegram, e-mail, copiar)
       event-row/             app-event-row: fila de programación reutilizable
       next-event-card/       app-next-event-card: tarjeta destacada (próximo evento / apoyo)
+      upcoming-strip/        app-upcoming-strip: lo que viene en una línea por fecha
+                             (equipos o padres), al pie de la tarjeta (+ .dom.spec.ts)
       calendar-button/       app-calendar-button: menú descargar .ics / suscribirse (ámbitos: all, event, team, youth, parent)
       event-share-button/    app-event-share-button: "Trimite detaliile" de una programación (EventShareService)
     features/
