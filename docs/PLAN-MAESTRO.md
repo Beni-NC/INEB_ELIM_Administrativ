@@ -403,6 +403,12 @@ defecto es deliberado).
   ahí no se repite en el desplegable: nunca hay dos líneas para la misma fecha.
 - Solo se avisa de lo que aún se puede arreglar: los choques cuyo segundo apoyo ya pasó no se
   marcan (cambiar el pasado no es una opción).
+- **La barra del panel en el móvil** deja de desplazarse: las seis secciones reparten el ancho a
+  partes iguales con el icono sobre el texto —como las pestañas de la app, pero en 40 px y con
+  texto de 10 px—, así que se ven todas de un vistazo (antes solo cabían cuatro y la cuarta salía
+  cortada). Con seis columnas, un nombre largo se recorta antes que descuadrar la barra.
+- **El acceso al panel en el pie** pasa a verse como las demás acciones (ya no al 35 % de opacidad)
+  y estrena icono propio de administrador (`admin_panel_settings` en el sprite).
 - **La columna de padres de la rotación** dice ahora de qué fecha habla: `Părinți (următoarea)`.
   Eran los padres de la **próxima** programación —lo que hace falta para planificar—, pero puesta
   al lado de "Ultima" se leía como si fueran los de aquella.

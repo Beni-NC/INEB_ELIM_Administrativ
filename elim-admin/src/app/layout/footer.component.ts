@@ -51,10 +51,10 @@ import { ShareButtonComponent } from '../shared/ui/share-button/share-button.com
           </button>
           <app-whatsapp-button [iconOnly]="true" [onDark]="true" [label]="'contact.label' | translate" [message]="'contact.message' | translate" />
           <app-share-button [iconOnly]="true" [onDark]="true" />
-          <!-- Acceso al panel de planificación: deliberadamente tenue, para quien mantiene los datos. -->
-          <a class="ui-btn ui-btn--on-dark ui-btn--icon ui-footer__admin" routerLink="/admin"
+          <!-- Acceso al panel de planificación, como una acción más del pie. -->
+          <a class="ui-btn ui-btn--on-dark ui-btn--icon" routerLink="/admin"
              [attr.aria-label]="'admin.title' | translate" [title]="'admin.title' | translate">
-            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#tune"/></svg>
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#admin_panel_settings"/></svg>
           </a>
           <span class="ui-footer__sep" aria-hidden="true"></span>
           <a class="ui-footer__partner" [href]="contact.partnerUrl" target="_blank" rel="noopener noreferrer"
