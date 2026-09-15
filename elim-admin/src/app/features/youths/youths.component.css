@@ -7,3 +7,6 @@
 /* En móvil la cabecera lleva título, contador y alerta: el resumen numérico no cabe. */
 .youths__stats { display: none; }
 @media (min-width: 600px) { .youths__stats { display: inline; } }
+
+/* En rejilla, las fichas van más apretadas: el ancho de columna es el que manda. */
+@media (min-width: 700px) { .ui-list--grid .ui-row { padding-inline: var(--sp-2); } }

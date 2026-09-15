@@ -19,7 +19,7 @@ import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
   template: `
     @if (rows().length > 0) {
       <div class="strip">
-        <span class="ui-eyebrow">
+        <span class="ui-eyebrow ui-eyebrow--marked">
           {{ (mode() === 'teams' ? 'schedule.strip_teams' : 'schedule.strip_parents') | translate }}
           <span class="ui-count">{{ rows().length }}</span>
         </span>
@@ -58,6 +58,7 @@ import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
       border-top: 1px solid var(--c-border);
     }
     .strip .ui-eyebrow { display: flex; align-items: center; gap: var(--sp-1); }
+    /* Dentro de la tarjeta destacada la tira comparte su fondo; suelta, se queda transparente. */
     .strip__grid {
       display: grid;
       /* El nombre de un equipo es corto: caben muchas columnas. */
@@ -78,7 +79,9 @@ import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
     }
     /* Dos nombres de padres necesitan 280 px para no cortarse; con menos, se cortan los dos. */
     .strip__grid--wide { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-    .strip__item--next { border-left-color: var(--c-primary); }
+    /* La marca toma el color del equipo de esa fecha: dentro de la tarjeta destacada es el suyo,
+       y así no aparece un acento de otro color en un bloque ya teñido. */
+    .strip__item--next { border-left-color: var(--team-color, var(--c-primary)); }
     .strip__date { flex: 0 0 48px; color: var(--c-text-2); }
     .strip__names { display: flex; align-items: center; gap: 4px; min-width: 0; }
     .strip__sep { flex: 0 0 auto; color: var(--c-text-3); }

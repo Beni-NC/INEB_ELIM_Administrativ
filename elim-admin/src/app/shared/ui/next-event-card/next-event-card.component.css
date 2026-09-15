@@ -1,6 +1,18 @@
 :host { display: block; }
 
-.next { border-left: 3px solid var(--team-color); }
+/* Es la respuesta a "¿qué toca ahora?": tiene que ganar a las demás tarjetas de la página sin
+   gritar. Se eleva (sombra de overlay), se tiñe del color del equipo en el borde y la cabecera, y
+   deja el evento en sí sobre la superficie limpia: los bloques de apoyo van sobre la hundida. */
+.next {
+  border-color: color-mix(in srgb, var(--team-color) 22%, var(--c-border));
+  border-left: 4px solid var(--team-color);
+  box-shadow: var(--shadow-overlay);
+}
+.next .ui-card__header {
+  background: color-mix(in srgb, var(--team-color) 8%, var(--c-surface));
+  border-bottom-color: color-mix(in srgb, var(--team-color) 18%, var(--c-border));
+}
+.next__icon { color: var(--team-color); }
 
 .next__body {
   display: grid;
@@ -60,8 +72,10 @@
   gap: var(--sp-1);
   padding: var(--sp-2) var(--sp-3);
   border-top: 1px solid var(--c-border);
+  background: var(--c-surface-2);
 }
-.next__people .ui-eyebrow { display: flex; align-items: center; gap: var(--sp-1); }
+/* La tira vive en su propio componente: el fondo se le pone a su elemento anfitrión. */
+.next app-upcoming-strip { display: block; background: var(--c-surface-2); }
 
 @media (max-width: 599px) {
   .next__body { grid-template-columns: auto 1fr; }

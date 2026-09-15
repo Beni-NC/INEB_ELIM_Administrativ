@@ -54,7 +54,7 @@
     </button>
     @if (showPastGlobal()) {
       <div class="ui-disclosure__panel">
-        <div class="ui-list">
+        <div class="ui-list ui-list--grid" style="--list-col: 420px">
           @for (pe of data.pastParentEvents; track entryKey(pe.entry)) {
             <app-event-row [entry]="pe.entry" [past]="true" [showMonth]="true" [showYear]="true" />
           }
@@ -216,7 +216,7 @@
               <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isPastOpen(p.id) ? 'expand_less' : 'expand_more')"/></svg>
             </button>
             @if (isPastOpen(p.id)) {
-              <div class="ui-list">
+              <div class="ui-list ui-list--grid" style="--list-col: 260px">
                 @for (e of data.getPastEventsForParent(p.id); track entryKey(e)) {
                   <app-event-row [entry]="e" [past]="true" [showMonth]="true" [showYear]="true" [showParents]="false" />
                 }

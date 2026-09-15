@@ -14,6 +14,17 @@
   min-width: 0;
 }
 /* Etiqueta 11 px en mayúsculas encima de un valor o de un grupo de chips. */
+/* Marca de sección dentro de una tarjeta destacada: una barrita del color del equipo que ata cada
+   bloque al evento del que habla. Sin altura extra: va dentro de la propia etiqueta. */
+.ui-eyebrow--marked { display: flex; align-items: center; gap: var(--sp-1); }
+.ui-eyebrow--marked::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--team-color, var(--c-primary));
+}
 .ui-eyebrow {
   font-size: var(--fs-xs);
   font-weight: 600;
@@ -78,6 +89,23 @@
 /* ---- Lista y filas ---- */
 .ui-list { display: flex; flex-direction: column; }
 .ui-list > * + * { border-top: 1px solid var(--c-border); }
+
+/* Variante en rejilla para listas largas de fichas cortas (directorios e históricos): desde 700 px
+   se reparte en columnas de `--list-col` en vez de dejar medio ancho vacío y estirar la página.
+   La separación pasa a ir DEBAJO de cada ficha: un borde superior solo en "la siguiente" dejaría
+   sin línea a la primera de cada columna y descuadraría la rejilla. */
+@media (min-width: 700px) {
+  .ui-list--grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--list-col, 320px), 1fr));
+    column-gap: var(--sp-4);
+  }
+  .ui-list--grid > * { border-bottom: 1px solid var(--c-border); }
+  .ui-list--grid > * + * { border-top: 0; }
+  /* Las cabeceras de mes y la ficha abierta ocupan la fila entera. */
+  .ui-list--grid > .ui-group-head,
+  .ui-list--grid > .is-open { grid-column: 1 / -1; }
+}
 
 .ui-row {
   display: flex;

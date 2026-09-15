@@ -99,7 +99,7 @@
                     <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isPastOpen(team.teamName) ? 'expand_less' : 'expand_more')"/></svg>
                   </button>
                   @if (isPastOpen(team.teamName)) {
-                    <div class="ui-list">
+                    <div class="ui-list ui-list--grid" style="--list-col: 260px">
                       @for (e of data.getPastEventsForTeam(team.teamName); track entryKey(e)) {
                         <app-event-row [entry]="e" [past]="true" [showTeam]="false" [showMonth]="true" [showYear]="true" [linkTeam]="data.isHistoricalEvent(e)" />
                       }
@@ -183,7 +183,7 @@
                   @if (historyEvents(hist).length > 0) {
                     <div class="ui-subsection">
                       <span class="ui-subsection__title">{{ 'teams.schedule_history' | translate }} <span class="ui-count">{{ historyEvents(hist).length }}</span></span>
-                      <div class="ui-list">
+                      <div class="ui-list ui-list--grid" style="--list-col: 260px">
                         @for (e of historyEvents(hist); track entryKey(e)) {
                           <app-event-row [entry]="e" [past]="true" [showTeam]="false" [showMonth]="true" [showYear]="true" [linkTeam]="false" />
                         }

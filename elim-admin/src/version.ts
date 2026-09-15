@@ -17,8 +17,8 @@ export interface AppVersion {
 
 export const APP_VERSION: AppVersion = {
   release: '2.10.0',
-  build: 91,
-  commit: '48ff296',
+  build: 92,
+  commit: 'a02e027',
   dirty: true,
-  builtAt: '2026-09-14T21:37:37.896Z',
+  builtAt: '2026-09-15T09:12:01.221Z',
 };

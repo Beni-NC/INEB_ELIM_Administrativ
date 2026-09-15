@@ -148,7 +148,7 @@
     </button>
     @if (showPast()) {
       <div class="ui-disclosure__panel">
-        <div class="ui-list">
+        <div class="ui-list ui-list--grid" style="--list-col: 420px">
           @for (group of data.pastByMonth; track group.key) {
             <div class="ui-group-head">
               {{ monthDate(group) | ldate:'monthYear' }}

@@ -45,7 +45,7 @@
         <span>{{ 'youths.no_results' | translate }}</span>
       </div>
     } @else {
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid">
         @for (y of visibleYouths(); track y.id) {
           <ng-container *ngTemplateOutlet="youthRow; context: { $implicit: y }" />
         }
@@ -65,7 +65,7 @@
     </button>
     @if (archivedOpen()) {
       <div class="ui-disclosure__panel">
-        <div class="ui-list">
+        <div class="ui-list ui-list--grid">
           @for (y of data.inactiveYouths; track y.id) {
             <ng-container *ngTemplateOutlet="youthRow; context: { $implicit: y }" />
           }
@@ -77,7 +77,7 @@
 
 <!-- Fila + perfil de un joven (activo o archivado) -->
 <ng-template #youthRow let-y>
-  <div [id]="'card-youth-' + y.id">
+  <div [id]="'card-youth-' + y.id" [class.is-open]="expanded() === y.id">
     <div class="ui-row ui-row--expandable"
          [class.ui-row--expanded]="expanded() === y.id"
          [class.ui-row--muted]="y.active === false">
@@ -219,7 +219,7 @@
               <svg class="icon icon--sm" aria-hidden="true"><use [attr.href]="'assets/icons.svg#' + (isPastOpen(y.id) ? 'expand_less' : 'expand_more')"/></svg>
             </button>
             @if (isPastOpen(y.id)) {
-              <div class="ui-list">
+              <div class="ui-list ui-list--grid" style="--list-col: 260px">
                 @for (h of data.getPastEventsForYouth(y.id); track entryKey(h.entry)) {
                   <app-event-row [entry]="h.entry" [past]="true" [showMonth]="true" [showYear]="true" [role]="h.role" [showParents]="false" />
                 }

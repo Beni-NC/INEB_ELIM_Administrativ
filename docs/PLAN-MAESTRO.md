@@ -409,6 +409,16 @@ defecto es deliberado).
   cortada). Con seis columnas, un nombre largo se recorta antes que descuadrar la barra.
 - **El acceso al panel en el pie** pasa a verse como las demás acciones (ya no al 35 % de opacidad)
   y estrena icono propio de administrador (`admin_panel_settings` en el sprite).
+- **La tarjeta destacada pesa lo que debe**: sombra de overlay, filo de 4 px y borde teñidos del
+  color del equipo, cabecera con un lavado del mismo color e icono a juego, y los bloques de apoyo
+  sobre superficie hundida para que el evento se quede en la limpia. Cada sección lleva su barrita
+  (`ui-eyebrow--marked`). Todo con tokens (funciona igual en oscuro) y **sin un píxel más de alto**.
+- **Listas en columnas** (`ui-list--grid`, variante de `ui-list`): con muchas fichas cortas, una
+  sola columna dejaba medio ancho vacío y estiraba la página. Desde 700 px se reparte en columnas
+  de `--list-col` (3 en un portátil, 2 en tablet, 1 en móvil). Tineri pasa de **3.329 px a 1.245 px**
+  de alto y la ficha abierta ocupa el ancho entero para que su detalle siga cabiendo. Se aplica
+  también a **los seis históricos** (Programare, Părinți global y por padre, Echipe por equipo y por
+  composición, y el de cada joven), donde las cabeceras de mes ocupan la fila entera.
 - **"Lo que viene", en la app pública** (`app-upcoming-strip`, con test de componente): al pie de la
   tarjeta destacada, una línea por programación con fecha, equipo y —en el modo `parents`— quién
   ayuda. En Programare van las dos tiras (a quién le toca y qué padres ayudan) y en Părinți solo la
