@@ -433,6 +433,16 @@ defecto es deliberado).
   de su mínimo de 32) y la compacta en móvil, donde antes salía una placa ilegible de 22 px.
   Pendiente del plan: isotipo cuadrado para favicon/avatar, bajar el volumen de la placa y las
   equivalencias CMYK/Pantone.
+- **Segunda auditoría del logotipo**: medir la diferencia con el arte **por zonas** en vez de en
+  bloque destapó que las letras grandes iban al 4,3–4,9 % (ruido de borde) y la placa al **28 %**.
+  Ampliada ×8, la causa: la C estaba dibujada como un arco con el extremo en bisel y una abertura
+  del 48 % —un Pac-Man—, cuando en el arte es un anillo con los remates cortados en horizontal y
+  una ranura de 0,98, el 17 % de la letra. De paso, los grosores eran inventados y desiguales
+  (asta de la T 1,80, resto 1,70, barras 1,50): el arte tiene **un solo grosor de asta (1,76) y
+  las barras más finas** (1,26–1,40), que es como se dibuja para que una horizontal no pese más
+  que una vertical. Alfabeto de TECH rehecho con esas medidas y altura corregida (5,46; la C ya
+  traía en el arte su desbordamiento óptico de 0,08). Comprobado que el mínimo declarado de 32 px
+  aguanta con las letras nuevas.
 - **La marca de INEB, dibujada en el bundle** (`app-ineb-logo`, misma arquitectura que el wordmark
   de ELIM): el PNG solo servía sobre fondo oscuro —«IN» es blanco—, se veía borroso al escalar y
   costaba 6 kB de red. Ahora es un SVG cuyo `viewBox` (120×38) es la retícula medida sobre el arte

@@ -39,16 +39,21 @@ export type InebLogoVariant = 'lockup' | 'compact' | 'auto';
              diseño original; en el arte bailaban una décima. -->
         <rect y="1.26" width="38.9" height="8.22" fill="var(--ineb-yellow)"/>
 
-        <!-- TECH centrado en la placa —igual arriba que abajo— y con el tracking repartido a partes
-             iguales: las cuatro letras miden 21 y los tres huecos, 4,88 cada uno. -->
+        <!-- TECH con los grosores del original medidos al píxel: astas de 1,76 y barras de 1,40
+             (una barra horizontal se dibuja más fina que un asta vertical o se ve más pesada),
+             altura 5,46 y la C desbordándola 0,08 arriba y abajo. Centrado en la placa —igual
+             arriba que abajo— y con los tres huecos repartidos a partes iguales. -->
         <g fill="var(--ineb-navy)">
-          <path d="M1.63 2.55h5.32v1.8H5.19v3.84H3.39V4.35H1.63z"/>
-          <path d="M11.83 2.55h4.78v1.5h-3.08v.57h2.47v1.5h-2.47v.57h3.08v1.5h-4.78z"/>
-          <path d="M31.83 2.55h1.7v2.07h2.04V2.55h1.7v5.64h-1.7V6.12h-2.04v2.07h-1.7z"/>
+          <path d="M1.63 2.64h5.32v1.4H5.17v4.06H3.41V4.04H1.63z"/>
+          <path d="M11.98 2.64h4.78v1.32h-3.02v.74h2.6v1.26h-2.6v.82h3.02v1.32h-4.78z"/>
+          <path d="M31.83 2.64h1.76v2.03h1.92V2.64h1.76v5.46h-1.76V6.07h-1.92v2.03h-1.76z"/>
+          <!-- La C es un anillo con los remates cortados en horizontal y una abertura estrecha:
+               0,98 de alto, el 17 % de la letra, medido en el arte. Con la abertura ancha parecía
+               un Pac-Man. El anillo es más grueso de lado que por arriba y abajo, igual que las
+               astas frente a las barras. -->
+          <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M26.81 4.88A2.53 2.81 0 1 0 26.81 5.86H25.01A.73 1.49 0 1 1 25.01 4.88z"/>
         </g>
-        <!-- La C se traza con línea, así que su caja de tinta es el arco MÁS medio trazo por lado:
-             por eso el arco no llega a 26,95, sino a 26,10. Desborda 0,09 arriba y abajo. -->
-        <path d="M26.1 4.51a1.97 2.06 0 1 0 0 1.72" stroke="var(--ineb-navy)" stroke-width="1.7"/>
 
         <!-- IN: mismo ancho que la placa y misma línea base que EB. -->
         <g fill="var(--ineb-ink)">
