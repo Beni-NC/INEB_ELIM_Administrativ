@@ -443,6 +443,16 @@ defecto es deliberado).
   que una vertical. Alfabeto de TECH rehecho con esas medidas y altura corregida (5,46; la C ya
   traía en el arte su desbordamiento óptico de 0,08). Comprobado que el mínimo declarado de 32 px
   aguanta con las letras nuevas.
+- **La marca, convertida en sistema exportable**: el componente pasa a ser autocontenido de verdad
+  (cero dependencias de la app: se copia la carpeta y funciona) y cubre **todos los casos que un
+  logotipo necesita**: tres formas —completa, compacta e **isotipo cuadrado** para favicon, avatar
+  o icono de app—, dos tonos, **una sola tinta** (sello, grabado, bordado, fax) con las letras de
+  la placa caladas al color del papel, cuadro navy opcional y nombre accesible opcional. Lo
+  acompaña un **README que es la hoja de marca**: anatomía, retícula y medidas exactas de cada
+  trazo, paleta con RGB/CMYK y contrastes medidos, mínimos por forma (32 / 16 / 16 px), espacio de
+  respeto, fondos, lo que no se hace, cómo instalarlo en Angular o pegar el SVG en cualquier otra
+  tecnología, y un informe para reproducirlo desde cero. 7 tests de componente cubren las
+  combinaciones que promete.
 - **La marca de INEB, dibujada en el bundle** (`app-ineb-logo`, misma arquitectura que el wordmark
   de ELIM): el PNG solo servía sobre fondo oscuro —«IN» es blanco—, se veía borroso al escalar y
   costaba 6 kB de red. Ahora es un SVG cuyo `viewBox` (120×38) es la retícula medida sobre el arte
