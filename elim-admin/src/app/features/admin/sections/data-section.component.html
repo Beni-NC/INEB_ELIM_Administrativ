@@ -30,9 +30,9 @@
 
     <!-- ══════════ Programaciones ══════════ -->
     @if (entity() === 'schedule') {
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid" style="--list-col: 380px">
         @for (e of schedule(); track entryKey(e)) {
-          <div>
+          <div [class.is-open]="isOpen(entryKey(e))">
             <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen(entryKey(e))" [style.--team-color]="getTeamColor(e.team)">
               <div class="ui-row__lead"><span class="ui-team-badge">{{ getTeamNumber(e.team) }}</span></div>
               <button type="button" class="ui-row__btn" (click)="openEntry(e)" [attr.aria-expanded]="isOpen(entryKey(e))">
@@ -119,9 +119,9 @@
 
     <!-- ══════════ Jóvenes ══════════ -->
     @if (entity() === 'youths') {
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid" style="--list-col: 300px">
         @for (y of youths(); track y.id) {
-          <div>
+          <div [class.is-open]="isOpen(y.id)">
             <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen(y.id)" [class.ui-row--muted]="y.active === false">
               <div class="ui-row__lead"><span class="ui-avatar" [attr.data-tone]="y.tone">{{ y.initials }}</span></div>
               <button type="button" class="ui-row__btn" (click)="openYouth(y)" [attr.aria-expanded]="isOpen(y.id)">
@@ -201,9 +201,9 @@
 
     <!-- ══════════ Padres ══════════ -->
     @if (entity() === 'parents') {
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid" style="--list-col: 380px">
         @for (p of parents(); track p.id) {
-          <div>
+          <div [class.is-open]="isOpen(p.id)">
             <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen(p.id)" [class.ui-row--muted]="p.active === false">
               <div class="ui-row__lead"><span class="ui-avatar" [attr.data-tone]="p.tone">{{ p.initials }}</span></div>
               <button type="button" class="ui-row__btn" (click)="openParent(p)" [attr.aria-expanded]="isOpen(p.id)">
@@ -266,9 +266,9 @@
 
     <!-- ══════════ Pertenencias ══════════ -->
     @if (entity() === 'memberships') {
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid" style="--list-col: 320px">
         @for (row of memberships(); track row.index) {
-          <div>
+          <div [class.is-open]="isOpen('m-' + row.index)">
             <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen('m-' + row.index)"
                  [class.ui-row--muted]="!row.m.active" [style.--team-color]="getTeamColor(row.m.teamName)">
               <div class="ui-row__lead"><span class="ui-team-badge">{{ getTeamNumber(row.m.teamName) }}</span></div>
@@ -331,9 +331,9 @@
 
     <!-- ══════════ Vínculos ══════════ -->
     @if (entity() === 'links') {
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid" style="--list-col: 360px">
         @for (row of links(); track row.index) {
-          <div>
+          <div [class.is-open]="isOpen('l-' + row.index)">
             <div class="ui-row ui-row--expandable data-row" [class.ui-row--expanded]="isOpen('l-' + row.index)">
               <div class="ui-row__lead">
                 <svg class="icon faint" aria-hidden="true"><use href="assets/icons.svg#family_restroom"/></svg>

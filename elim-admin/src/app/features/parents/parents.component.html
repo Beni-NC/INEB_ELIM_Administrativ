@@ -34,7 +34,7 @@
     @if (data.activeParents.length === 0) {
       <div class="ui-empty"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#info"/></svg>{{ 'parents.empty' | translate }}</div>
     } @else {
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid" style="--list-col: 340px">
         @for (p of data.activeParents; track p.id) {
           <ng-container *ngTemplateOutlet="parentRow; context: { $implicit: p }" />
         }
@@ -75,7 +75,7 @@
     </button>
     @if (archivedOpen()) {
       <div class="ui-disclosure__panel">
-        <div class="ui-list">
+        <div class="ui-list ui-list--grid" style="--list-col: 340px">
           @for (p of data.inactiveParents; track p.id) {
             <ng-container *ngTemplateOutlet="parentRow; context: { $implicit: p }" />
           }
@@ -87,7 +87,7 @@
 
 <!-- Fila + perfil de un padre (activo o archivado) -->
 <ng-template #parentRow let-p>
-  <div [id]="'card-parent-' + p.id">
+  <div [id]="'card-parent-' + p.id" [class.is-open]="expanded() === p.id">
     <div class="ui-row ui-row--expandable"
          [class.ui-row--expanded]="expanded() === p.id"
          [class.ui-row--muted]="p.active === false">

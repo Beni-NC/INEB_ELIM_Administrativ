@@ -463,6 +463,14 @@ defecto es deliberado).
   color del equipo, cabecera con un lavado del mismo color e icono a juego, y los bloques de apoyo
   sobre superficie hundida para que el evento se quede en la limpia. Cada sección lleva su barrita
   (`ui-eyebrow--marked`). Todo con tokens (funciona igual en oscuro) y **sin un píxel más de alto**.
+- **El barrido completo de listas**: `ui-list--grid` se aplica ya en **todas** las listas largas de
+  fichas cortas, no solo en Tineri y los históricos. Alto de página a 1280 px, medido con la
+  rejilla y desactivándola: Tineri **3.044 → 1.245** (−59 %), panel → Datele **2.046 → 1.232**
+  (−40 %), Părinți **2.340 → 1.668** (−29 %), Programare **2.452 → 1.876** (−23 %), y Echipe pasa a
+  caber entero sin desplazar. El ancho de columna se elige por tabla, no por gusto: se midió
+  cuántos nombres se cortaban en cada una, y donde a tres columnas se cortaban 33 de 45
+  (Programări del panel) se bajó a dos. Resultado final: **cero nombres cortados** en las nueve
+  rejillas y ni un desborde horizontal en móvil.
 - **Listas en columnas** (`ui-list--grid`, variante de `ui-list`): con muchas fichas cortas, una
   sola columna dejaba medio ancho vacío y estiraba la página. Desde 700 px se reparte en columnas
   de `--list-col` (3 en un portátil, 2 en tablet, 1 en móvil). Tineri pasa de **3.329 px a 1.245 px**

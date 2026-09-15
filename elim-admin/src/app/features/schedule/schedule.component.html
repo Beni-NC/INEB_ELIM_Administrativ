@@ -94,7 +94,7 @@
         <span>{{ 'schedule.empty_upcoming' | translate }}</span>
       </div>
     } @else {
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid" style="--list-col: 420px">
         @for (group of data.upcomingByMonth; track group.key) {
           <div class="ui-group-head">
             {{ monthDate(group) | ldate:'monthYear' }}
@@ -116,7 +116,7 @@
       <header class="ui-card__header">
         <h2 class="ui-card__title">{{ 'schedule.coordinator_summary' | translate }}</h2>
       </header>
-      <div class="ui-list coord-list">
+      <div class="ui-list ui-list--grid coord-list" style="--list-col: 300px">
         @for (c of topCoordinators; track c.name + '|' + c.team) {
           <div class="ui-row ui-row--expandable" [style.--team-color]="getTeamColor(c.team)">
             <button type="button" class="ui-row__btn" (click)="goToCoordinator(c.name)"

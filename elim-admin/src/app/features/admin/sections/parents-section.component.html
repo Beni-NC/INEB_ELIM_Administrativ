@@ -90,7 +90,7 @@
       <span class="ui-count">{{ parents().length }}</span>
     </header>
     <p class="ui-card__desc">{{ 'admin.parents_load_desc' | translate }}</p>
-    <div class="ui-list">
+    <div class="ui-list ui-list--grid" style="--list-col: 420px">
       @for (p of parents(); track p.parent.id) {
         <div class="ui-row">
           <div class="ui-row__lead"><span class="ui-avatar" [attr.data-tone]="p.parent.tone">{{ p.parent.initials }}</span></div>
