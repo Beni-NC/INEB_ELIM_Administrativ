@@ -81,7 +81,8 @@
       <span class="ui-eyebrow ui-eyebrow--marked">{{ 'schedule.support_parents' | translate }} <span class="ui-count">{{ parents().length }}</span></span>
       <div class="ui-chip-group">
         @for (p of parents(); track p.id) {
-          <button type="button" class="ui-chip" (click)="nav.goTo('parent', p.id, $event)" [title]="'schedule.view_parent' | translate">
+          <button type="button" class="ui-chip ui-chip--person" (click)="nav.goTo('parent', p.id, $event)"
+                  [title]="'schedule.view_parent' | translate">
             <span class="ui-avatar" [attr.data-tone]="p.tone">{{ p.initials }}</span>
             {{ p.name }}
           </button>

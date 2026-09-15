@@ -357,6 +357,26 @@ button.ui-subsection__title { width: 100%; cursor: pointer; border-radius: var(-
 .ui-chip .ui-avatar { width: 16px; height: 16px; font-size: 8px; margin-left: -4px; }
 @media (hover: hover) { button.ui-chip:hover { border-color: var(--c-border-strong); color: var(--c-text); background: var(--c-surface-2); } }
 .ui-chip-group { display: flex; flex-wrap: wrap; gap: var(--sp-1); min-width: 0; }
+/* Persona señalada: para cuando lo que importa es reconocerse en la lista (los padres de apoyo
+   del próximo turno). Pastilla alta con el avatar a tamaño grande, el nombre en cuerpo normal y
+   relleno primario suave: junto a los chips pequeños del equipo, salta a la vista sin gritar. */
+.ui-chip--person {
+  height: 34px;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3) 0 4px;
+  border-radius: var(--r-full);
+  border-color: color-mix(in srgb, var(--c-primary) 35%, transparent);
+  background: var(--c-primary-soft);
+  color: var(--c-text);
+  /* Al nivel del nombre del equipo: en esta tarjeta lo que se busca es la fecha y quién ayuda. */
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+.ui-chip--person .ui-avatar { width: 26px; height: 26px; font-size: 11px; }
+@media (hover: hover) {
+  button.ui-chip--person:hover { border-color: var(--c-primary); color: var(--c-primary); }
+}
+
 /* Chip conmutable (filtro): activo = primario suave, como el segmentado. */
 button.ui-chip[aria-pressed="true"] { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-primary); }
 

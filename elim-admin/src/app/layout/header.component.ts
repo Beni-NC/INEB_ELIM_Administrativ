@@ -6,6 +6,7 @@ import { AppLanguage, LanguageService } from '../core/services/language.service'
 import { LDatePipe } from '../core/i18n/ldate.pipe';
 import { ThemeService } from '../core/services/theme.service';
 import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component';
+import { CONTACT } from '../core/contact.config';
 
 /** Cabecera: wordmark de la iglesia + nombre del departamento, fecha de hoy, idioma y tema (claro/oscuro manual). */
 @Component({
@@ -15,7 +16,7 @@ import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component
     template: `
     <header class="ui-header">
       <div class="ui-header__inner ui-container">
-      <app-brand-logo tone="light" link="/" />
+      <app-brand-logo tone="light" [link]="contact.churchUrl" />
       <span class="ui-header__divider" aria-hidden="true"></span>
       <a routerLink="/" class="ui-header__brand" [title]="'common.back_to_main' | translate">
         <div class="ui-header__text">
@@ -46,6 +47,8 @@ import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component
   `
 })
 export class HeaderComponent {
+  /** El wordmark lleva a la web de la iglesia; el nombre del departamento, de vuelta a la app. */
+  readonly contact = CONTACT;
   protected readonly lang = inject(LanguageService);
   protected readonly theme = inject(ThemeService);
   readonly today = inject(DataService).today;

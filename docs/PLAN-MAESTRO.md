@@ -409,14 +409,27 @@ defecto es deliberado).
   cortada). Con seis columnas, un nombre largo se recorta antes que descuadrar la barra.
 - **El acceso al panel en el pie** pasa a verse como las demás acciones (ya no al 35 % de opacidad)
   y estrena icono propio de administrador (`admin_panel_settings` en el sprite).
+- **Los padres de apoyo, destacados** (`ui-chip--person`): en la tarjeta destacada pasan de chip
+  gris de 24 px a pastilla de 34 con avatar de 26, nombre a 15/600 y relleno primario suave. Quien
+  entra en Părinți tiene que ver de un vistazo si le toca; los chips del equipo preparador siguen
+  pequeños, y ese contraste es lo que hace que los padres salten.
+- **El wordmark de ELIM lleva a la web de la iglesia** (`CONTACT.churchUrl`, pestaña nueva con
+  `rel="noopener noreferrer"`), en la cabecera y en el pie —donde antes no era pulsable—. El
+  componente acepta ahora una dirección completa además de una ruta interna. No se pierde el
+  "volver a casa": el nombre del departamento, justo al lado del logotipo, sigue llevando a la app.
+- **Programări viitoare cu părinți** pasa también a `ui-list--grid` (columnas de 420 px): 11 fichas
+  con sus padres en dos columnas en vez de once filas con medio ancho vacío.
 - **La marca de INEB, dibujada en el bundle** (`app-ineb-logo`, misma arquitectura que el wordmark
   de ELIM): el PNG solo servía sobre fondo oscuro —«IN» es blanco—, se veía borroso al escalar y
   costaba 6 kB de red. Ahora es un SVG cuyo `viewBox` (120×38) es la retícula medida sobre el arte
   original a 6000×1875, con la paleta real (#ffd230 / #ff3131 / #10144a) y dos tonos. **Cada
   coordenada es una medida** (1 unidad = 50 px de aquel lienzo): caja de la placa, alto de las
   letras TECH, asta de la I, pendiente de la diagonal de la N, las tres barras de la E —la central
-  más corta— y los dos cuencos de la B, más ancho el de abajo. Contrastado contra el arte original
-  píxel a píxel: **3,1 % de los píxeles con tinta difieren**, y a 41 px son indistinguibles. Es una
+  más corta— y los dos cuencos de la B, más ancho el de abajo. Sobre esas medidas se **regulariza**
+  lo que en el arte bailaba: TECH centrado en su placa (1,63 a cada lado, 1,29 arriba y abajo, con
+  los tres huecos entre letras a 4,88), placa y «IN» al mismo borde, y «IN» y «EB» sobre la misma
+  línea base. El `viewBox` va a ras de tinta, así que el alto que pide el contexto es el alto real
+  del logotipo. Contrastado contra el arte original píxel a píxel, son indistinguibles a 41 px. Es una
   **reconstrucción**: si aparece el vector original, se cambian los trazados y el componente sigue
   igual. El PNG queda sin usar en `src/assets/`.
 - La tarjeta destacada recorta a su radio (`overflow: hidden`): la cabecera teñida y las secciones

@@ -179,7 +179,8 @@
 .ui-footer__partner { display: inline-flex; align-items: center; opacity: 0.9; border-radius: var(--r-sm); transition: opacity var(--dur) var(--ease); }
 @media (hover: hover) { .ui-footer__partner:hover { opacity: 1; } }
 /* aspect-ratio reserva el hueco antes de que cargue la imagen (evita el salto de layout que medía Lighthouse). */
-.ui-footer__partner app-ineb-logo { --ineb-size: clamp(24px, 3.2vw, 44px); }
+/* A ras de tinta: el alto es el del logotipo, sin el aire que traía el PNG (de ahí el ×0,92). */
+.ui-footer__partner app-ineb-logo { --ineb-size: clamp(22px, 2.9vw, 40px); }
 
 /* Chip de versión: el detalle técnico aparece en un tooltip al pasar el ratón o enfocar. */
 .ui-footer__version {

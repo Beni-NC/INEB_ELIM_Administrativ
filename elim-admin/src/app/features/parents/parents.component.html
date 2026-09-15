@@ -11,7 +11,7 @@
         <h2 class="ui-card__title">{{ 'parents.upcoming_with_parents' | translate }}</h2>
         <span class="ui-count">{{ data.upcomingParentEvents.length }}</span>
       </header>
-      <div class="ui-list">
+      <div class="ui-list ui-list--grid" style="--list-col: 420px">
         @for (pe of data.upcomingParentEvents; track entryKey(pe.entry)) {
           <app-event-row [entry]="pe.entry" [showMonth]="true" />
         }

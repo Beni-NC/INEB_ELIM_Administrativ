@@ -25,7 +25,14 @@ export type BrandLogoTone = 'light' | 'dark';
     imports: [RouterLink, TranslatePipe],
     host: { '[class]': 'hostClass()' },
     template: `
-    @if (link(); as href) {
+    @if (external()) {
+      <!-- Fuera de la app: pestaña nueva, para no sacar a nadie de la programación. -->
+      <a class="brand" [href]="link()" target="_blank" rel="noopener noreferrer"
+         [title]="'brand.site' | translate">
+        <span class="brand__name">{{ 'brand.short' | translate }}</span>
+        <span class="brand__city">{{ 'brand.location' | translate }}</span>
+      </a>
+    } @else if (link(); as href) {
       <a class="brand" [routerLink]="href" [title]="'brand.name' | translate">
         <span class="brand__name">{{ 'brand.short' | translate }}</span>
         <span class="brand__city">{{ 'brand.location' | translate }}</span>
@@ -41,8 +48,12 @@ export type BrandLogoTone = 'light' | 'dark';
 })
 export class BrandLogoComponent {
   readonly tone = input<BrandLogoTone>('light');
-  /** Ruta interna del enlace; `null` la pinta como imagen no navegable. */
+  /**
+   * A dónde lleva: una ruta interna ("/"), una dirección completa (la web de la iglesia) o `null`
+   * para pintarla como imagen no navegable.
+   */
   readonly link = input<string | null>('/');
 
   protected readonly hostClass = computed(() => `is-${this.tone()}`);
+  protected readonly external = computed(() => this.link()?.startsWith('http') ?? false);
 }

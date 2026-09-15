@@ -6,6 +6,8 @@ export const CONTACT = Object.freeze({
   /** Número de WhatsApp del responsable, en formato internacional sin "+", como exige wa.me. */
   whatsappNumber: '34643340453',
   whatsappDisplay: '+34 643 340 453',
+  /** Web de la iglesia: es a donde lleva el logotipo de ELIM. */
+  churchUrl: 'https://beni-cioarba.github.io/MEDIA-ELIM/',
   /**
    * Crédito del footer (el logo de INEB). Apunta al perfil de LinkedIn del desarrollador
    * mientras no haya web oficial: mejor un enlace que lleva a algo real que uno que no resuelve.
