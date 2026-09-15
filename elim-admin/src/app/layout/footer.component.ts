@@ -7,6 +7,7 @@ import { LanguageService } from '../core/services/language.service';
 import { CONTACT } from '../core/contact.config';
 import { APP_VERSION } from '../../version';
 import { BrandLogoComponent } from '../shared/ui/brand-logo/brand-logo.component';
+import { InebLogoComponent } from '../shared/ui/ineb-logo/ineb-logo.component';
 import { WhatsappButtonComponent } from '../shared/ui/whatsapp-button/whatsapp-button.component';
 import { ShareButtonComponent } from '../shared/ui/share-button/share-button.component';
 
@@ -23,7 +24,7 @@ import { ShareButtonComponent } from '../shared/ui/share-button/share-button.com
 @Component({
   selector: 'app-footer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, BrandLogoComponent, WhatsappButtonComponent, ShareButtonComponent],
+  imports: [RouterLink, TranslatePipe, BrandLogoComponent, InebLogoComponent, WhatsappButtonComponent, ShareButtonComponent],
   template: `
     <footer class="ui-footer">
       <div class="ui-footer__inner ui-container">
@@ -59,7 +60,7 @@ import { ShareButtonComponent } from '../shared/ui/share-button/share-button.com
           <span class="ui-footer__sep" aria-hidden="true"></span>
           <a class="ui-footer__partner" [href]="contact.partnerUrl" target="_blank" rel="noopener noreferrer"
              [attr.aria-label]="'footer.partner' | translate" [title]="'footer.partner' | translate">
-            <img src="assets/logo-ineb.png" alt="" width="128" height="40" loading="lazy" decoding="async">
+            <app-ineb-logo tone="dark" />
           </a>
         </div>
       </div>

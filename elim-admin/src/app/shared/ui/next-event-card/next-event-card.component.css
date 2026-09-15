@@ -7,6 +7,9 @@
   border-color: color-mix(in srgb, var(--team-color) 22%, var(--c-border));
   border-left: 4px solid var(--team-color);
   box-shadow: var(--shadow-overlay);
+  /* La cabecera teñida y las secciones sobre superficie hundida llegan al borde: sin esto pintan
+     sus esquinas cuadradas encima del radio de la tarjeta y se ve como si estuviera cortada. */
+  overflow: hidden;
 }
 .next .ui-card__header {
   background: color-mix(in srgb, var(--team-color) 8%, var(--c-surface));

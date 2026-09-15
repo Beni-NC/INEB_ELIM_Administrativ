@@ -102,6 +102,8 @@ src/
       pwa-install-prompt.component.ts  banner de instalación (estado en PwaInstallService)
     shared/ui/
       brand-logo/            app-brand-logo: wordmark ELIM (portado de MEDIA-ELIM)
+      ineb-logo/             app-ineb-logo: marca INEB dibujada en SVG (dos tonos, 0 kB
+                             de red; geometría medida del arte original)
       whatsapp-button/       app-whatsapp-button: enlace wa.me con mensaje preescrito
       share-button/          app-share-button: Web Share API o <dialog> (WhatsApp, Telegram, e-mail, copiar)
       event-row/             app-event-row: fila de programación reutilizable

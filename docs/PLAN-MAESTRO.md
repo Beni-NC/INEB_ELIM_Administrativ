@@ -409,6 +409,19 @@ defecto es deliberado).
   cortada). Con seis columnas, un nombre largo se recorta antes que descuadrar la barra.
 - **El acceso al panel en el pie** pasa a verse como las demás acciones (ya no al 35 % de opacidad)
   y estrena icono propio de administrador (`admin_panel_settings` en el sprite).
+- **La marca de INEB, dibujada en el bundle** (`app-ineb-logo`, misma arquitectura que el wordmark
+  de ELIM): el PNG solo servía sobre fondo oscuro —«IN» es blanco—, se veía borroso al escalar y
+  costaba 6 kB de red. Ahora es un SVG cuyo `viewBox` (120×38) es la retícula medida sobre el arte
+  original a 6000×1875, con la paleta real (#ffd230 / #ff3131 / #10144a) y dos tonos. **Cada
+  coordenada es una medida** (1 unidad = 50 px de aquel lienzo): caja de la placa, alto de las
+  letras TECH, asta de la I, pendiente de la diagonal de la N, las tres barras de la E —la central
+  más corta— y los dos cuencos de la B, más ancho el de abajo. Contrastado contra el arte original
+  píxel a píxel: **3,1 % de los píxeles con tinta difieren**, y a 41 px son indistinguibles. Es una
+  **reconstrucción**: si aparece el vector original, se cambian los trazados y el componente sigue
+  igual. El PNG queda sin usar en `src/assets/`.
+- La tarjeta destacada recorta a su radio (`overflow: hidden`): la cabecera teñida y las secciones
+  sobre superficie hundida llegan al borde y pintaban sus esquinas cuadradas encima, con lo que la
+  tarjeta parecía cortada por arriba y por abajo.
 - **La tarjeta destacada pesa lo que debe**: sombra de overlay, filo de 4 px y borde teñidos del
   color del equipo, cabecera con un lavado del mismo color e icono a juego, y los bloques de apoyo
   sobre superficie hundida para que el evento se quede en la limpia. Cada sección lleva su barrita
