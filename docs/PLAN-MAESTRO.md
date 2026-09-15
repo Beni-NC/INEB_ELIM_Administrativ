@@ -419,6 +419,20 @@ defecto es deliberado).
   "volver a casa": el nombre del departamento, justo al lado del logotipo, sigue llevando a la app.
 - **Programări viitoare cu părinți** pasa también a `ui-list--grid` (columnas de 420 px): 11 fichas
   con sus padres en dos columnas en vez de once filas con medio ancho vacío.
+- **Auditoría del logotipo y correcciones** (lo que un logotipo tiene que pasar antes de darse por
+  bueno): sobre el navy del pie, TECH contrastaba 11,9 y «EB» —media marca— solo 3,9; a 24 px la
+  placa dejaba de leerse; y no había versión que bajara de ahí. Se corrige lo corregible sin tocar
+  la identidad: **desbordamiento óptico** de las formas redondas (cuencos de la B y C de TECH, que
+  a igual altura se ven menores que la E) y una **variante compacta** —la palabra en una línea, a
+  un solo tamaño y con los dos colores de marca— que baja a 16 px sin romperse. Lo que **no** se
+  toca es el rojo: la auditoría medía 3,9 de contraste sobre el navy y llegué a apagarlo a #ff5f5f
+  para subirlo a 4,8, pero ese listón (4,5) es el de *texto*; para texto grande es 3 y los
+  logotipos están exentos. Apagarlo solo le quitaba vida, así que vuelve el #ff3131 en todos los
+  fondos. Y la fragmentación del nombre no la causaba el color, sino la diferencia de altura y la
+  placa encima: con las cuatro letras a la misma altura, el bloque se lee entero incluso a 16 px. El pie usa `auto`: la completa en escritorio (34–40 px, por encima
+  de su mínimo de 32) y la compacta en móvil, donde antes salía una placa ilegible de 22 px.
+  Pendiente del plan: isotipo cuadrado para favicon/avatar, bajar el volumen de la placa y las
+  equivalencias CMYK/Pantone.
 - **La marca de INEB, dibujada en el bundle** (`app-ineb-logo`, misma arquitectura que el wordmark
   de ELIM): el PNG solo servía sobre fondo oscuro —«IN» es blanco—, se veía borroso al escalar y
   costaba 6 kB de red. Ahora es un SVG cuyo `viewBox` (120×38) es la retícula medida sobre el arte
