@@ -19,13 +19,14 @@ import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
   template: `
     @if (rows().length > 0) {
       <div class="strip">
-        <span class="ui-eyebrow ui-eyebrow--marked">
+        <span class="ui-eyebrow">
           {{ (mode() === 'teams' ? 'schedule.strip_teams' : 'schedule.strip_parents') | translate }}
           <span class="ui-count">{{ rows().length }}</span>
         </span>
         <div class="strip__grid" [class.strip__grid--wide]="mode() === 'parents'">
           @for (r of rows(); track r.time) {
-            <!-- La de la tarjeta de arriba se marca, para no perder el hilo entre una y otra. -->
+            <!-- La de la tarjeta de arriba se marca con una pastilla suave, la misma que usa la app
+                 para "activo": destaca lo justo para saber cuál es el siguiente turno. -->
             <div class="strip__item" [class.strip__item--next]="r.time === highlight()" [style.--team-color]="getTeamColor(r.team)">
               <span class="strip__date num">{{ r.date | ldate:'dayMonth' }}</span>
               <span class="ui-team-badge ui-team-badge--xs" [title]="r.team">{{ getTeamNumber(r.team) }}</span>
@@ -72,8 +73,8 @@ import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
       align-items: center;
       gap: var(--sp-1);
       min-width: 0;
-      padding: 1px 0 1px var(--sp-1);
-      border-left: 2px solid transparent;
+      padding: 1px var(--sp-1);
+      border-radius: var(--r-sm);
       font-size: var(--fs-sm);
       line-height: 1.6;
     }
@@ -81,7 +82,9 @@ import { getTeamColor, getTeamNumber } from '../../../core/utils/team.utils';
     .strip__grid--wide { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
     /* La marca toma el color del equipo de esa fecha: dentro de la tarjeta destacada es el suyo,
        y así no aparece un acento de otro color en un bloque ya teñido. */
-    .strip__item--next { border-left-color: var(--team-color, var(--c-primary)); }
+    .strip__item--next { background: var(--c-primary-soft); }
+    .strip__item--next .strip__date,
+    .strip__item--next .strip__link { color: var(--c-text); font-weight: 600; }
     .strip__date { flex: 0 0 48px; color: var(--c-text-2); }
     .strip__names { display: flex; align-items: center; gap: 4px; min-width: 0; }
     .strip__sep { flex: 0 0 auto; color: var(--c-text-3); }

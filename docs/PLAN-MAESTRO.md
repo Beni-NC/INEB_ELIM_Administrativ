@@ -471,8 +471,13 @@ defecto es deliberado).
   tarjeta parecía cortada por arriba y por abajo.
 - **La tarjeta destacada pesa lo que debe**: sombra de overlay, filo de 4 px y borde teñidos del
   color del equipo, cabecera con un lavado del mismo color e icono a juego, y los bloques de apoyo
-  sobre superficie hundida para que el evento se quede en la limpia. Cada sección lleva su barrita
-  (`ui-eyebrow--marked`). Todo con tokens (funciona igual en oscuro) y **sin un píxel más de alto**.
+  sobre superficie hundida para que el evento se quede en la limpia. Todo con tokens (funciona
+  igual en oscuro) y **sin un píxel más de alto**. Las barritas de color junto a cada etiqueta de
+  sección se probaron y se quitaron: a los participantes les liaban más que ayudaban.
+- **El siguiente turno, en pastilla**: en las tiras "a quién le toca" y "qué padres ayudan", la
+  programación de la tarjeta deja la barra lateral y pasa a una pastilla primaria suave con fecha y
+  nombre en tinta plena. Destaca lo justo para saber cuál es el turno activo, con el mismo lenguaje
+  que la app usa para "activo" en todas partes.
 - **El barrido completo de listas**: `ui-list--grid` se aplica ya en **todas** las listas largas de
   fichas cortas, no solo en Tineri y los históricos. Alto de página a 1280 px, medido con la
   rejilla y desactivándola: Tineri **3.044 → 1.245** (−59 %), panel → Datele **2.046 → 1.232**

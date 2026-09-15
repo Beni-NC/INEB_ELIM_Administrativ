@@ -63,7 +63,7 @@
 
   @if (showRoster() && roster().length > 0) {
     <div class="next__people">
-      <span class="ui-eyebrow ui-eyebrow--marked">{{ 'schedule.preparing_team' | translate }} <span class="ui-count">{{ roster().length }}</span></span>
+      <span class="ui-eyebrow">{{ 'schedule.preparing_team' | translate }} <span class="ui-count">{{ roster().length }}</span></span>
       <div class="ui-chip-group">
         @for (y of roster(); track y.id) {
           <button type="button" class="ui-chip" (click)="nav.goTo('youth', y.id, $event)">
@@ -78,7 +78,7 @@
 
   @if (parents().length > 0) {
     <div class="next__people">
-      <span class="ui-eyebrow ui-eyebrow--marked">{{ 'schedule.support_parents' | translate }} <span class="ui-count">{{ parents().length }}</span></span>
+      <span class="ui-eyebrow">{{ 'schedule.support_parents' | translate }} <span class="ui-count">{{ parents().length }}</span></span>
       <div class="ui-chip-group">
         @for (p of parents(); track p.id) {
           <button type="button" class="ui-chip ui-chip--person" (click)="nav.goTo('parent', p.id, $event)"

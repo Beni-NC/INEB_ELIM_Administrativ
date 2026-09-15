@@ -14,17 +14,6 @@
   min-width: 0;
 }
 /* Etiqueta 11 px en mayúsculas encima de un valor o de un grupo de chips. */
-/* Marca de sección dentro de una tarjeta destacada: una barrita del color del equipo que ata cada
-   bloque al evento del que habla. Sin altura extra: va dentro de la propia etiqueta. */
-.ui-eyebrow--marked { display: flex; align-items: center; gap: var(--sp-1); }
-.ui-eyebrow--marked::before {
-  content: '';
-  flex: 0 0 auto;
-  width: 3px;
-  height: 12px;
-  border-radius: 2px;
-  background: var(--team-color, var(--c-primary));
-}
 .ui-eyebrow {
   font-size: var(--fs-xs);
   font-weight: 600;
