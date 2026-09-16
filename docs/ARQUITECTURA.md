@@ -135,11 +135,14 @@ src/
     test-providers.ts        providers del TestBed: zoneless, router real, i18n sin cargador, APP_TODAY/APP_DATA
 scripts/
   build-icons.mjs            sprite assets/icons.svg desde los iconos usados (npm run icons; se versiona)
-  assets-src/logo_admin.png  original del icono PWA (1,3 MB): fuera de assets/ para no publicarlo
+  build-app-icon.mjs         icono de la app y sus 9 derivados desde el sello original: any+maskable
+                             (un mismo PNG), Apple 180, aviso de instalación, favicon (emblema sin
+                             el anillo de texto) en PNG+ICO y un icono por atajo (npm run app-icon)
+  assets-src/logo_admin.png  el sello, original de 970 px con fondo transparente: es la fuente del
+                             icono y no se publica tal cual (1,3 MB)
   generate-version.mjs       src/version.ts: semver + build (commits) + commit + dirty + fecha
   generate-calendars.mjs     empaqueta con esbuild y ejecuta calendars.entry.ts
   calendars.entry.ts         genera assets/calendars/*.ics (global, por equipo, joven y padre)
-  generate-icons.js          iconos PWA desde logo_admin.png
 ```
 
 Regla de dependencias: `features → shared/ui → core`; `layout → core`. `core` no importa de

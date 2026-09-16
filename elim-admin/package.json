@@ -9,6 +9,7 @@
     "generate": "node scripts/generate-version.mjs && node scripts/generate-calendars.mjs",
     "calendars": "node scripts/generate-calendars.mjs",
     "icons": "node scripts/build-icons.mjs",
+    "app-icon": "node scripts/build-app-icon.mjs",
     "postinstall": "node scripts/generate-version.mjs",
     "prestart": "npm run generate",
     "start": "ng serve",

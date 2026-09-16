@@ -60,7 +60,7 @@ import { ShareButtonComponent } from '../shared/ui/share-button/share-button.com
           <span class="ui-footer__sep" aria-hidden="true"></span>
           <a class="ui-footer__partner" [href]="contact.partnerUrl" target="_blank" rel="noopener noreferrer"
              [attr.aria-label]="'footer.partner' | translate" [title]="'footer.partner' | translate">
-            <app-ineb-logo tone="dark" variant="auto" />
+            <app-ineb-logo tone="dark" />
           </a>
         </div>
       </div>

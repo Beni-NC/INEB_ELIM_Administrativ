@@ -10,7 +10,7 @@ import { PwaInstallService } from '../core/services/pwa-install.service';
   template: `
     @if (install.bannerVisible()) {
       <div class="ui-banner" role="region" aria-live="polite" [attr.aria-label]="'pwa_install.title' | translate">
-        <img src="assets/logo_admin-72.png" alt="" class="ui-banner__img" width="36" height="36">
+        <img src="assets/app-icon-72.png" alt="" class="ui-banner__img" width="36" height="36">
         <div class="ui-banner__text">
           <strong>{{ 'pwa_install.title' | translate }}</strong>
           @if (install.isIos()) {

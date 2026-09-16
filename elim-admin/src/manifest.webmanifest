@@ -12,28 +12,16 @@
   "description": "Programarea pregătirii mesei - Departament Tineret, Biserica ELIM Arganda del Rey",
   "icons": [
     {
-      "src": "assets/logo_admin-192.png",
+      "src": "assets/app-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "assets/logo_admin-512.png",
+      "src": "assets/app-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/logo_admin-192-maskable.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "assets/logo_admin-512-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
   "shortcuts": [
@@ -43,7 +31,7 @@
       "description": "Echipele active și componența lor",
       "icons": [
         {
-          "src": "assets/logo_admin-192.png",
+          "src": "assets/shortcut-teams-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -55,7 +43,7 @@
       "description": "Lista tinerilor din departament",
       "icons": [
         {
-          "src": "assets/logo_admin-192.png",
+          "src": "assets/shortcut-youths-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -67,7 +55,7 @@
       "description": "Părinții de sprijin și următorul sprijin",
       "icons": [
         {
-          "src": "assets/logo_admin-192.png",
+          "src": "assets/shortcut-parents-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }

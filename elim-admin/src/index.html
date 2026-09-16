@@ -18,7 +18,7 @@
   <meta property="og:title" content="ELIM Arganda - Programare Tineret">
   <meta property="og:description" content="Programarea pregătirii mesei - Departament Tineret, Biserica ELIM Arganda del Rey">
   <meta property="og:url" content="https://beni-nc.github.io/INEB_ELIM_Administrativ/">
-  <meta property="og:image" content="https://beni-nc.github.io/INEB_ELIM_Administrativ/assets/logo_admin-512.png">
+  <meta property="og:image" content="https://beni-nc.github.io/INEB_ELIM_Administrativ/assets/app-icon-512.png">
   <meta property="og:image:width" content="512">
   <meta property="og:image:height" content="512">
   <meta property="og:locale" content="ro_RO">
@@ -26,10 +26,12 @@
   <meta name="theme-color" content="#ffffff">
   <!-- Tema guardado por el usuario (ThemeService): se aplica antes del primer pintado para evitar el destello claro. -->
   <script>try{if(localStorage.getItem('app.theme')==='dark'){document.documentElement.dataset.theme='dark';document.querySelector('meta[name="theme-color"]').content='#181d26';}}catch(e){}</script>
-  <link rel="icon" type="image/png" href="assets/logo_admin-192.png">
+  <!-- Favicon: el emblema del sello sin el anillo de texto (que a 16–32 px no se lee), en PNG de 32
+       y en favicon.ico (16/32/48) en la raíz. -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <!-- iOS no respeta iconos maskable: se usa el icono "any" con fondo de marca. -->
-  <link rel="apple-touch-icon" href="assets/logo_admin-192.png">
+  <!-- iOS recorta sus propias esquinas: la baldosa navy completa, a los 180 px que pide. -->
+  <link rel="apple-touch-icon" href="assets/app-icon-180.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="ELIM Tineret">

@@ -179,11 +179,10 @@
 .ui-footer__partner { display: inline-flex; align-items: center; opacity: 0.9; border-radius: var(--r-sm); transition: opacity var(--dur) var(--ease); }
 @media (hover: hover) { .ui-footer__partner:hover { opacity: 1; } }
 /* aspect-ratio reserva el hueco antes de que cargue la imagen (evita el salto de layout que medía Lighthouse). */
-/* A ras de tinta: el alto es el del logotipo, sin el aire que traía el PNG.
-   En móvil sale la variante compacta (22 px le sobran); desde 600 px, la completa, y ahí el
-   suelo sube a 34 px porque su mínimo son 32. */
-.ui-footer__partner app-ineb-logo { --ineb-size: 22px; }
-@media (min-width: 600px) { .ui-footer__partner app-ineb-logo { --ineb-size: clamp(34px, 2.9vw, 40px); } }
+/* A ras de tinta: el alto es el del logotipo, sin el aire que traía el PNG. Siempre la forma
+   completa, también en móvil: la placa TECH es parte de la identidad y quitarla le quita vida a la
+   marca, aunque a 32 px el descriptor sea más placa que texto. 32 es su mínimo declarado. */
+.ui-footer__partner app-ineb-logo { --ineb-size: clamp(32px, 2.9vw, 40px); }
 
 /* Chip de versión: el detalle técnico aparece en un tooltip al pasar el ratón o enfocar. */
 .ui-footer__version {

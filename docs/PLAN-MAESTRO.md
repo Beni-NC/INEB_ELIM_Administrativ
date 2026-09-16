@@ -424,7 +424,9 @@ defecto es deliberado).
   placa dejaba de leerse; y no había versión que bajara de ahí. Se corrige lo corregible sin tocar
   la identidad: **desbordamiento óptico** de las formas redondas (cuencos de la B y C de TECH, que
   a igual altura se ven menores que la E) y una **variante compacta** —la palabra en una línea, a
-  un solo tamaño y con los dos colores de marca— que baja a 16 px sin romperse. Lo que **no** se
+  un solo tamaño y con los dos colores de marca— que baja a 16 px sin romperse; queda disponible,
+  pero **el pie usa siempre la completa**, también en móvil (32 px, su mínimo): la placa TECH es
+  parte de la identidad y quitarla le quita vida a la marca. Decisión del propietario. Lo que **no** se
   toca es el rojo: la auditoría medía 3,9 de contraste sobre el navy y llegué a apagarlo a #ff5f5f
   para subirlo a 4,8, pero ese listón (4,5) es el de *texto*; para texto grande es 3 y los
   logotipos están exentos. Apagarlo solo le quitaba vida, así que vuelve el #ff3131 en todos los
@@ -443,6 +445,18 @@ defecto es deliberado).
   que una vertical. Alfabeto de TECH rehecho con esas medidas y altura corregida (5,46; la C ya
   traía en el arte su desbordamiento óptico de 0,08). Comprobado que el mínimo declarado de 32 px
   aguanta con las letras nuevas.
+- **Icono de la app: el sello, mejor servido**. Se probó sustituirlo por un monograma («E» del
+  wordmark) y se descartó: el sello es la identidad del departamento y se queda. Lo que cambia es
+  cómo se sirve, que es donde estaba el problema medido en la auditoría: (1) el sello pasa del
+  **62 % al 78 %** de la baldosa —al ser circular cabe entero en el círculo de seguridad, así un
+  mismo PNG vale para `any` y `maskable`, y a 48 px se nota—; (2) el **favicon** deja de ser el PNG
+  de 192 encogido y pasa a ser **el disco interior del sello** —emblema y filete dorado, sin el
+  anillo de texto que a 16–32 px no se lee—, con el símbolo el doble de grande; (3) el aviso de
+  instalación lleva el sello sobre baldosa navy en vez de suelto sobre blanco, donde su interior
+  blanco desaparecía; (4) **un solo navy**, el de la marca; (5) todo rasterizado desde el original
+  de 970 px, no desde un PNG ya reescalado; (6) **un icono por atajo** (Echipe, Tineri, Părinți).
+  `npm run app-icon` regenera los nueve ficheros; el generador antiguo (`sharp`, sin instalar) se
+  retira.
 - **La marca, convertida en sistema exportable**: el componente pasa a ser autocontenido de verdad
   (cero dependencias de la app: se copia la carpeta y funciona) y cubre **todos los casos que un
   logotipo necesita**: tres formas —completa, compacta e **isotipo cuadrado** para favicon, avatar
